@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-label="Institute logo">
+  <!-- Temporary brand mark: graduation cap over an open book. Replace with the real logo. -->
+  <rect width="48" height="48" rx="10" fill="#274de3"/>
+  <path d="M24 10 8 17l16 7 16-7-16-7Z" fill="#ffffff"/>
+  <path d="M13 21v6c0 2.8 4.9 6 11 6s11-3.2 11-6v-6l-11 4.8L13 21Z" fill="#dce7fe"/>
+  <path d="M36 19v9" stroke="#ebbc59" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,23 @@
+﻿app\office\students\[studentId]\page.tsx :: 267:59  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+app\reset-password\page.tsx :: 50:7  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+app\student\quizzes\[quizId]\attempt\[attemptId]\AttemptClient.tsx :: 67:14  error  Error: Cannot access variable before it is declared
+app\student\quizzes\[quizId]\attempt\[attemptId]\AttemptClient.tsx:143:3 :: 144:5   error  Compilation Skipped: Existing memoization could not be preserved
+app\student\quizzes\[quizId]\attempt\[attemptId]\page.tsx :: 39:12  error  Error: Avoid constructing JSX within try/catch
+app\student\quizzes\[quizId]\page.tsx :: 35:12  error  Error: Avoid constructing JSX within try/catch
+app\student\quizzes\[quizId]\result\[attemptId]\page.tsx :: 39:12  error  Error: Avoid constructing JSX within try/catch
+app\verify-email\page.tsx :: 35:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+components\office\OfficeShell.tsx :: 80:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+components\office\OfficeShell.tsx:80:5 :: 104:34  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+components\office\assignments\EditAssignmentForm.tsx :: 82:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+components\office\reports\DonutChart.tsx :: 31:7  error    Error: Cannot reassign variable after render completes
+components\student\StudentShell.tsx :: 59:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+components\ui\checkbox.tsx :: 15:42  error    React Hook "React.useId" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+components\ui\checkbox.tsx :: 60:18  error    An interface declaring no members is equivalent to its supertype                                                                @typescript-eslint/no-empty-object-type
+components\ui\field.tsx :: 6:18  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+lib\analytics\permissions.ts :: 78:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+lib\auth\permissions.ts :: 83:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+lib\office\courses\ordering.ts :: 23:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+lib\office\courses\ordering.ts :: 32:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+lib\office\courses\ordering.ts :: 39:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+lib\support\queries.ts :: 30:32   error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+middleware.ts :: 49:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any

@@ -1,0 +1,88 @@
+﻿app/office/assignments/[assignmentId]/submissions/page.tsx(202,18): error TS2741: Property 'assignmentMaxScore' is missing in type '{ key: string; submission: OfficeSubmissionSummary; canGrade: boolean; }' but required in type 'SubmissionCardProps'.
+app/student/support/StudentSupportClient.tsx(302,17): error TS2322: Type 'boolean | null' is not assignable to type 'boolean'.
+  Type 'null' is not assignable to type 'boolean'.
+components/office/assignments/SubmissionDetail.tsx(247,18): error TS2552: Cannot find name 'Select'. Did you mean 'onselect'?
+components/office/assignments/SubmissionDetail.tsx(247,66): error TS7006: Parameter 'value' implicitly has an 'any' type.
+components/office/assignments/SubmissionDetail.tsx(248,20): error TS2304: Cannot find name 'SelectTrigger'.
+components/office/assignments/SubmissionDetail.tsx(249,22): error TS2304: Cannot find name 'SelectValue'.
+components/office/assignments/SubmissionDetail.tsx(250,21): error TS2304: Cannot find name 'SelectTrigger'.
+components/office/assignments/SubmissionDetail.tsx(251,20): error TS2304: Cannot find name 'SelectContent'.
+components/office/assignments/SubmissionDetail.tsx(252,22): error TS2304: Cannot find name 'SelectItem'.
+components/office/assignments/SubmissionDetail.tsx(252,56): error TS2304: Cannot find name 'SelectItem'.
+components/office/assignments/SubmissionDetail.tsx(253,22): error TS2304: Cannot find name 'SelectItem'.
+components/office/assignments/SubmissionDetail.tsx(253,92): error TS2304: Cannot find name 'SelectItem'.
+components/office/assignments/SubmissionDetail.tsx(254,21): error TS2304: Cannot find name 'SelectContent'.
+components/office/assignments/SubmissionDetail.tsx(255,19): error TS2552: Cannot find name 'Select'. Did you mean 'onselect'?
+components/office/support/SupportFilters.tsx(44,50): error TS2367: This comparison appears to be unintentional because the types 'string' and 'boolean' have no overlap.
+components/ui/select.tsx(9,20): error TS2344: Type 'FC<SelectProps>' does not satisfy the constraint 'keyof IntrinsicElements | ForwardRefExoticComponent<any> | (new (props: any, context: any) => Component<any, {}, any>) | ((props: any) => ReactNode)'.
+  Property '$$typeof' is missing in type 'FunctionComponent<SelectProps>' but required in type 'ForwardRefExoticComponent<any>'.
+components/ui/select.tsx(12,25): error TS2322: Type '{ children: ReactNode; open?: boolean | undefined; defaultOpen?: boolean | undefined; onOpenChange?(open: boolean): void; dir?: Direction | undefined; name?: string | undefined; ... 7 more ...; ref: ForwardedRef<...>; }' is not assignable to type 'IntrinsicAttributes & SelectSharedProps & { value?: string | undefined; defaultValue?: string | undefined; onValueChange?(value: string): void; }'.
+  Property 'ref' does not exist on type 'IntrinsicAttributes & SelectSharedProps & { value?: string | undefined; defaultValue?: string | undefined; onValueChange?(value: string): void; }'.
+components/ui/textarea.tsx(28,19): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+lib/office/announcements/mutations.ts(97,28): error TS2551: Property 'courseId' does not exist on type 'Document<unknown, {}, IAnnouncement, {}, DefaultSchemaOptions> & IAnnouncement & Required<{ _id: ObjectId; }> & { ...; } & { ...; }'. Did you mean 'course'?
+lib/office/announcements/mutations.ts(111,20): error TS2551: Property 'courseId' does not exist on type 'Document<unknown, {}, IAnnouncement, {}, DefaultSchemaOptions> & IAnnouncement & Required<{ _id: ObjectId; }> & { ...; } & { ...; }'. Did you mean 'course'?
+lib/office/announcements/mutations.ts(114,20): error TS2551: Property 'courseId' does not exist on type 'Document<unknown, {}, IAnnouncement, {}, DefaultSchemaOptions> & IAnnouncement & Required<{ _id: ObjectId; }> & { ...; } & { ...; }'. Did you mean 'course'?
+lib/office/announcements/mutations.ts(119,18): error TS2551: Property 'courseId' does not exist on type 'Document<unknown, {}, IAnnouncement, {}, DefaultSchemaOptions> & IAnnouncement & Required<{ _id: ObjectId; }> & { ...; } & { ...; }'. Did you mean 'course'?
+lib/office/announcements/queries.ts(80,19): error TS2551: Property 'courseId' does not exist on type 'IAnnouncement & Required<{ _id: ObjectId; }> & { __v: number; }'. Did you mean 'course'?
+lib/office/announcements/queries.ts(90,85): error TS2551: Property 'courseId' does not exist on type 'IAnnouncement & Required<{ _id: ObjectId; }> & { __v: number; }'. Did you mean 'course'?
+lib/office/announcements/queries.ts(91,36): error TS2551: Property 'courseId' does not exist on type 'IAnnouncement & Required<{ _id: ObjectId; }> & { __v: number; }'. Did you mean 'course'?
+lib/office/announcements/queries.ts(98,30): error TS2551: Property 'courseId' does not exist on type 'IAnnouncement & Required<{ _id: ObjectId; }> & { __v: number; }'. Did you mean 'course'?
+lib/office/announcements/queries.ts(131,68): error TS2551: Property 'courseId' does not exist on type 'IAnnouncement & Required<{ _id: ObjectId; }> & { __v: number; }'. Did you mean 'course'?
+lib/office/announcements/queries.ts(132,55): error TS2551: Property 'courseId' does not exist on type 'IAnnouncement & Required<{ _id: ObjectId; }> & { __v: number; }'. Did you mean 'course'?
+lib/office/announcements/queries.ts(140,28): error TS2551: Property 'courseId' does not exist on type 'IAnnouncement & Required<{ _id: ObjectId; }> & { __v: number; }'. Did you mean 'course'?
+lib/office/assignments/mutations.ts(55,5): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Object literal may only specify known properties, and 'module' does not exist in type '{ _id?: ObjectIdQueryTypeCasting | undefined; createdAt?: DateQueryTypeCasting | undefined; updatedAt?: DateQueryTypeCasting | undefined; ... 6 more ...; isPublished?: boolean | undefined; }'.
+lib/office/assignments/mutations.ts(69,26): error TS2339: Property '_id' does not exist on type 'never'.
+lib/office/assignments/mutations.ts(86,28): error TS2339: Property '_id' does not exist on type 'never'.
+lib/office/assignments/mutations.ts(91,37): error TS2339: Property '_id' does not exist on type 'never'.
+lib/office/assignments/mutations.ts(110,24): error TS2339: Property 'module' does not exist on type 'Document<unknown, {}, IAssignment, {}, DefaultSchemaOptions> & IAssignment & Required<{ _id: ObjectId; }> & { ...; } & { ...; }'.
+lib/office/assignments/mutations.ts(122,18): error TS2339: Property 'module' does not exist on type 'Document<unknown, {}, IAssignment, {}, DefaultSchemaOptions> & IAssignment & Required<{ _id: ObjectId; }> & { ...; } & { ...; }'.
+lib/office/assignments/mutations.ts(124,18): error TS2339: Property 'module' does not exist on type 'Document<unknown, {}, IAssignment, {}, DefaultSchemaOptions> & IAssignment & Required<{ _id: ObjectId; }> & { ...; } & { ...; }'.
+lib/office/assignments/mutations.ts(135,22): error TS2339: Property 'module' does not exist on type 'Document<unknown, {}, IAssignment, {}, DefaultSchemaOptions> & IAssignment & Required<{ _id: ObjectId; }> & { ...; } & { ...; }'.
+lib/office/assignments/mutations.ts(137,62): error TS2339: Property 'module' does not exist on type 'Document<unknown, {}, IAssignment, {}, DefaultSchemaOptions> & IAssignment & Required<{ _id: ObjectId; }> & { ...; } & { ...; }'.
+lib/office/assignments/mutations.ts(320,17): error TS2339: Property 'sendAssignmentGradedEmail' does not exist on type 'typeof import("C:/Users/pk245/OneDrive/Desktop/institute/institute/lib/email/events")'.
+lib/office/assignments/queries.ts(163,31): error TS2339: Property 'module' does not exist on type 'IAssignment & Required<{ _id: ObjectId; }> & { __v: number; }'.
+lib/office/assignments/queries.ts(238,29): error TS2339: Property 'module' does not exist on type 'IAssignment & Required<{ _id: ObjectId; }> & { __v: number; }'.
+lib/office/assignments/queries.ts(408,9): error TS2322: Type '{ id: string; score: {}; feedback: {}; internalNote: unknown; gradedById: string; gradedByName: string; gradedAt: string; isRegrade: boolean; previousScore: unknown; }[]' is not assignable to type 'GradingHistoryEntry[]'.
+  Type '{ id: string; score: {}; feedback: {}; internalNote: unknown; gradedById: string; gradedByName: string; gradedAt: string; isRegrade: boolean; previousScore: unknown; }' is not assignable to type 'GradingHistoryEntry'.
+    Types of property 'score' are incompatible.
+      Type '{}' is not assignable to type 'number'.
+lib/office/courses/actions.ts(286,40): error TS2339: Property 'id' does not exist on type 'Promise<SessionUser>'.
+lib/office/courses/actions.ts(290,17): error TS2345: Argument of type 'Promise<SessionUser>' is not assignable to parameter of type 'SessionUser'.
+  Type 'Promise<SessionUser>' is missing the following properties from type 'SessionUser': id, name, email, role, and 2 more.
+lib/office/courses/actions.ts(432,17): error TS2345: Argument of type 'Promise<SessionUser>' is not assignable to parameter of type 'SessionUser'.
+  Type 'Promise<SessionUser>' is missing the following properties from type 'SessionUser': id, name, email, role, and 2 more.
+lib/office/students/queries.ts(69,9): error TS2367: This comparison appears to be unintentional because the types '"verified" | "unverified"' and '"VERIFIED"' have no overlap.
+lib/support/mutations.ts(56,7): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'string | null | undefined' is not assignable to type 'string | RegExp | undefined'.
+      Type 'null' is not assignable to type 'string | RegExp | undefined'.
+        Type 'string | null | undefined' is not assignable to type 'string | RegExp | undefined'.
+          Type 'null' is not assignable to type 'string | RegExp | undefined'.
+            Type 'string | null | undefined' is not assignable to type 'string | RegExp | undefined'.
+              Type 'null' is not assignable to type 'string | RegExp | undefined'.
+lib/support/mutations.ts(57,7): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'string | null | undefined' is not assignable to type 'string | RegExp | undefined'.
+      Type 'null' is not assignable to type 'string | RegExp | undefined'.
+        Type 'string | null | undefined' is not assignable to type 'string | RegExp | undefined'.
+          Type 'null' is not assignable to type 'string | RegExp | undefined'.
+            Type 'string | null | undefined' is not assignable to type 'string | RegExp | undefined'.
+              Type 'null' is not assignable to type 'string | RegExp | undefined'.
+lib/support/mutations.ts(58,7): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'string | null | undefined' is not assignable to type 'string | RegExp | undefined'.
+      Type 'null' is not assignable to type 'string | RegExp | undefined'.
+        Type 'string | null | undefined' is not assignable to type 'string | RegExp | undefined'.
+          Type 'null' is not assignable to type 'string | RegExp | undefined'.
+            Type 'string | null | undefined' is not assignable to type 'string | RegExp | undefined'.
+              Type 'null' is not assignable to type 'string | RegExp | undefined'.
+lib/support/mutations.ts(69,22): error TS2339: Property '_id' does not exist on type 'never'.
+lib/support/mutations.ts(83,29): error TS2339: Property '_id' does not exist on type 'never'.
+lib/support/mutations.ts(192,24): error TS2345: Argument of type '{ sender: Types.ObjectId; senderType: string; message: string; attachmentUrl: string | null | undefined; attachmentPublicId: string | null | undefined; originalFileName: string | null | undefined; isInternal: boolean; createdAt: Date; }' is not assignable to parameter of type 'ITicketMessage'.
+  Types of property 'senderType' are incompatible.
+    Type 'string' is not assignable to type '"student" | "staff"'.
+lib/support/notifications.ts(33,33): error TS2345: Argument of type '{ studentId: string; studentName: string; studentEmail: string; ticketNumber: string; subject: string; replyMessage: string; replierName: string; }' is not assignable to parameter of type 'SupportReplyEmailParams'.
+  Property 'messageId' is missing in type '{ studentId: string; studentName: string; studentEmail: string; ticketNumber: string; subject: string; replyMessage: string; replierName: string; }' but required in type 'SupportReplyEmailParams'.

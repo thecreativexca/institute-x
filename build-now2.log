@@ -1,0 +1,136 @@
+﻿Γû▓ Next.js 16.3.3 (Turbopack)
+ΓÜá Warning: Next.js ignored pnpm-workspace.yaml in C:\Users\pk245 because it is outside the current Git repository (C:\Users\pk245\OneDrive\Desktop\institute\institute).
+ To use this directory, set `turbopack.root` in your Next.js config.
+
+Γ£ô Running next.config.ts took 224ms
+
+ΓÜá The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 50s
+  Running TypeScript ...
+  Finished TypeScript in 30.0s ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/46) ...
+  Generating static pages using 3 workers (11/46) 
+  Generating static pages using 3 workers (22/46) 
+  Generating static pages using 3 workers (34/46) 
+Γ£ô Generating static pages using 3 workers (46/46) in 4.2s
+  Finalizing page optimization ...
+
+Route (app)
+Γöî ╞Æ /
+Γö£ Γùï /_not-found
+Γö£ ╞Æ /about
+Γö£ ╞Æ /api/auth/forgot-password
+Γö£ ╞Æ /api/auth/login
+Γö£ ╞Æ /api/auth/logout
+Γö£ ╞Æ /api/auth/office-forgot-password
+Γö£ ╞Æ /api/auth/office-login
+Γö£ ╞Æ /api/auth/office-logout
+Γö£ ╞Æ /api/auth/office-reset-password
+Γö£ ╞Æ /api/auth/register
+Γö£ ╞Æ /api/auth/resend-verification
+Γö£ ╞Æ /api/auth/reset-password
+Γö£ ╞Æ /api/auth/verify-email
+Γö£ ╞Æ /api/certificates/verify
+Γö£ ╞Æ /api/dev/seed-quizzes
+Γö£ ╞Æ /api/enrollments/free
+Γö£ ╞Æ /api/health
+Γö£ ╞Æ /api/office/announcements
+Γö£ ╞Æ /api/office/announcements/[announcementId]
+Γö£ ╞Æ /api/office/assignments
+Γö£ ╞Æ /api/office/assignments/[assignmentId]
+Γö£ ╞Æ /api/office/assignments/[assignmentId]/submissions
+Γö£ ╞Æ /api/office/assignments/[assignmentId]/submissions/[submissionId]
+Γö£ ╞Æ /api/office/change-password
+Γö£ ╞Æ /api/office/courses/[courseId]/thumbnail
+Γö£ ╞Æ /api/office/profile
+Γö£ ╞Æ /api/office/quizzes
+Γö£ ╞Æ /api/office/quizzes/[quizId]
+Γö£ ╞Æ /api/office/quizzes/[quizId]/questions
+Γö£ ╞Æ /api/office/quizzes/[quizId]/questions/[questionId]
+Γö£ ╞Æ /api/office/quizzes/[quizId]/results
+Γö£ ╞Æ /api/office/quizzes/[quizId]/results/[attemptId]
+Γö£ ╞Æ /api/office/reports/export
+Γö£ ╞Æ /api/office/resources
+Γö£ ╞Æ /api/office/resources/[resourceId]
+Γö£ ╞Æ /api/office/resources/catalog
+Γö£ ╞Æ /api/office/students/[studentId]
+Γö£ ╞Æ /api/office/students/[studentId]/enroll
+Γö£ ╞Æ /api/office/support
+Γö£ ╞Æ /api/office/support/[ticketId]
+Γö£ ╞Æ /api/payments/create-order
+Γö£ ╞Æ /api/payments/verify
+Γö£ ╞Æ /api/student/certificates/[certificateId]/download
+Γö£ ╞Æ /api/student/certificates/[enrollmentId]/issue
+Γö£ ╞Æ /api/student/quizzes/[quizId]/attempt/[attemptId]/answer
+Γö£ ╞Æ /api/student/quizzes/[quizId]/attempt/[attemptId]/submit
+Γö£ ╞Æ /api/student/quizzes/[quizId]/start
+Γö£ ╞Æ /api/student/resources/[resourceId]/download
+Γö£ ╞Æ /api/student/support
+Γö£ ╞Æ /api/student/support/[ticketId]
+Γö£ ╞Æ /api/webhooks/razorpay
+Γö£ ╞Æ /checkout/[courseId]
+Γö£ ╞Æ /contact
+Γö£ ╞Æ /courses
+Γö£ ╞Æ /courses/[slug]
+Γö£ Γùï /forgot-password
+Γö£ Γùï /login
+Γö£ Γùï /office
+Γö£ ╞Æ /office/announcements
+Γö£ ╞Æ /office/announcements/[announcementId]
+Γö£ ╞Æ /office/announcements/[announcementId]/edit
+Γö£ ╞Æ /office/announcements/new
+Γö£ ╞Æ /office/assignments
+Γö£ ╞Æ /office/assignments/[assignmentId]
+Γö£ ╞Æ /office/assignments/[assignmentId]/edit
+Γö£ ╞Æ /office/assignments/[assignmentId]/submissions
+Γö£ ╞Æ /office/assignments/[assignmentId]/submissions/[submissionId]
+Γö£ ╞Æ /office/assignments/new
+Γö£ ╞Æ /office/quizzes
+Γö£ ╞Æ /office/quizzes/new
+Γö£ ╞Æ /office/resources
+Γö£ ╞Æ /office/students
+Γö£ ╞Æ /office/students/[studentId]
+Γö£ ╞Æ /office/students/[studentId]/edit
+Γö£ ╞Æ /office/students/[studentId]/enroll
+Γö£ ╞Æ /office/support
+Γö£ ╞Æ /office/support/[ticketId]
+Γö£ ╞Æ /payment/failed
+Γö£ ╞Æ /payment/success
+Γö£ Γùï /register
+Γö£ Γùï /reset-password
+Γö£ ╞Æ /student
+Γö£ ╞Æ /student/assignments
+Γö£ ╞Æ /student/certificates
+Γö£ ╞Æ /student/certificates/[certificateId]
+Γö£ ╞Æ /student/courses
+Γö£ ╞Æ /student/courses/[courseId]
+Γö£ ╞Æ /student/courses/[courseId]/lessons/[lessonId]
+Γö£ ╞Æ /student/dashboard
+Γö£ ╞Æ /student/payments
+Γö£ ╞Æ /student/payments/[paymentId]
+Γö£ ╞Æ /student/profile
+Γö£ ╞Æ /student/progress
+Γö£ ╞Æ /student/quizzes
+Γö£ ╞Æ /student/quizzes/[quizId]
+Γö£ ╞Æ /student/quizzes/[quizId]/attempt/[attemptId]
+Γö£ ╞Æ /student/quizzes/[quizId]/result/[attemptId]
+Γö£ ╞Æ /student/quizzes/[quizId]/start
+Γö£ ╞Æ /student/resources/[resourceId]
+Γö£ ╞Æ /student/support
+Γö£ Γùï /verify-certificate
+Γö£ ╞Æ /verify-certificate/[verificationCode]
+Γöö Γùï /verify-email
+
+
+╞Æ Proxy (Middleware)
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+

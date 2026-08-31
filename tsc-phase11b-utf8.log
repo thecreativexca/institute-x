@@ -1,0 +1,17 @@
+﻿components/office/resource-upload-panel.tsx(91,1): error TS1005: '}' expected.
+lib/progress/data.ts(102,1): error TS1131: Property or signature expected.
+lib/progress/data.ts(161,23): error TS1005: ':' expected.
+lib/progress/data.ts(162,12): error TS1005: ',' expected.
+lib/progress/data.ts(162,29): error TS1011: An element access expression should take an argument.
+lib/progress/data.ts(163,2): error TS1005: ',' expected.
+lib/progress/data.ts(163,23): error TS1005: ',' expected.
+lib/progress/data.ts(163,24): error TS1109: Expression expected.
+lib/progress/data.ts(163,25): error TS1005: ':' expected.
+lib/progress/data.ts(164,16): error TS1005: ',' expected.
+lib/progress/data.ts(164,29): error TS1005: ',' expected.
+lib/progress/data.ts(164,31): error TS1005: ',' expected.
+lib/progress/data.ts(528,3): error TS1109: Expression expected.
+lib/progress/data.ts(528,4): error TS1128: Declaration or statement expected.
+lib/progress/data.ts(528,5): error TS1128: Declaration or statement expected.
+lib/progress/data.ts(529,1): error TS1128: Declaration or statement expected.
+lib/progress/data.ts(530,1): error TS1128: Declaration or statement expected.

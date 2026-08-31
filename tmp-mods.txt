@@ -1,0 +1,35 @@
+﻿
+app\(public)\courses\[slug]\_components\CourseCurriculum.tsx:110:          <ModuleItem 
+key={module.slug} module={module} index={index} />
+app\api\dev\seed-quizzes\route.ts:51:  const module = await Module.findOneAndUpdate(
+components\office\courses\curriculum-manager.tsx:112:    const module = modules[moduleIndex];
+lib\office\assignments\mutations.ts:32:    const module = await Module.findOne({
+lib\office\assignments\mutations.ts:117:      const module = await Module.findOne({
+lib\office\assignments\mutations.ts:122:      assignment.module = toObjectId(input.moduleId);
+lib\office\assignments\mutations.ts:124:      assignment.module = undefined;
+lib\office\assignments\mutations.ts:205:      changedFields.module = { old: 
+oldData.module?.toString() ?? null, new: newModuleId?.toString() ?? null };
+lib\office\assignments\queries.ts:87:    query.module = toObjectId(filters.moduleId);
+lib\office\assignments\queries.ts:163:    const module = assignment.module as unknown as { 
+_id: Types.ObjectId; title: string } | null;
+lib\office\assignments\queries.ts:238:  const module = assignment.module as unknown as { _id: 
+Types.ObjectId; title: string } | null;
+lib\office\courses\actions.ts:479:    const module = await Module.create({
+lib\office\courses\actions.ts:513:    const module = await Module.findOne({
+lib\office\courses\actions.ts:549:    const module = await Module.findOne({
+lib\office\courses\actions.ts:649:    const module = await Module.findOne({
+lib\office\courses\actions.ts:818:    const module = await Module.findOne({
+lib\office\courses\actions.ts:882:    lesson.module = targetModule._id;
+lib\office\quizzes\mutations.ts:32:    const module = await Module.findOne({
+lib\office\quizzes\mutations.ts:144:      const module = await Module.findOne({
+lib\office\quizzes\mutations.ts:149:      quiz.module = toObjectId(input.moduleId);
+lib\office\quizzes\mutations.ts:151:      quiz.module = undefined;
+lib\office\quizzes\queries.ts:89:    query.module = toObjectId(filters.moduleId);
+lib\office\quizzes\queries.ts:148:    const module = quiz.module as unknown as { _id: 
+Types.ObjectId; title: string } | null;
+lib\office\quizzes\queries.ts:213:  const module = quiz.module as unknown as { _id: 
+Types.ObjectId; title: string } | null;
+lib\quizzes\queries.ts:207:    const module = titleRef(q.module);
+lib\quizzes\queries.ts:317:  const module = titleRef(quiz.module);
+
+

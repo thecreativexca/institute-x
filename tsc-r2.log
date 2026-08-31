@@ -1,0 +1,8 @@
+﻿components/office/courses/curriculum-manager.tsx(420,79): error TS2339: Property 'id' does not exist on type '{}'.
+components/office/courses/curriculum-manager.tsx(423,46): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?
+components/office/courses/curriculum-manager.tsx(423,61): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?
+components/office/courses/curriculum-manager.tsx(424,52): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?
+components/office/courses/curriculum-manager.tsx(424,67): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?
+components/office/courses/curriculum-manager.tsx(425,52): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?
+components/office/courses/curriculum-manager.tsx(425,67): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?
+components/office/courses/curriculum-manager.tsx(434,92): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?

@@ -1,0 +1,11 @@
+﻿components/office/courses/curriculum-manager.tsx(227,105): error TS2353: Object literal may only specify known properties, and 'moduleDoc' does not exist in type '{ mode: "edit"; module: CurriculumModuleDTO; } | ((prevState: { mode: "create"; } | { mode: "edit"; module: CurriculumModuleDTO; } | null) => { ...; } | ... 1 more ... | null)'.
+components/office/courses/curriculum-manager.tsx(420,79): error TS2339: Property 'id' does not exist on type '{}'.
+components/office/courses/curriculum-manager.tsx(423,46): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?
+components/office/courses/curriculum-manager.tsx(423,61): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?
+components/office/courses/curriculum-manager.tsx(424,52): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?
+components/office/courses/curriculum-manager.tsx(424,67): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?
+components/office/courses/curriculum-manager.tsx(425,52): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?
+components/office/courses/curriculum-manager.tsx(425,67): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?
+components/office/courses/curriculum-manager.tsx(434,92): error TS2551: Property 'module' does not exist on type 'ModuleModalState'. Did you mean 'mode'?
+lib/quizzes/queries.ts(207,34): error TS2339: Property 'module' does not exist on type 'RawQuizPopulated'.
+lib/quizzes/queries.ts(317,35): error TS2339: Property 'module' does not exist on type 'RawQuizPopulated'.

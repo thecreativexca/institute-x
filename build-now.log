@@ -1,0 +1,34 @@
+﻿Γû▓ Next.js 16.3.3 (Turbopack)
+ΓÜá Warning: Next.js ignored pnpm-workspace.yaml in C:\Users\pk245 because it is outside the current Git repository (C:\Users\pk245\OneDrive\Desktop\institute\institute).
+ To use this directory, set `turbopack.root` in your Next.js config.
+
+Γ£ô Running next.config.ts took 367ms
+
+ΓÜá The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 2.2min
+  Running TypeScript ...
+Γ£ô Finished writing to filesystem cache in 11.0s
+  Finished TypeScript in 94s ...
+  Collecting page data using 3 workers ...
+Error: Failed to collect configuration for /api/office/reports/export
+    at ignore-listed frames {
+  [cause]: Error: A "use server" file can only export async functions, found object.
+  Read more: https://nextjs.org/docs/messages/invalid-use-server-value
+      at module evaluation (lib\analytics\activity.ts:152:1)
+    150 |   ]);
+    151 |   return rows.map((r) => r._id);
+  > 152 | }
+        | ^
+}
+
+> Build error occurred
+Error: Failed to collect page data for /api/office/reports/export
+    at ignore-listed frames {
+  type: 'Error'
+}

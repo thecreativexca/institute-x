@@ -1,0 +1,174 @@
+﻿
+app\api\dev\seed-quizzes\route.ts:50:  // 2. Find or create a sample moduleDoc + lesson.
+app\api\dev\seed-quizzes\route.ts:51:  const moduleDoc = await Module.findOneAndUpdate(
+app\api\dev\seed-quizzes\route.ts:69:        module: moduleDoc._id,
+app\api\dev\seed-quizzes\route.ts:84:        module: moduleDoc._id,
+app\api\dev\seed-quizzes\route.ts:88:          "Test your understanding of core JavaScript 
+concepts covered in the JavaScript Essentials moduleDoc.",
+app\api\dev\seed-quizzes\route.ts:135:  // 5. Upsert moduleDoc quiz questions (5 sample MCQs).
+app\api\dev\seed-quizzes\route.ts:197:  // Additional moduleDoc quiz questions (3-5).
+components\office\courses\curriculum-manager.tsx:112:    const moduleDoc = 
+modules[moduleIndex];
+components\office\courses\curriculum-manager.tsx:114:    if (target < 0 || target >= 
+moduleDoc.lessons.length) return;
+components\office\courses\curriculum-manager.tsx:123:        moduleDoc.id,
+components\office\courses\curriculum-manager.tsx:166:          <Button onClick={() => 
+setModuleModal({ mode: "create" })}>Add moduleDoc</Button>
+components\office\courses\curriculum-manager.tsx:184:          description="Start building 
+this course by adding its first moduleDoc."
+components\office\courses\curriculum-manager.tsx:187:              <Button onClick={() => 
+setModuleModal({ mode: "create" })}>Add moduleDoc</Button>
+components\office\courses\curriculum-manager.tsx:193:          {modules.map((moduleDoc, 
+moduleIndex) => (
+components\office\courses\curriculum-manager.tsx:194:            <li key={moduleDoc.id}>
+components\office\courses\curriculum-manager.tsx:200:                      {moduleDoc.title}
+components\office\courses\curriculum-manager.tsx:201:                      
+<ContentStatusBadge published={moduleDoc.isPublished} />
+components\office\courses\curriculum-manager.tsx:203:                    
+{moduleDoc.description ? (
+components\office\courses\curriculum-manager.tsx:204:                      <p className="mt-1 
+text-sm text-slate-500">{moduleDoc.description}</p>
+components\office\courses\curriculum-manager.tsx:214:                        
+aria-label={`Move moduleDoc ${moduleIndex + 1} up`}
+components\office\courses\curriculum-manager.tsx:223:                        
+aria-label={`Move moduleDoc ${moduleIndex + 1} down`}
+components\office\courses\curriculum-manager.tsx:227:                      <Button size="sm" 
+variant="outline" onClick={() => setModuleModal({ mode: "edit", moduleDoc })}>
+components\office\courses\curriculum-manager.tsx:234:                          if 
+(window.confirm(`Delete moduleDoc "${moduleDoc.title}"?`)) {
+components\office\courses\curriculum-manager.tsx:235:                            
+runMutation(() => deleteModuleAction(courseId, moduleDoc.id));
+components\office\courses\curriculum-manager.tsx:247:                      <Button size="sm" 
+variant="secondary" onClick={() => setLessonModal({ moduleId: moduleDoc.id })}>
+components\office\courses\curriculum-manager.tsx:253:                  
+{moduleDoc.lessons.length === 0 ? (
+components\office\courses\curriculum-manager.tsx:255:                      This moduleDoc has 
+no lessons yet.
+components\office\courses\curriculum-manager.tsx:258:                    <ul 
+className="space-y-2" aria-label={`Lessons in ${moduleDoc.title}`}>
+components\office\courses\curriculum-manager.tsx:259:                      
+{moduleDoc.lessons.map((lesson, lessonIndex) => (
+components\office\courses\curriculum-manager.tsx:264:                          
+moduleId={moduleDoc.id}
+components\office\courses\curriculum-manager.tsx:278:                          
+onEditLesson={() => setLessonModal({ moduleId: moduleDoc.id, lesson })}
+components\office\courses\curriculum-manager.tsx:336:                setError(result.error ?? 
+result.fieldErrors?.title ?? "Could not create moduleDoc.");
+components\office\courses\curriculum-manager.tsx:396:  moduleDoc?: CurriculumModuleDTO;
+components\office\courses\curriculum-manager.tsx:441:      title={state?.mode === "edit" ? 
+"Edit moduleDoc" : "Add moduleDoc"}
+components\office\courses\curriculum-manager.tsx:448:            {state?.mode === "edit" ? 
+"Save moduleDoc" : "Create moduleDoc"}
+components\office\courses\curriculum-manager.tsx:818:            Move to moduleDoc
+components\office\courses\curriculum-manager.tsx:828:            <option value="">Choose a 
+moduleDoc…</option>
+lib\office\assignments\mutations.ts:32:    const moduleDoc = await Module.findOne({
+lib\office\assignments\mutations.ts:36:    if (!moduleDoc) return { error: "Module not found 
+in this course" };
+lib\office\assignments\mutations.ts:48:        return { error: "Lesson does not belong to the 
+selected moduleDoc" };
+lib\office\assignments\mutations.ts:117:      const moduleDoc = await Module.findOne({
+lib\office\assignments\mutations.ts:121:      if (!moduleDoc) return { error: "Module not 
+found in this course" };
+lib\office\assignments\mutations.ts:138:          return { error: "Lesson does not belong to 
+the selected moduleDoc" };
+lib\office\assignments\queries.ts:163:    const moduleDoc = assignment.module as unknown as { 
+_id: Types.ObjectId; title: string } | null;
+lib\office\assignments\queries.ts:171:      moduleId: moduleDoc?._id.toString() ?? null,
+lib\office\assignments\queries.ts:172:      moduleTitle: moduleDoc?.title ?? null,
+lib\office\assignments\queries.ts:238:  const moduleDoc = assignment.module as unknown as { 
+_id: Types.ObjectId; title: string } | null;
+lib\office\assignments\queries.ts:246:    moduleId: moduleDoc?._id.toString() ?? null,
+lib\office\assignments\queries.ts:247:    moduleTitle: moduleDoc?.title ?? null,
+lib\office\courses\actions.ts:479:    const moduleDoc = await Module.create({
+lib\office\courses\actions.ts:487:    await audit(user, "module.create", "module", 
+moduleDoc._id.toString(), {
+lib\office\courses\actions.ts:488:      title: moduleDoc.title,
+lib\office\courses\actions.ts:509:      return { ok: false, error: "Invalid moduleDoc 
+changes." };
+lib\office\courses\actions.ts:512:    // IDOR (req. 101): the moduleDoc MUST belong to the 
+course in the URL.
+lib\office\courses\actions.ts:513:    const moduleDoc = await Module.findOne({
+lib\office\courses\actions.ts:517:    if (!moduleDoc) return { ok: false, error: "Module not 
+found in this course." };
+lib\office\courses\actions.ts:519:    if (parsed.data.title !== undefined) moduleDoc.title = 
+parsed.data.title;
+lib\office\courses\actions.ts:521:      moduleDoc.description = parsed.data.description || 
+undefined;
+lib\office\courses\actions.ts:523:      moduleDoc.isPublished = parsed.data.isPublished;
+lib\office\courses\actions.ts:524:    await moduleDoc.save();
+lib\office\courses\actions.ts:527:      title: moduleDoc.title,
+lib\office\courses\actions.ts:538: * Delete is careful (req. 38–39): a moduleDoc with lessons 
+(or any student
+lib\office\courses\actions.ts:549:    const moduleDoc = await Module.findOne({
+lib\office\courses\actions.ts:553:    if (!moduleDoc) return { ok: false, error: "Module not 
+found in this course." };
+lib\office\courses\actions.ts:555:    const lessonCount = await Lesson.countDocuments({ 
+module: moduleDoc._id });
+lib\office\courses\actions.ts:559:        error: `This moduleDoc contains ${lessonCount} 
+lesson(s) and may have student progress. Remove its lessons or unpublish the moduleDoc 
+instead.`,
+lib\office\courses\actions.ts:563:    await Module.findByIdAndDelete(moduleDoc._id);
+lib\office\courses\actions.ts:565:      title: moduleDoc.title,
+lib\office\courses\actions.ts:578: * complete moduleDoc set before any write (optimistic UI 
+rolls back on failure).
+lib\office\courses\actions.ts:647:    // Relationship validation (req. 41–42): the moduleDoc 
+must belong to the
+lib\office\courses\actions.ts:649:    const moduleDoc = await Module.findOne({
+lib\office\courses\actions.ts:653:    if (!moduleDoc) {
+lib\office\courses\actions.ts:657:    const last = await Lesson.findOne({ module: 
+moduleDoc._id })
+lib\office\courses\actions.ts:665:      course: moduleDoc.course,
+lib\office\courses\actions.ts:666:      module: moduleDoc._id,
+lib\office\courses\actions.ts:714:    // IDOR: lesson must belong to a moduleDoc of THIS 
+course.
+lib\office\courses\actions.ts:808:/** Reorder lessons inside a moduleDoc (server-verified, 
+req. 51). */
+lib\office\courses\actions.ts:818:    const moduleDoc = await Module.findOne({
+lib\office\courses\actions.ts:824:    if (!moduleDoc) return { ok: false, error: "Module not 
+found in this course." };
+lib\office\courses\actions.ts:856:/** Move a lesson to another moduleDoc in the SAME course 
+(req. 52). */
+lib\office\courses\actions.ts:873:    if (!targetModule) return { ok: false, error: "Target 
+moduleDoc not found in this course." };
+lib\office\courses\actions.ts:875:      return { ok: true, message: "Lesson is already in 
+that moduleDoc." };
+lib\office\quizzes\mutations.ts:32:    const moduleDoc = await Module.findOne({
+lib\office\quizzes\mutations.ts:36:    if (!moduleDoc) return { error: "Module not found in 
+this course" };
+lib\office\quizzes\mutations.ts:48:        return { error: "Lesson does not belong to the 
+selected moduleDoc" };
+lib\office\quizzes\mutations.ts:54:    return { error: "Module quizzes require a moduleDoc" };
+lib\office\quizzes\mutations.ts:144:      const moduleDoc = await Module.findOne({
+lib\office\quizzes\mutations.ts:148:      if (!moduleDoc) return { error: "Module not found 
+in this course" };
+lib\office\quizzes\mutations.ts:165:          return { error: "Lesson does not belong to the 
+selected moduleDoc" };
+lib\office\quizzes\mutations.ts:176:      return { error: "Module quizzes require a 
+moduleDoc" };
+lib\office\quizzes\mutations.ts:598:  if (quiz.type === QUIZ_TYPES.MODULE && !quiz.module) 
+issues.push("Module quizzes require a moduleDoc");
+lib\office\quizzes\queries.ts:148:    const moduleDoc = quiz.module as unknown as { _id: 
+Types.ObjectId; title: string } | null;
+lib\office\quizzes\queries.ts:156:      moduleId: moduleDoc?._id.toString() ?? null,
+lib\office\quizzes\queries.ts:157:      moduleTitle: moduleDoc?.title ?? null,
+lib\office\quizzes\queries.ts:213:  const moduleDoc = quiz.module as unknown as { _id: 
+Types.ObjectId; title: string } | null;
+lib\office\quizzes\queries.ts:221:    moduleId: moduleDoc?._id.toString() ?? null,
+lib\office\quizzes\queries.ts:222:    moduleTitle: moduleDoc?.title ?? null,
+lib\progress\course.ts:225:  for (const moduleDoc of ctx.modules) {
+lib\progress\course.ts:226:    const moduleLessons = ctx.lessons.filter((l) => l.moduleId === 
+moduleDoc._id);
+lib\progress\course.ts:239:        label: moduleDoc.title,
+lib\quizzes\queries.ts:36:  moduleDoc?: Types.ObjectId | RawTitleRef | null;
+lib\quizzes\queries.ts:207:    const moduleDoc = titleRef(q.module);
+lib\quizzes\queries.ts:217:      moduleId: moduleDoc?._id.toString() ?? null,
+lib\quizzes\queries.ts:218:      moduleTitle: (moduleDoc?.title || null) as string | null,
+lib\quizzes\queries.ts:317:  const moduleDoc = titleRef(quiz.module);
+lib\quizzes\queries.ts:328:    moduleId: moduleDoc?._id.toString() ?? null,
+lib\quizzes\queries.ts:329:    moduleTitle: moduleDoc?.title || null,
+lib\student\dashboard.ts:205:    const moduleDoc = (modules as unknown as 
+RawModule[]).find((m) => m._id.toString() === (lesson.module as RawModule)._id.toString());
+lib\student\dashboard.ts:209:      moduleTitle: moduleDoc?.title ?? "Unknown Module",
+
+
