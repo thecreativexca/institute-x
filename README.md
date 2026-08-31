@@ -1,36 +1,288 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Skill Development Institute Platform
 
-## Getting Started
+A production-ready **Skill Development Education Institute Website + Student LMS + Office/Admin Management Portal** built with Next.js 16 (App Router), TypeScript, Tailwind CSS v4, and MongoDB/Mongoose.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Framework**: Next.js 16 with App Router
+- **Language**: TypeScript (strict mode)
+- **Styling**: Tailwind CSS v4 (CSS-first configuration)
+- **Database**: MongoDB with Mongoose
+- **Validation**: Zod
+- **Fonts**: Geist (via `next/font`)
+
+## Project Structure
+
+```
+app/
+├── (public)/           # Public website routes (home, courses, about, contact)
+├── (auth)/             # Auth routes (login, register) — foundation only
+├── api/                # API route handlers (health check, future endpoints)
+├── office/             # Office/admin portal shell — foundation only
+├── student/            # Student portal shell — foundation only
+├── layout.tsx          # Root layout with metadata, fonts, skip link
+├── globals.css         # Design system (colors, typography, shadows, radius)
+├── loading.tsx         # Route-level loading UI
+├── error.tsx           # Route segment error boundary
+├── global-error.tsx    # Global error boundary
+└── not-found.tsx       # 404 page
+
+components/
+├── ui/                 # Reusable design system primitives
+│   ├── button.tsx
+│   ├── card.tsx
+│   ├── badge.tsx
+│   ├── input.tsx
+│   ├── select.tsx
+│   ├── textarea.tsx
+│   ├── modal.tsx
+│   ├── container.tsx
+│   ├── section-heading.tsx
+│   ├── field.tsx
+│   ├── loading.tsx
+│   ├── empty-state.tsx
+│   └── error-state.tsx
+├── layout/             # Shell components
+│   ├── header.tsx      # Responsive header with mobile menu
+│   ├── footer.tsx      # Footer with navigation, categories, contact
+│   └── logo.tsx        # Institute logo (from siteConfig)
+└── public/             # Public page sections
+    ├── hero-section.tsx
+    ├── intro-section.tsx
+    ├── category-grid.tsx
+    ├── popular-courses-section.tsx
+    ├── course-card.tsx
+    ├── why-choose-us-section.tsx
+    ├── benefits-section.tsx
+    ├── career-section.tsx
+    └── cta-section.tsx
+
+lib/
+├── config/
+│   ├── site.ts         # Centralized branding (name, tagline, contact, nav)
+│   ├── env.ts          # Server-only env access with validation
+│   └── catalog.ts      # Canonical 5 categories × 16 courses (source of truth)
+├── db/
+│   └── connect.ts      # MongoDB connection with global cache (no hot-reload leaks)
+├── mongodb/
+│   ├── models.ts       # Central model registry (single import point)
+│   └── model-registry.ts # defineModel guard against dev overwrites
+├── constants/
+│   └── index.ts        # All enums: roles, statuses, levels, priorities
+├── validations/
+│   ├── common.ts       # Shared Zod primitives (ObjectId, slug, email, phone)
+│   ├── user.ts         # User auth/input schemas (foundation)
+│   └── course.ts       # Course CRUD schemas (foundation)
+└── utils/
+    └── cn.ts           # clsx + tailwind-merge helper
+
+models/
+├── User.ts             # Student + staff (roles, status, passwordHash placeholder)
+├── Category.ts         # Course categories
+├── Course.ts           # 16 courses, isDisplayed/isBundleable flags for admin control
+├── Module.ts           # Ordered module groups per course
+├── Lesson.ts           # Video/text lessons, preview flag, YouTube-ready fields
+├── Enrollment.ts       # Student↔Course link, paymentStatus for Razorpay phase
+├── Progress.ts         # Per-lesson completion (not_started/in_progress/completed)
+├── Assignment.ts       # Foundation schema (instructions, maxScore, dueAt)
+├── Quiz.ts             # Foundation schema (questions, passingScore, duration)
+├── Certificate.ts      # Issued certificates (unique number, status, revocation)
+├── Announcement.ts     # Staff notices (audience targeting, publish/expiry)
+└── SupportTicket.ts    # Student↔Staff threads (status, priority, assignment)
+
+types/
+├── common.ts           # BaseDocument, ApiResponse, Pagination, MongoId
+├── user.ts             # Client-safe User, PublicStudentProfile
+├── course.ts           # Category, Course, CourseSummary
+└── enrollment.ts       # Enrollment, Progress (serialized shapes)
+
+public/
+└── assets/logo.svg     # Placeholder logo (replace with client's)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Copy `.env.local.example` to `.env.local` and fill in real values:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.local.example .env.local
+```
 
-## Learn More
+| Variable | Scope | Required | Description |
+|----------|-------|----------|-------------|
+| `MONGODB_URI` | Server | Yes | MongoDB connection string |
+| `NEXT_PUBLIC_APP_URL` | Public | Yes | Canonical site URL |
+| `RAZORPAY_KEY_ID` | Server | Phase 2+ | Razorpay key ID |
+| `RAZORPAY_KEY_SECRET` | Server | Phase 2+ | Razorpay key secret |
+| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Public | Phase 2+ | Exposed checkout key |
+| `RESEND_API_KEY` | Server | Phase 2+ | Resend API key |
+| `RESEND_FROM_EMAIL` | Server | Phase 2+ | Sender email address |
+| `CLOUDINARY_CLOUD_NAME` | Server | Phase 2+ | Cloudinary cloud name |
+| `CLOUDINARY_API_KEY` | Server | Phase 2+ | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | Server | Phase 2+ | Cloudinary API secret |
+| `NEXT_PUBLIC_YOUTUBE_ENABLED` | Public | Phase 2+ | Toggle YouTube embeds |
 
-To learn more about Next.js, take a look at the following resources:
+**Security Rules:**
+- Only `NEXT_PUBLIC_*` variables are embedded in client bundles
+- Never import `lib/config/env.ts` from client components
+- `.env.local` is git-ignored; never commit secrets
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Commands
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Development
+npm run dev
 
-## Deploy on Vercel
+# Production build
+npm run build
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Start production server
+npm run start
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Lint
+npm run lint
+
+# Type check
+npx tsc --noEmit
+```
+
+## Phase 1 Scope (Complete)
+
+✅ **Completed in Phase 1:**
+
+- Next.js 16 App Router structure with route groups
+- MongoDB connection utility with global cache (dev + prod safe)
+- All 11 foundational Mongoose models with proper relationships
+- Role architecture: `STUDENT`, `SUPER_ADMIN`, `OFFICE_STAFF`, `CONTENT_MANAGER`, `FACULTY`
+- Centralized branding config (`lib/config/site.ts`) — no hardcoded institute info
+- Professional design system (colors, typography, spacing, radius, shadows)
+- Responsive header/footer with mobile menu, skip link, focus-visible states
+- Homepage with 8 composed sections (hero, intro, categories, courses, why-us, benefits, career, CTA)
+- Reusable UI primitives: Button, Card, Badge, Input, Select, Textarea, Modal, Container, SectionHeading, Field, Loading, EmptyState, ErrorState
+- Accessible forms foundation (aria labels, error/hint wiring, focus management)
+- 404 page, global error boundary, route error boundary, loading UI
+- Zod validation schemas for users and courses (shared primitives)
+- Course catalog as source of truth (5 categories, 16 courses — no hardcoded counts)
+- Environment config with clear public/secret separation
+- ESLint + TypeScript strict mode passing
+- Production build successful
+
+## Phase 1 — Intentionally NOT Implemented
+
+These belong to later phases:
+
+- Student registration / login / password reset
+- Session management / JWT / cookies
+- Student dashboard (courses, progress, assignments, certificates)
+- Office/admin dashboard (CRUD, analytics, user management)
+- Course enrollment flow
+- Razorpay payment integration
+- Resend email integration
+- Cloudinary upload (images, PDFs, documents)
+- Assignment submission / grading
+- Quiz engine (attempts, scoring, randomized options)
+- Certificate PDF generation / verification
+- Full RBAC / permission matrix
+- Admin CRUD for courses, categories, modules, lessons
+- Announcements / support ticket UI
+- YouTube video embeds in lessons
+
+## Architecture Decisions
+
+1. **Models are registered once** via `defineModel` guard — safe under Next.js hot reload
+2. **All constants in `lib/constants`** — single source of truth for enums used by models, validations, and UI
+3. **Catalog is data-driven** — UI derives counts from arrays, never hardcodes "16 courses"
+4. **Server-only env access** — `lib/config/env.ts` throws early with clear messages
+5. **Client-safe types** — `types/*` never include password hashes or server secrets
+6. **Design system in CSS** — Tailwind v4 `@theme` defines tokens; components use semantic utilities
+7. **No dark mode** — light theme only by design for consistent professional appearance
+8. **Accessibility first** — semantic HTML, focus-visible, skip links, aria attributes, reduced-motion respect
+
+## Verification Checklist
+
+- [x] `npm run dev` starts without errors
+- [x] `npm run build` compiles successfully (static + dynamic routes)
+- [x] `npm run lint` passes
+- [x] `npx tsc --noEmit` passes
+- [x] MongoDB connection utility caches correctly (no duplicate connections on HMR)
+- [x] `.env.local` is git-ignored (only `.env.local.example` tracked)
+- [x] No secret keys in client bundles (`NEXT_PUBLIC_` only for safe values)
+- [x] All UI components compile and render
+- [x] Responsive layouts work at 320px, 375px, 768px, 1024px, 1280px, 1440px+
+
+## Development Test Accounts
+
+For local development/testing convenience, this project supports **one-click
+Quick Login** into every system role. These accounts are development-only and
+are **never** available in production.
+
+### How it works
+
+- A dedicated server action/API (`POST /api/dev/test-login`) creates a normal,
+  authenticated session for the requested test role — it never bypasses RBAC,
+  account status, or session configuration.
+- The Quick Login UI is rendered only from a **Server Component** gated by
+  `areTestAccountsEnabled()`, which requires **both**:
+  1. `NODE_ENV !== "production"`
+  2. `ENABLE_TEST_ACCOUNTS=true`
+
+  So even if the flag is accidentally set to `true` in production, the feature
+  stays disabled and the endpoint returns 404 (no session is ever created).
+
+### Test accounts
+
+| Role             | Email                | Redirect            |
+|------------------|----------------------|---------------------|
+| Student          | student@test.local   | `/student/dashboard`|
+| Super Admin      | superadmin@test.local| `/office`           |
+| Office Staff     | office@test.local    | `/office`           |
+| Content Manager  | content@test.local   | `/office`           |
+| Faculty          | faculty@test.local   | `/office`           |
+
+The shared development password for all of these is `Test@12345`. Passwords are
+hashed with the same production `hashPassword` helper; nothing is stored in
+plain text.
+
+### Setup
+
+1. Enable the feature (development only):
+
+   ```
+   ENABLE_TEST_ACCOUNTS=true
+   ```
+
+2. Seed the test accounts (explicit step — never runs automatically):
+
+   ```
+   npm run seed:test-accounts
+   ```
+
+3. Start the development server:
+
+   ```
+   npm run dev
+   ```
+
+4. Open the login pages and use the Quick Login buttons:
+   - Student: `/login`
+   - Office roles: `/office/login`
+
+### Important
+
+- **Never enable this feature in production.**
+- Do not set `ENABLE_TEST_ACCOUNTS=true` on any deployed environment.
+- The seed script refuses to run outside development.
+- Cosmetic test accounts only — real RBAC permissions apply exactly as they do
+  for normal logins.
+
+## Next Steps (Phase 2+)
+
+1. **Authentication** — register, login, JWT/session, password reset
+2. **Student Portal** — dashboard, my courses, progress tracking, assignments
+3. **Office Portal** — CRUD for courses/categories/modules/lessons, user management
+4. **Payments** — Razorpay integration, enrollment activation
+5. **Content Delivery** — video lessons, Cloudinary uploads, PDF resources
+6. **Assessment** — assignment submission, quiz engine, grading
+7. **Certificates** — PDF generation, verification page
+8. **Communications** — Resend emails, announcements, support tickets
+9. **RBAC** — permission matrix, role-based route guards
