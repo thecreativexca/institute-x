@@ -173,14 +173,13 @@ function buildMatch(
   return match;
 }
 
-function uniqueIds(
-  docs: { [key: string]: unknown }[],
-  field: string
-): Types.ObjectId[] {
+function uniqueIds<T>(docs: T[], field: keyof T & string): Types.ObjectId[] {
   const ids = new Set<string>();
   for (const doc of docs) {
-    const value = doc[field];
-    if (value && Types.ObjectId.isValid(value)) ids.add(value.toString());
+    const value = doc[field] as unknown;
+    if (value && Types.ObjectId.isValid(value as Types.ObjectId)) {
+      ids.add((value as { toString(): string }).toString());
+    }
   }
   return [...ids].map((id) => toObjectId(id));
 }

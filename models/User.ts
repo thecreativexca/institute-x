@@ -24,6 +24,9 @@ export interface IUser {
   passwordHash?: string;
   role: UserRole;
   status: AccountStatus;
+  employeeCode?: string;
+  designation?: string;
+  department?: string;
   avatarUrl?: string;
   emailVerifiedAt?: Date | null;
   lastLoginAt?: Date | null;
@@ -58,6 +61,9 @@ const UserSchema = new Schema<IUser>(
       enum: Object.values(ACCOUNT_STATUSES),
       default: ACCOUNT_STATUSES.ACTIVE,
     },
+    employeeCode: { type: String, trim: true },
+    designation: { type: String, trim: true },
+    department: { type: String, trim: true },
     avatarUrl: { type: String },
     emailVerifiedAt: { type: Date, default: null },
     lastLoginAt: { type: Date, default: null },
@@ -77,24 +83,19 @@ UserSchema.index({ emailVerificationTokenExpiresAt: 1 });
 UserSchema.index({ passwordResetTokenExpiresAt: 1 });
 UserSchema.index({ role: 1, status: 1 });
 
-// Two-role safety net: a User can only ever be saved as `student` or `admin`.
+// Mongoose 9 middleware is promise-based: there is no `next` callback.
 // Any legacy row that still holds an old role (e.g. "super admin",
 // OFFICE_STAFF, FACULTY, …) is normalized here — BEFORE the role enum
 // validator runs — so loading/saving a stale document can't throw. Because the
 // hook mutates the in-memory document, the corrected role is also what any
 // caller sees immediately after save (e.g. login building the session).
-UserSchema.pre("validate", function (next) {
-  const doc = this as unknown as {
-    get(path: string): unknown;
-    set(path: string, value: unknown): void;
-  };
-  const raw = doc.get("role");
+UserSchema.pre("validate", async function () {
+  const raw = this.get("role");
   if (typeof raw === "string") {
     const folded = raw.toLowerCase().replace(/[\s_-]+/g, "");
     const target = folded.includes("student") ? USER_ROLES.STUDENT : USER_ROLES.ADMIN;
-    if (raw !== target) doc.set("role", target);
+    if (raw !== target) this.set("role", target);
   }
-  next();
 });
 
 export const User = defineModel("User", UserSchema);

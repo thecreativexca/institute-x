@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SESSION_STATUSES } from "@/lib/constants";
+import { SESSION_STATUSES, type SessionStatus } from "@/lib/constants";
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -25,7 +25,9 @@ export const sessionFormSchema = z.object({
   address: z.string().trim().max(300, "Keep the address under 300 characters.").optional(),
   instructorName: z.string().trim().max(120, "Keep the instructor name short.").optional(),
   notes: z.string().trim().max(1000, "Keep notes under 1000 characters.").optional(),
-  status: z.enum(Object.values(SESSION_STATUSES) as [string, ...string[]]).default(SESSION_STATUSES.SCHEDULED),
+  status: z
+    .enum(Object.values(SESSION_STATUSES) as [SessionStatus, ...SessionStatus[]])
+    .default(SESSION_STATUSES.SCHEDULED),
   isDisplayed: z.boolean().default(true),
 });
 

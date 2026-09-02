@@ -25,6 +25,7 @@
 
 import { connectDB } from "@/lib/db/connect";
 import { User } from "@/lib/mongodb/models";
+import type { UserRole } from "@/lib/constants";
 
 const SUPPORTED_ROLES = new Set(["student", "admin"]);
 
@@ -37,7 +38,7 @@ const DRY_RUN = process.env.LEGACY_ROLE_MIGRATION_DRY_RUN === "1";
  *   - equals "admin"           -> "admin"
  *   - anything else (legacy)   -> "admin"
  */
-function canonicalRole(raw: unknown): string {
+function canonicalRole(raw: unknown): UserRole {
   const folded = String(raw ?? "")
     .toLowerCase()
     .replace(/[\s_-]+/g, "");

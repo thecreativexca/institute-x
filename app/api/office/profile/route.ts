@@ -7,8 +7,11 @@ import { requireAdminApi } from "@/lib/auth/helpers";
 export async function PATCH(request: NextRequest) {
   try {
     const { user: session, errorResponse } = await requireAdminApi();
-    if (errorResponse) {
-      return errorResponse;
+    if (errorResponse || !session) {
+      return (
+        errorResponse ??
+        NextResponse.json({ success: false, error: "Unauthorized." }, { status: 401 })
+      );
     }
 
     const body = await request.json();

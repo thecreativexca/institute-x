@@ -24,6 +24,8 @@ export interface FieldShellProps {
   hint?: string;
   error?: string;
   id: string;
+  /** Marks the label with a visual required indicator. */
+  required?: boolean;
   children: React.ReactNode;
 }
 
@@ -33,12 +35,14 @@ export function FieldShell({
   hint,
   error,
   id,
+  required,
   children,
 }: FieldShellProps) {
   return (
     <div className="flex w-full flex-col gap-1.5">
       <Label htmlFor={id} className="text-sm font-medium text-slate-800">
         {label}
+        {required ? <span className="ml-0.5 text-red-600">*</span> : null}
         {optionalLabel ? (
           <span className="ml-1 font-normal text-slate-500">({optionalLabel})</span>
         ) : null}
