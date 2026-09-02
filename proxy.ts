@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { OFFICE_ROLES } from "@/lib/constants";
-
 const PUBLIC_PATHS = [
   "/",
   "/login",
@@ -41,8 +39,9 @@ function matchesAny(pathname: string, paths: readonly string[]): boolean {
   return paths.some((path) => matchesPath(pathname, path));
 }
 
+/** Two-role system: the office portal belongs to ADMIN only. */
 function isOfficeRole(role: string): boolean {
-  return OFFICE_ROLES.includes(role as (typeof OFFICE_ROLES)[number]);
+  return role === "admin";
 }
 
 function readOptimisticSession(request: NextRequest): {

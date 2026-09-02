@@ -213,7 +213,7 @@ export function OfficeAccountClient({ account }: { account: OfficeAccount }) {
 
         <Card className="rounded-2xl border-primary-100">
           <CardHeader className="border-b border-primary-100 bg-gradient-to-r from-accent-50 to-primary-50">
-            <CardTitle className="flex items-center gap-2"><Fingerprint className="h-5 w-5 text-accent-700" aria-hidden="true" /> Staff information</CardTitle>
+            <CardTitle className="flex items-center gap-2"><Fingerprint className="h-5 w-5 text-accent-700" aria-hidden="true" /> Account information</CardTitle>
             <CardDescription>Employment details managed by the institute.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-6">
@@ -229,7 +229,7 @@ export function OfficeAccountClient({ account }: { account: OfficeAccount }) {
                 <div className="min-w-0"><p className="text-xs text-slate-500">{item.label}</p><p className="mt-0.5 truncate text-sm font-semibold text-slate-800">{item.value}</p></div>
               </div>
             ))}
-            <p className="text-xs leading-5 text-slate-500">Contact a Super Admin to change employment information.</p>
+            <p className="text-xs leading-5 text-slate-500">Contact your institute administrator to change employment information.</p>
           </CardContent>
         </Card>
       </div>

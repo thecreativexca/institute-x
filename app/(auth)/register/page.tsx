@@ -143,9 +143,12 @@ export default function RegisterPage() {
       }
 
       setSuccess(true);
+      const redirectUrl = (data as { redirect?: string }).redirect;
       setTimeout(() => {
-        router.push(`/verify-email?email=${encodeURIComponent(formData.email)}&callbackUrl=${encodeURIComponent(callbackUrl)}`);
-      }, 1500);
+        // Registration auto-verifies and logs the student in, so go straight to
+        // the dashboard (no separate "verify your email" step).
+        router.push(redirectUrl ?? `/login?registered=1`);
+      }, 1200);
     } catch {
       setGeneralError("An unexpected error occurred. Please try again.");
     } finally {
@@ -158,7 +161,7 @@ export default function RegisterPage() {
       <Card className="auth-card">
         <CardHeader className="items-center px-6 pb-4 pt-8 text-center sm:px-8">
           <CardTitle as="h1">Account Created</CardTitle>
-          <CardDescription>Redirecting to email verification page...</CardDescription>
+          <CardDescription>Taking you to your dashboard...</CardDescription>
         </CardHeader>
         <CardContent className="px-6 pb-8 sm:px-8">
           <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary-600" />

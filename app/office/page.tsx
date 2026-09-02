@@ -3,15 +3,18 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   ArrowUpRight,
+  BookOpen,
+  CalendarClock,
   ClipboardList,
-  ContactRound,
   FileStack,
   HelpCircle,
   LifeBuoy,
   Megaphone,
   ShieldCheck,
   Settings,
+  TrendingUp,
   Users,
+  Wallet,
 } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -37,13 +40,16 @@ const modules: Array<{
   permissions: readonly Permission[];
 }> = [
   { href: "/office/students", label: "Students", description: "Review learner accounts, enrollments and academic progress.", icon: Users, iconClassName: "text-primary-800", iconSurfaceClassName: "bg-primary-100", permissions: [PERMISSIONS.STUDENTS_READ] },
-  { href: "/office/faculty", label: "Faculty", description: "View faculty profiles, departments and assigned course responsibilities.", icon: ContactRound, iconClassName: "text-accent-800", iconSurfaceClassName: "bg-accent-100", permissions: [PERMISSIONS.STAFF_READ] },
+  { href: "/office/courses", label: "Courses", description: "Create courses, build curriculum with YouTube, text and PDF lessons.", icon: BookOpen, iconClassName: "text-accent-800", iconSurfaceClassName: "bg-accent-100", permissions: [PERMISSIONS.COURSES_READ, PERMISSIONS.COURSES_CREATE] },
+  { href: "/office/payments", label: "Payments & Orders", description: "Track student payments, revenue and process refunds.", icon: Wallet, iconClassName: "text-emerald-800", iconSurfaceClassName: "bg-emerald-50", permissions: [PERMISSIONS.PAYMENTS_READ] },
+  { href: "/office/sessions", label: "Sessions", description: "Schedule offline / venue classes against courses.", icon: CalendarClock, iconClassName: "text-[#8a4b2d]", iconSurfaceClassName: "bg-[#fdf0e7]", permissions: [PERMISSIONS.SESSIONS_READ, PERMISSIONS.SESSIONS_MANAGE] },
+  { href: "/office/analytics", label: "Analytics", description: "Revenue, enrollment and content performance insights.", icon: TrendingUp, iconClassName: "text-[#5f7425]", iconSurfaceClassName: "bg-[#f1f6cf]", permissions: [PERMISSIONS.ANALYTICS_READ] },
   { href: "/office/resources", label: "Resources", description: "Organize lesson documents and downloadable study material.", icon: FileStack, iconClassName: "text-accent-800", iconSurfaceClassName: "bg-accent-100", permissions: [PERMISSIONS.RESOURCES_MANAGE] },
   { href: "/office/assignments", label: "Assignments", description: "Create tasks, review submissions and manage grading.", icon: ClipboardList, iconClassName: "text-primary-700", iconSurfaceClassName: "bg-primary-50", permissions: [PERMISSIONS.ASSIGNMENTS_READ, PERMISSIONS.ASSIGNMENTS_MANAGE, PERMISSIONS.ASSIGNMENTS_GRADE] },
   { href: "/office/quizzes", label: "Quizzes", description: "Manage assessments, question banks and learner results.", icon: HelpCircle, iconClassName: "text-accent-700", iconSurfaceClassName: "bg-accent-50", permissions: [PERMISSIONS.QUIZZES_READ, PERMISSIONS.QUIZZES_MANAGE, PERMISSIONS.QUIZ_RESULTS_READ] },
-  { href: "/office/announcements", label: "Announcements", description: "Publish timely updates for students and staff audiences.", icon: Megaphone, iconClassName: "text-[#5f7425]", iconSurfaceClassName: "bg-[#f1f6cf]", permissions: [PERMISSIONS.ANNOUNCEMENTS_MANAGE] },
+  { href: "/office/announcements", label: "Announcements", description: "Publish timely updates for students and course students audiences.", icon: Megaphone, iconClassName: "text-[#5f7425]", iconSurfaceClassName: "bg-[#f1f6cf]", permissions: [PERMISSIONS.ANNOUNCEMENTS_MANAGE] },
   { href: "/office/support", label: "Support", description: "Respond to learner requests and resolve open tickets.", icon: LifeBuoy, iconClassName: "text-emerald-800", iconSurfaceClassName: "bg-emerald-50", permissions: [PERMISSIONS.SUPPORT_READ] },
-  { href: "/office/account", label: "My Account", description: "Review your staff profile and keep account security up to date.", icon: Settings, iconClassName: "text-primary-800", iconSurfaceClassName: "bg-primary-100", permissions: [PERMISSIONS.OFFICE_ACCESS] },
+  { href: "/office/account", label: "My Account", description: "Review your admin profile and keep account security up to date.", icon: Settings, iconClassName: "text-primary-800", iconSurfaceClassName: "bg-primary-100", permissions: [PERMISSIONS.ADMIN_ACCESS] },
 ];
 
 export default async function OfficeHomePage() {

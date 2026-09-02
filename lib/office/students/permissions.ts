@@ -14,36 +14,37 @@ export const STUDENT_PERMISSIONS = {
   QUIZ_RESULTS_READ: PERMISSIONS.QUIZ_RESULTS_READ,
 } as const;
 
+// Two-role system: every office/student-management capability belongs to ADMIN.
 export function canReadStudents(role: string): boolean {
-  return role === "super_admin" || role === "office_staff";
+  return role === "admin";
 }
 
 export function canUpdateStudents(role: string): boolean {
-  return role === "super_admin" || role === "office_staff";
+  return role === "admin";
 }
 
 export function canManageStudentStatus(role: string): boolean {
-  return role === "super_admin" || role === "office_staff";
+  return role === "admin";
 }
 
 export function canManageEnrollments(role: string): boolean {
-  return role === "super_admin" || role === "office_staff";
+  return role === "admin";
 }
 
 export function canReadPayments(role: string): boolean {
-  return role === "super_admin" || role === "office_staff";
+  return role === "admin";
 }
 
 export function canReadCertificates(role: string): boolean {
-  return role === "super_admin" || role === "office_staff" || role === "faculty";
+  return role === "admin";
 }
 
 export function canReadAssignments(role: string): boolean {
-  return role === "super_admin" || role === "office_staff" || role === "faculty";
+  return role === "admin";
 }
 
 export function canReadQuizResults(role: string): boolean {
-  return role === "super_admin" || role === "office_staff" || role === "faculty";
+  return role === "admin";
 }
 
 export function checkPermission(role: string, permission: Permission): boolean {

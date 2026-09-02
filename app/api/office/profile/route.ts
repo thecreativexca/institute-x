@@ -2,30 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/db/connect";
 import { User } from "@/lib/mongodb/models";
-import { OFFICE_ROLES } from "@/lib/constants";
-import { getValidatedSession } from "@/lib/auth/helpers";
+import { requireAdminApi } from "@/lib/auth/helpers";
 
 export async function PATCH(request: NextRequest) {
   try {
-    const { user: session, error } = await getValidatedSession();
-    if (!session || error) {
-      return NextResponse.json(
-        { success: false, error: error || "Authentication required" },
-        { status: 401 }
-      );
-    }
-
-    // Check if user has an office role
-    const isOfficeUser = session.role === "super_admin" ||
-      session.role === "office_staff" ||
-      session.role === "content_manager" ||
-      session.role === "faculty";
-
-    if (!isOfficeUser) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 403 }
-      );
+    const { user: session, errorResponse } = await requireAdminApi();
+    if (errorResponse) {
+      return errorResponse;
     }
 
     const body = await request.json();

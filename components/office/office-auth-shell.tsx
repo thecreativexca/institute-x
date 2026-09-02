@@ -15,7 +15,7 @@ export function OfficeAuthShell({ children }: { children: React.ReactNode }) {
           <div className="relative">
             <Logo tone="inverse" />
             <span className="mt-12 inline-flex items-center gap-2 rounded-full border border-accent-200/25 bg-accent-200/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-accent-200">
-              <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" /> Authorized staff only
+              <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" /> Authorized admin only
             </span>
             <h1 className="mt-5 text-3xl font-bold leading-tight tracking-tight xl:text-4xl">Secure institute operations in one workspace.</h1>
             <p className="mt-4 text-sm leading-7 text-primary-100">Manage learners, academic work and support requests with role-based access designed for your institute team.</p>

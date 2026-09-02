@@ -25,6 +25,7 @@ export type AuditAction =
   | "course.archive"
   | "course.delete"
   | "course.thumbnail_update"
+  | "category.create"
   | "module.create"
   | "module.update"
   | "module.delete"
@@ -68,12 +69,17 @@ export type AuditAction =
   | "support.reply"
   | "support.resolve"
   | "support.close"
-  | "support.reopen";
+  | "support.reopen"
+  | "payment.refund"
+  | "session.create"
+  | "session.update"
+  | "session.delete";
 
 export type AuditEntityType =
   | "user"
   | "staffProfile"
   | "course"
+  | "category"
   | "module"
   | "lesson"
   | "resource"
@@ -86,6 +92,7 @@ export type AuditEntityType =
   | "submission"
   | "quiz"
   | "question"
+  | "session"
   | "support_ticket";
 
 export interface IAuditLog {

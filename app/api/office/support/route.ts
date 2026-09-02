@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getValidatedSession } from "@/lib/auth/helpers";
-import { canAccessOffice, hasPermission, PERMISSIONS } from "@/lib/auth/permissions";
+import { canAccessAdmin, hasPermission, PERMISSIONS } from "@/lib/auth/permissions";
 import { getOfficeSupportTickets, getSupportStats } from "@/lib/support/queries";
 import { supportFiltersSchema } from "@/lib/support/validation";
 
@@ -11,15 +11,15 @@ export async function GET(request: NextRequest) {
     const { user } = await getValidatedSession();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!canAccessOffice(user.role)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!canAccessAdmin(user.role)) {
+      return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
     if (!hasPermission(user.role, PERMISSIONS.SUPPORT_READ)) {
-      return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 });
+      return NextResponse.json({ success: false, error: "Insufficient permissions" }, { status: 403 });
     }
 
     const searchParams = request.nextUrl.searchParams;
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     const parsed = supportFiltersSchema.safeParse(params);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid query parameters", details: parsed.error }, { status: 400 });
+      return NextResponse.json({ success: false, error: "Invalid query parameters", details: parsed.error }, { status: 400 });
     }
 
     const vp = parsed.data;
@@ -60,6 +60,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ...result, stats });
   } catch (error) {
     console.error("Office support GET error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }

@@ -32,13 +32,10 @@ export const updateUserStatusSchema = z.object({
   ]),
 });
 
-/** Role values allowed to be assigned (RBAC rules arrive in a later phase). */
+/** Role values allowed to be assigned (only ADMIN and STUDENT). */
 export const assignableRolesSchema = z.enum([
   USER_ROLES.STUDENT,
-  USER_ROLES.SUPER_ADMIN,
-  USER_ROLES.OFFICE_STAFF,
-  USER_ROLES.CONTENT_MANAGER,
-  USER_ROLES.FACULTY,
+  USER_ROLES.ADMIN,
 ]);
 
 export type RegisterStudentInput = z.infer<typeof registerStudentSchema>;

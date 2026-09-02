@@ -113,10 +113,8 @@ export function AnnouncementFilters({
                 <SelectValue placeholder="All audiences" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All audiences</SelectItem>
-                <SelectItem value="all">All Users</SelectItem>
+                <SelectItem value="all">All Students</SelectItem>
                 <SelectItem value="students">Course Students</SelectItem>
-                <SelectItem value="staff">Staff Only</SelectItem>
               </SelectContent>
             </Select>
           </div>

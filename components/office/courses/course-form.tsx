@@ -1,16 +1,20 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
+import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FieldShell, controlClassName } from "@/components/ui/field";
-import { createCourseAction, updateCourseAction } from "@/lib/office/courses/actions";
+import {
+  createCategoryAction,
+  createCourseAction,
+  updateCourseAction,
+} from "@/lib/office/courses/actions";
 import { slugify } from "@/lib/office/courses/validation";
 import type { CourseFormValues, CategoryOption } from "@/lib/office/courses/dto";
-import type { CourseLevel } from "@/lib/constants";
-import type { LearningMode } from "@/models/Course";
+import type { CourseLevel, LearningMode } from "@/lib/constants";
 
 const LEVEL_OPTIONS: { value: CourseLevel; label: string }[] = [
   { value: "beginner", label: "Beginner" },
@@ -70,6 +74,14 @@ export function CourseForm({ mode, courseId, categories, initial, canSubmit }: C
   const [slugTouched, setSlugTouched] = useState(mode === "edit");
   const [savedSnapshot] = useState(() => JSON.stringify(initial ?? emptyCourseFormValues));
 
+  // Category options are seeded server-side but grow in place when the admin
+  // quick-creates a new category inline (see "+ Add new category" below).
+  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>(categories);
+  const [showNewCategory, setShowNewCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategoryError, setNewCategoryError] = useState<string | null>(null);
+  const [isCreatingCategory, startCreateCategory] = useTransition();
+
   const isDirty = useMemo(
     () => JSON.stringify(values) !== savedSnapshot,
     [values, savedSnapshot]
@@ -100,6 +112,34 @@ export function CourseForm({ mode, courseId, categories, initial, canSubmit }: C
   }
 
   const fieldError = (key: string) => state.fieldErrors?.[key];
+
+  function handleAddCategory() {
+    const name = newCategoryName.trim();
+    if (!name) {
+      setNewCategoryError("Please enter a category name.");
+      return;
+    }
+    setNewCategoryError(null);
+    startCreateCategory(async () => {
+      const result = await createCategoryAction({ name });
+      if (result.ok && result.category) {
+        // created is a const so its narrowing survives the setState callback.
+        const created = result.category;
+        setCategoryOptions((prev) =>
+          prev.some((category) => category.id === created.id)
+            ? prev
+            : [...prev, created]
+        );
+        set("categoryId", created.id);
+        setShowNewCategory(false);
+        setNewCategoryName("");
+      } else {
+        setNewCategoryError(
+          result.error ?? result.fieldErrors?.name ?? "Could not create the category."
+        );
+      }
+    });
+  }
 
   return (
     <form action={formAction} className="space-y-6">
@@ -156,12 +196,71 @@ export function CourseForm({ mode, courseId, categories, initial, canSubmit }: C
                 required
               >
                 <option value="">Select a category…</option>
-                {categories.map((category) => (
+                {categoryOptions.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
                 ))}
               </select>
+
+              <div className="mt-1.5">
+                {showNewCategory ? (
+                  <div className="space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-2.5">
+                    <input
+                      aria-label="New category name"
+                      placeholder="e.g. Web & Programming"
+                      value={newCategoryName}
+                      onChange={(e) => setNewCategoryName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddCategory();
+                        }
+                      }}
+                      className={controlClassName(!!newCategoryError)}
+                      maxLength={120}
+                    />
+                    {newCategoryError ? (
+                      <p role="alert" className="text-xs font-medium text-red-700">
+                        {newCategoryError}
+                      </p>
+                    ) : null}
+                    <div className="flex items-center gap-3">
+                      <Button
+                        type="button"
+                        size="sm"
+                        isLoading={isCreatingCategory}
+                        onClick={handleAddCategory}
+                      >
+                        Add category
+                      </Button>
+                      <button
+                        type="button"
+                        className="text-xs font-medium text-slate-500 hover:text-slate-800"
+                        onClick={() => {
+                          setShowNewCategory(false);
+                          setNewCategoryName("");
+                          setNewCategoryError(null);
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowNewCategory(true);
+                      setNewCategoryError(null);
+                    }}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-primary-700 hover:text-primary-900"
+                  >
+                    <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+                    Add new category
+                  </button>
+                )}
+              </div>
             </FieldShell>
 
             <FieldShell label="Level" id="level">

@@ -117,8 +117,8 @@ export async function updateSupportTicket(
     if (input.assignedTo) {
       const assignee = await User.findById(toObjectId(input.assignedTo)).lean();
       if (!assignee) return { error: "Assignee not found" };
-      const isStaff = ["super_admin", "office_staff", "content_manager", "faculty"].includes(assignee.role);
-      if (!isStaff) return { error: "Can only assign to staff members" };
+      const isStaff = assignee.role === "admin";
+      if (!isStaff) return { error: "Can only assign to an admin" };
       ticket.assignedTo = toObjectId(input.assignedTo);
     } else {
       ticket.assignedTo = null;
@@ -166,7 +166,7 @@ export async function replyToTicket(
   const ticket = await SupportTicket.findById(toObjectId(ticketId));
   if (!ticket) return { error: "Ticket not found" };
 
-  const isStaff = ["super_admin", "office_staff", "content_manager", "faculty"].includes(actorRole);
+  const isStaff = actorRole === "admin";
   const isOwner = ticket.student.toString() === actorId;
 
   if (!isStaff && !isOwner) {

@@ -16,40 +16,19 @@ export const TEST_ACCOUNTS = {
     redirectTo: "/student/dashboard",
     description: "Student LMS Access",
   },
-  SUPER_ADMIN: {
-    email: "superadmin@test.local",
-    name: "Test Super Admin",
-    role: "SUPER_ADMIN",
+  ADMIN: {
+    email: "admin@test.local",
+    name: "Test Admin",
+    role: "ADMIN",
     redirectTo: "/office",
-    description: "Full Office Access",
-  },
-  OFFICE_STAFF: {
-    email: "office@test.local",
-    name: "Test Office Staff",
-    role: "OFFICE_STAFF",
-    redirectTo: "/office",
-    description: "Operational Access",
-  },
-  CONTENT_MANAGER: {
-    email: "content@test.local",
-    name: "Test Content Manager",
-    role: "CONTENT_MANAGER",
-    redirectTo: "/office",
-    description: "Course & Content Access",
-  },
-  FACULTY: {
-    email: "faculty@test.local",
-    name: "Test Faculty",
-    role: "FACULTY",
-    redirectTo: "/office",
-    description: "Assigned Course Access",
+    description: "Admin Office Access",
   },
 } as const satisfies Record<string, TestAccountConfig>;
 
 export type TestRole = keyof typeof TEST_ACCOUNTS;
 
 export const STUDENT_TEST_ROLES: TestRole[] = ["STUDENT"];
-export const OFFICE_TEST_ROLES: TestRole[] = ["SUPER_ADMIN", "OFFICE_STAFF", "CONTENT_MANAGER", "FACULTY"];
+export const OFFICE_TEST_ROLES: TestRole[] = ["ADMIN"];
 
 export function areTestAccountsEnabled(): boolean {
   return (

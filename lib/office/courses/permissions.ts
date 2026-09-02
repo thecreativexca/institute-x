@@ -2,9 +2,6 @@ import { connectDB } from "@/lib/db/connect";
 import { PERMISSIONS, type Permission } from "@/lib/constants";
 import { hasPermission } from "@/lib/auth/permissions";
 import type { SessionUser } from "@/lib/auth/session";
-import { toObjectId } from "@/lib/utils/object-id";
-import { FacultyCourseAssignment } from "@/models/FacultyCourseAssignment";
-import { USER_ROLES } from "@/lib/constants";
 
 /** Course/content permissions used across the office Courses area (Phase 17). */
 export const COURSE_PERMISSIONS = {
@@ -42,37 +39,27 @@ export function requirePermission(
   return session;
 }
 
-/** Roles that may manage content across the whole institute. */
+/**
+ * Admin has global content scope - no course assignment needed.
+ */
 function hasGlobalContentScope(role: string): boolean {
-  return role === USER_ROLES.SUPER_ADMIN || role === USER_ROLES.CONTENT_MANAGER;
+  return role === "admin";
 }
 
 /**
- * Phase 15 faculty resource scope: a FACULTY member (or any scoped role) may
- * only touch content for courses they have been explicitly assigned, even if
- * their role carries lessons.manage/modules.manage.
+ * ADMIN can access all courses - no scoping needed.
  */
 export async function isScopedToCourse(
   session: SessionUser,
   courseId: string
 ): Promise<boolean> {
   if (hasGlobalContentScope(session.role)) return true;
-  if (session.role !== USER_ROLES.FACULTY) return false;
-  if (!/^[\da-f]{24}$/i.test(courseId)) return false;
-
-  await connectDB();
-  const assignment = await FacultyCourseAssignment.findOne({
-    faculty: toObjectId(session.id),
-    course: toObjectId(courseId),
-  })
-    .select("_id")
-    .lean();
-  return !!assignment;
+  // No other roles should have content management access in two-role system
+  return false;
 }
 
 /**
- * Combined gate: permission + course scope. Faculty with lessons.manage can
- * only mutate content on courses assigned to them.
+ * Combined gate: permission + course scope. ADMIN has full access to all courses.
  */
 export async function requireCourseScope(
   session: SessionUser | null,
@@ -83,7 +70,7 @@ export async function requireCourseScope(
   const allowed = await isScopedToCourse(user, courseId);
   if (!allowed) {
     throw new PermissionDeniedError(
-      "You are not assigned to this course, so you cannot manage its content."
+      "You do not have permission to manage this course."
     );
   }
   return user;

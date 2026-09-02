@@ -8,6 +8,7 @@ export { Category, type ICategory } from "@/models/Category";
 export { Course, type ICourse } from "@/models/Course";
 export { Module, type IModule } from "@/models/Module";
 export { Lesson, type ILesson } from "@/models/Lesson";
+export { Session, type ISession } from "@/models/Session";
 export { Enrollment, type IEnrollment } from "@/models/Enrollment";
 export { Progress, type IProgress } from "@/models/Progress";
 export { Assignment, type IAssignment } from "@/models/Assignment";
@@ -23,11 +24,6 @@ export { SupportTicket, type ISupportTicket } from "@/models/SupportTicket";
 export { User, type IUser } from "@/models/User";
 export { Payment, type IPayment } from "@/models/Payment";
 export { EmailLog, type IEmailLog } from "@/models/EmailLog";
-export { StaffProfile, type IStaffProfile } from "@/models/StaffProfile";
-export {
-  FacultyCourseAssignment,
-  type IFacultyCourseAssignment,
-} from "@/models/FacultyCourseAssignment";
 export { AuditLog, type IAuditLog } from "@/models/AuditLog";
 export {
   EMAIL_EVENTS,

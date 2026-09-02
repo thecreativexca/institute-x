@@ -647,16 +647,7 @@ export async function getModuleLessons(moduleId: string) {
   return Lesson.find({ module: toObjectId(moduleId), isPublished: true }).select("title sortOrder").sort({ sortOrder: 1 }).lean();
 }
 
-async function getUserCourseScope(userId: string, role: string): Promise<Types.ObjectId[] | null> {
-  if (role === "super_admin" || role === "content_manager" || role === "office_staff") {
-    return null;
-  }
-  if (role === "faculty") {
-    const { FacultyCourseAssignment } = await import("@/models/FacultyCourseAssignment");
-    const assignments = await FacultyCourseAssignment.find({ faculty: toObjectId(userId) })
-      .select("course")
-      .lean();
-    return assignments.map((a) => a.course);
-  }
-  return [];
+async function getUserCourseScope(_userId: string, role: string): Promise<Types.ObjectId[] | null> {
+  // Two-role system: only ADMIN reaches office quiz mutations, with global course scope.
+  return role === "admin" ? null : [];
 }

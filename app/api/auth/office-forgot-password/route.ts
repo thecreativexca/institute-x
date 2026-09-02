@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/db/connect";
 import { User } from "@/lib/mongodb/models";
-import { OFFICE_ROLES, ACCOUNT_STATUSES } from "@/lib/constants";
+import { ACCOUNT_STATUSES } from "@/lib/constants";
 import { generateSecureToken, hashToken, getTokenExpiry } from "@/lib/auth/tokens";
 import { sendPasswordResetEmail } from "@/lib/email";
 import { siteConfig } from "@/lib/config/site";
@@ -34,11 +34,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user has an office role
-    const isOfficeUser = user.role === "super_admin" ||
-      user.role === "office_staff" ||
-      user.role === "content_manager" ||
-      user.role === "faculty";
+    // Check if user has an admin (office) role
+    const isOfficeUser = user.role === "admin";
 
     if (!isOfficeUser) {
       return NextResponse.json(

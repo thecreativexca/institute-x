@@ -177,7 +177,7 @@ export async function createManualEnrollment(
 
   await AuditLog.create({
     actorUserId: toObjectId(input.enrolledBy),
-    actorRole: "office_staff",
+    actorRole: "admin",
     action: "enrollment.manage",
     entityType: "enrollment",
     entityId: enrollment._id,

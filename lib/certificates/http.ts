@@ -35,9 +35,9 @@ export interface Actor {
   role: string;
 }
 
-/** True when the actor is permitted to issue/revoke as office/staff. */
+/** True when the actor is permitted to issue/revoke as an admin (office/staff). */
 export function isAuthorizedStaffRole(role: string): boolean {
-  return role === USER_ROLES.SUPER_ADMIN || role === USER_ROLES.OFFICE_STAFF;
+  return role === USER_ROLES.ADMIN;
 }
 
 /** Helper for simple JSON responses. */

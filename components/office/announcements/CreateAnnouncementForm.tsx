@@ -127,9 +127,8 @@ export function CreateAnnouncementForm({ courseOptions }: CreateAnnouncementForm
             <SelectValue placeholder="Select audience" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Users (students and staff)</SelectItem>
+            <SelectItem value="all">All Students</SelectItem>
             <SelectItem value="students">Course Students</SelectItem>
-            <SelectItem value="staff">Staff Only</SelectItem>
           </SelectContent>
         </Select>
         {errors.audience && <p className="mt-1 text-sm text-red-600">{errors.audience}</p>}

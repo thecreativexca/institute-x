@@ -1,5 +1,5 @@
-import type { CourseStatus, CourseLevel } from "@/lib/constants";
-import type { ICourseFaq, LearningMode } from "@/models/Course";
+import type { CourseStatus, CourseLevel, LearningMode } from "@/lib/constants";
+import type { ICourseFaq } from "@/models/Course";
 
 /**
  * Safe DTOs sent to office client components (req. 123). Mongoose documents,
@@ -133,6 +133,17 @@ export interface CurriculumData {
 export interface CategoryOption {
   id: string;
   name: string;
+}
+
+/** Result of the "add category" inline action on the course form. */
+export interface CategoryCreateResult {
+  ok: boolean;
+  /** Present when a category was created (or already existed and was reused). */
+  category?: CategoryOption;
+  /** True when an existing category with the same name was reused instead of creating a duplicate. */
+  reused?: boolean;
+  error?: string;
+  fieldErrors?: Record<string, string>;
 }
 
 export interface CourseFormValues {

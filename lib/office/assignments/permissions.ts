@@ -21,25 +21,11 @@ export function canGradeAssignments(role: string): boolean {
 
 export async function canAccessAssignment(
   role: string,
-  userId: string,
-  assignmentCourseId: string
+  _userId: string,
+  _assignmentCourseId: string
 ): Promise<boolean> {
-  if (hasPermission(role, PERMISSIONS.ASSIGNMENTS_MANAGE) || hasPermission(role, PERMISSIONS.ASSIGNMENTS_GRADE)) {
-    if (role === "super_admin") return true;
-    if (role === "content_manager") return true;
-    if (role === "faculty") {
-      const { FacultyCourseAssignment } = await import("@/models/FacultyCourseAssignment");
-      const { connectDB } = await import("@/lib/db/connect");
-      const { Types } = await import("mongoose");
-      await connectDB();
-      const assignment = await FacultyCourseAssignment.findOne({
-        faculty: new Types.ObjectId(userId),
-        course: new Types.ObjectId(assignmentCourseId),
-      }).lean();
-      return !!assignment;
-    }
-  }
-  return false;
+  // Two-role system: only ADMIN manages/grades assignments, with full course scope.
+  return role === "admin";
 }
 
 export function checkPermission(role: string, permission: Permission): boolean {

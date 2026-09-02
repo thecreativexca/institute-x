@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/db/connect";
 import { User } from "@/lib/mongodb/models";
-import { OFFICE_ROLES, ACCOUNT_STATUSES } from "@/lib/constants";
+import { USER_ROLES, ACCOUNT_STATUSES } from "@/lib/constants";
 import { verifyPassword } from "@/lib/auth/password";
 import { createSession } from "@/lib/auth/session";
 import { AuditEvents } from "@/lib/audit/log";
@@ -37,12 +37,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user has an office role
-    const isOfficeUser = OFFICE_ROLES.includes(
-      user.role as (typeof OFFICE_ROLES)[number]
-    );
+    // Check if user has admin role
+    const isAdminUser = user.role === USER_ROLES.ADMIN;
 
-    if (!isOfficeUser) {
+    if (!isAdminUser) {
       return NextResponse.json(
         { success: false, error: "Invalid email or password." },
         { status: 401 }

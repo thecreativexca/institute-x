@@ -1,10 +1,13 @@
 import { z } from "zod";
 import { AUDIENCES, type Audience } from "@/lib/constants";
 
+/** Announcements reach students only: all students or students of one course. */
+const ANNOUNCEMENT_AUDIENCES = [AUDIENCES.ALL, AUDIENCES.STUDENTS] as const satisfies readonly Audience[];
+
 export const createAnnouncementSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title too long"),
   body: z.string().min(1, "Body is required"),
-  audience: z.enum(Object.values(AUDIENCES) as [Audience, ...Audience[]]),
+  audience: z.enum(ANNOUNCEMENT_AUDIENCES),
   courseId: z.string().optional().nullable(),
   isActive: z.boolean().optional().default(true),
   sendEmail: z.boolean().optional().default(false),
@@ -21,7 +24,7 @@ export const createAnnouncementSchema = z.object({
 export const updateAnnouncementSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title too long").optional(),
   body: z.string().min(1, "Body is required").optional(),
-  audience: z.enum(Object.values(AUDIENCES) as [Audience, ...Audience[]]).optional(),
+  audience: z.enum(ANNOUNCEMENT_AUDIENCES).optional(),
   courseId: z.string().optional().nullable(),
   isActive: z.boolean().optional(),
   sendEmail: z.boolean().optional(),
@@ -37,7 +40,7 @@ export const updateAnnouncementSchema = z.object({
 
 export const announcementFiltersSchema = z.object({
   search: z.string().optional(),
-  audience: z.enum(["all", "students", "staff"]).optional().default("all"),
+  audience: z.enum(ANNOUNCEMENT_AUDIENCES).optional().default(AUDIENCES.ALL),
   status: z.enum(["active", "inactive", "all"]).optional().default("all"),
   sort: z.enum(["updatedAt", "publishedAt", "createdAt", "title"]).optional().default("updatedAt"),
   direction: z.enum(["asc", "desc"]).optional().default("desc"),

@@ -7,9 +7,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Bell,
+  BookOpen,
+  CalendarClock,
   ChevronDown,
   ClipboardList,
-  ContactRound,
   FileStack,
   HelpCircle,
   LayoutDashboard,
@@ -19,7 +20,9 @@ import {
   Menu,
   ShieldCheck,
   Settings,
+  TrendingUp,
   Users,
+  Wallet,
   X,
 } from "lucide-react";
 
@@ -45,9 +48,12 @@ interface OfficeShellProps {
 }
 
 const navItems = [
-  { href: "/office", label: "Dashboard", icon: LayoutDashboard, permissions: [PERMISSIONS.OFFICE_ACCESS] },
+  { href: "/office", label: "Dashboard", icon: LayoutDashboard, permissions: [PERMISSIONS.ADMIN_ACCESS] },
   { href: "/office/students", label: "Students", icon: Users, permissions: [PERMISSIONS.STUDENTS_READ] },
-  { href: "/office/faculty", label: "Faculty", icon: ContactRound, permissions: [PERMISSIONS.STAFF_READ] },
+  { href: "/office/courses", label: "Courses", icon: BookOpen, permissions: [PERMISSIONS.COURSES_READ] },
+  { href: "/office/payments", label: "Payments & Orders", icon: Wallet, permissions: [PERMISSIONS.PAYMENTS_READ] },
+  { href: "/office/sessions", label: "Sessions", icon: CalendarClock, permissions: [PERMISSIONS.SESSIONS_READ] },
+  { href: "/office/analytics", label: "Analytics", icon: TrendingUp, permissions: [PERMISSIONS.ANALYTICS_READ] },
   { href: "/office/resources", label: "Resources", icon: FileStack, permissions: [PERMISSIONS.RESOURCES_MANAGE] },
   {
     href: "/office/assignments",
@@ -63,7 +69,7 @@ const navItems = [
   },
   { href: "/office/announcements", label: "Announcements", icon: Megaphone, permissions: [PERMISSIONS.ANNOUNCEMENTS_MANAGE] },
   { href: "/office/support", label: "Support", icon: LifeBuoy, permissions: [PERMISSIONS.SUPPORT_READ] },
-  { href: "/office/account", label: "My Account", icon: Settings, permissions: [PERMISSIONS.OFFICE_ACCESS] },
+  { href: "/office/account", label: "My Account", icon: Settings, permissions: [PERMISSIONS.ADMIN_ACCESS] },
 ] satisfies Array<{
   href: string;
   label: string;

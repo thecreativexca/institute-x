@@ -6,7 +6,6 @@ import { Module } from "@/models/Module";
 import { Lesson } from "@/models/Lesson";
 import { Assignment } from "@/models/Assignment";
 import { Submission } from "@/models/Submission";
-import { FacultyCourseAssignment } from "@/models/FacultyCourseAssignment";
 import { AuditLog } from "@/models/AuditLog";
 import { Types } from "mongoose";
 import {
@@ -31,17 +30,9 @@ function escapeRegex(input: string): string {
   return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-async function getUserCourseScope(userId: string, role: string): Promise<Types.ObjectId[] | null> {
-  if (role === "super_admin" || role === "content_manager" || role === "office_staff") {
-    return null;
-  }
-  if (role === "faculty") {
-    const assignments = await FacultyCourseAssignment.find({ faculty: toObjectId(userId) })
-      .select("course")
-      .lean();
-    return assignments.map((a) => a.course);
-  }
-  return [];
+async function getUserCourseScope(_userId: string, role: string): Promise<Types.ObjectId[] | null> {
+  // Two-role system: only ADMIN reaches office assignments, with global course scope.
+  return role === "admin" ? null : [];
 }
 
 export async function getOfficeAssignments(

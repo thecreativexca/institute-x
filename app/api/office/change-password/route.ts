@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/db/connect";
 import { User } from "@/lib/mongodb/models";
-import { OFFICE_ROLES, ACCOUNT_STATUSES } from "@/lib/constants";
+import { USER_ROLES, ACCOUNT_STATUSES } from "@/lib/constants";
 import { verifyPassword, hashPassword } from "@/lib/auth/password";
 import { getValidatedSession } from "@/lib/auth/helpers";
 import { destroySession } from "@/lib/auth/session";
+import { canAccessAdmin } from "@/lib/auth/permissions";
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,13 +18,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user has an office role
-    const isOfficeUser = session.role === "super_admin" ||
-      session.role === "office_staff" ||
-      session.role === "content_manager" ||
-      session.role === "faculty";
-
-    if (!isOfficeUser) {
+    // Check if user has admin role
+    if (!canAccessAdmin(session.role)) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
         { status: 403 }
@@ -72,13 +68,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user has an office role
-    const isOfficeUserCheck = user.role === "super_admin" ||
-      user.role === "office_staff" ||
-      user.role === "content_manager" ||
-      user.role === "faculty";
-
-    if (!isOfficeUserCheck) {
+    // Check if user has admin role in DB
+    if (!canAccessAdmin(user.role)) {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
         { status: 403 }

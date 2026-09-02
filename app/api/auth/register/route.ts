@@ -4,9 +4,8 @@ import { connectDB } from "@/lib/db/connect";
 import { User } from "@/lib/mongodb/models";
 import { registerStudentSchema } from "@/lib/validations/user";
 import { hashPassword } from "@/lib/auth/password";
-import { generateSecureToken, hashToken, getTokenExpiry } from "@/lib/auth/tokens";
-import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
-import { siteConfig } from "@/lib/config/site";
+import { createSession } from "@/lib/auth/session";
+import { ACCOUNT_STATUSES } from "@/lib/constants";
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,34 +32,26 @@ export async function POST(request: NextRequest) {
     }
 
     const passwordHash = await hashPassword(password);
-    const rawToken = generateSecureToken();
-    const tokenHash = hashToken(rawToken);
-    const tokenExpiresAt = new Date(Date.now() + getTokenExpiry("verification"));
 
+    // Email verification is removed: the account is verified at signup so a
+    // student can start immediately, without a verification link or email.
+    const now = new Date();
     const user = await User.create({
       name,
       email: email.toLowerCase(),
       phone,
       passwordHash,
       role: "student",
-      status: "active",
-      emailVerificationToken: tokenHash,
-      emailVerificationTokenExpiresAt: tokenExpiresAt,
+      status: ACCOUNT_STATUSES.ACTIVE,
+      emailVerifiedAt: now,
+      lastLoginAt: now,
     });
 
-    const verificationUrl = `${siteConfig.url}/verify-email?token=${rawToken}`;
-    const expiryHours = getTokenExpiry("verification") / (1000 * 60 * 60);
-
-    await sendVerificationEmail({
-      studentId: user._id.toString(),
-      studentName: name,
-      studentEmail: email,
-      verificationUrl,
-      expiryHours,
-    });
+    // Log the student straight in — no separate "verify your email" step.
+    await createSession(user);
 
     return NextResponse.json(
-      { success: true, message: "Registration successful. Please check your email to verify your account." },
+      { success: true, message: "Registration successful", redirect: "/student/dashboard" },
       { status: 201 }
     );
   } catch (error) {

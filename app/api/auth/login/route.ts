@@ -62,17 +62,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!user.emailVerifiedAt) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Please verify your email before continuing.",
-          code: "EMAIL_NOT_VERIFIED",
-        },
-        { status: 403 }
-      );
-    }
-
     user.lastLoginAt = new Date();
     await user.save();
 

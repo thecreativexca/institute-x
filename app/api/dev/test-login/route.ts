@@ -7,13 +7,7 @@ import { createSession } from "@/lib/auth/session";
 import { TEST_ACCOUNTS, areTestAccountsEnabled, type TestRole } from "@/lib/dev/test-accounts";
 import { recordAuditEvent } from "@/lib/audit/log";
 
-const ALLOWED_TEST_ROLES: TestRole[] = [
-  "STUDENT",
-  "SUPER_ADMIN",
-  "OFFICE_STAFF",
-  "CONTENT_MANAGER",
-  "FACULTY",
-];
+const ALLOWED_TEST_ROLES: TestRole[] = ["STUDENT", "ADMIN"];
 
 export async function POST(request: NextRequest) {
   // CRITICAL: Independent environment check - MUST be evaluated on every request

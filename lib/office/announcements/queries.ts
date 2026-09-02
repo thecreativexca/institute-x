@@ -178,16 +178,7 @@ export async function getAnnouncementAudience(
     return { studentIds, count: studentIds.length };
   }
 
-  if (audience === AUDIENCES.STAFF) {
-    const staffIds = await User.find({
-      role: { $in: ["super_admin", "office_staff", "content_manager", "faculty"] },
-      status: "active",
-    })
-      .select("_id")
-      .lean()
-      .then((users) => users.map((u) => u._id.toString()));
-    return { studentIds: staffIds, count: staffIds.length };
-  }
-
+  // Two-role system: no staff audience. Announcements target all students
+  // (AUDIENCES.ALL) or students of a specific course (AUDIENCES.STUDENTS).
   return { studentIds: [], count: 0 };
 }

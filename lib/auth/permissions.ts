@@ -1,69 +1,70 @@
-import { ROLE_PERMISSIONS, type Permission, type UserRole, PERMISSIONS } from "@/lib/constants";
+import { USER_ROLES, type Permission, PERMISSIONS } from "@/lib/constants";
 
-export { PERMISSIONS, ROLE_PERMISSIONS } from "@/lib/constants";
+export { PERMISSIONS, ROLE_LABELS, ADMIN_ROLES, ROLE_PERMISSIONS } from "@/lib/constants";
 export type { Permission, UserRole } from "@/lib/constants";
 
-function permissionsForRole(role: string): readonly Permission[] {
-  return ROLE_PERMISSIONS[role as UserRole] ?? [];
+/**
+ * Two-role authorization kernel.
+ *
+ * The application has exactly two roles: ADMIN and STUDENT.
+ * - ADMIN holds every permission (full management portal).
+ * - STUDENT (and any other/legacy value) holds none.
+ *
+ * These helpers are intentionally role-only (no fine-grained matrix). The
+ * legacy symbolic permission surface is retained so existing call sites keep
+ * compiling, but every check reduces to "is this user an active ADMIN?".
+ */
+
+function isAdminRole(role: string): boolean {
+  return role === USER_ROLES.ADMIN;
 }
 
-/**
- * Check if a role has a specific permission.
- */
-export function hasPermission(role: string, permission: Permission): boolean {
-  return permissionsForRole(role).includes(permission);
+/** True only for the ADMIN role. */
+export function isAdmin(role: string): boolean {
+  return isAdminRole(role);
 }
 
-/**
- * Check if a role has any of the specified permissions.
- */
-export function hasAnyPermission(role: string, permissions: Permission[]): boolean {
-  return permissions.some((p) => hasPermission(role, p));
-}
-
-/**
- * Check if a role has all of the specified permissions.
- */
-export function hasAllPermissions(role: string, permissions: Permission[]): boolean {
-  return permissions.every((p) => hasPermission(role, p));
-}
-
-/**
- * Get all permissions for a role.
- */
-export function getPermissionsForRole(role: string): readonly Permission[] {
-  return permissionsForRole(role);
-}
-
-/**
- * Check if a role can access the office portal.
- */
-export function canAccessOffice(role: string): boolean {
-  return hasPermission(role, PERMISSIONS.OFFICE_ACCESS);
-}
-
-/**
- * True when the role is an office-side staff role (not a student).
- */
-export function isOfficeRole(role: string): boolean {
-  return (
-    role === "super_admin" ||
-    role === "office_staff" ||
-    role === "content_manager" ||
-    role === "faculty"
-  );
-}
-
-/**
- * True when the role is a student role.
- */
+/** True only for the STUDENT role. */
 export function isStudent(role: string): boolean {
-  return role === "student";
+  return role === USER_ROLES.STUDENT;
+}
+
+/** Whether a role is an office/admin-capable role (two-role: only ADMIN). */
+export function isOfficeRole(role: string): boolean {
+  return isAdminRole(role);
 }
 
 /**
- * Get human-readable label for a permission.
+ * Two-role: only ADMIN has a permission. `permission` is ignored — ADMIN can do
+ * everything a management action requires.
  */
+export function hasPermission(role: string, _permission: Permission): boolean {
+  return isAdminRole(role);
+}
+
+export function hasAnyPermission(role: string, _permissions: Permission[]): boolean {
+  return isAdminRole(role);
+}
+
+export function hasAllPermissions(role: string, _permissions: Permission[]): boolean {
+  return isAdminRole(role);
+}
+
+export function getPermissionsForRole(role: string): readonly Permission[] {
+  return isAdminRole(role) ? Object.values(PERMISSIONS) : [];
+}
+
+/** Whether a role can access the admin/office portal. */
+export function canAccessAdmin(role: string): boolean {
+  return isAdminRole(role);
+}
+
+/** Alias kept for existing call sites. */
+export function canAccessOffice(role: string): boolean {
+  return isAdminRole(role);
+}
+
+/** Human-readable label for a permission (metadata only). */
 export function getPermissionLabel(permission: Permission): string {
   const parts = permission.split(".");
   if (parts.length !== 2) return permission;
@@ -71,21 +72,16 @@ export function getPermissionLabel(permission: Permission): string {
   return `${resource.charAt(0).toUpperCase() + resource.slice(1)}: ${action.charAt(0).toUpperCase() + action.slice(1)}`;
 }
 
-/**
- * Check if a user session has a specific permission.
- * This is the main authorization function for server-side checks.
- */
+/** Session-level gate: authenticated, active, and (for admin checks) ADMIN. */
 export function sessionHasPermission(
   session: { role: string; status: string } | null,
-  permission: Permission
+  _permission: Permission
 ): boolean {
-  if (!session || session.status !== "active") return false;
-  return hasPermission(session.role, permission);
+  return !!session && session.status === "active" && isAdminRole(session.role);
 }
 
-/**
- * Check if a user session can access the office portal.
- */
-export function sessionCanAccessOffice(session: { role: string; status: string } | null): boolean {
-  return sessionHasPermission(session, PERMISSIONS.OFFICE_ACCESS);
+export function sessionCanAccessAdmin(
+  session: { role: string; status: string } | null
+): boolean {
+  return !!session && session.status === "active" && isAdminRole(session.role);
 }

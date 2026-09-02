@@ -8,10 +8,9 @@ import { Module } from "@/models/Module";
 import { Lesson } from "@/models/Lesson";
 import { Resource } from "@/models/Resource";
 import { Enrollment } from "@/models/Enrollment";
-import { FacultyCourseAssignment } from "@/models/FacultyCourseAssignment";
 import type { SessionUser } from "@/lib/auth/session";
-import type { CourseStatus } from "@/lib/constants";
 import { USER_ROLES } from "@/lib/constants";
+import type { CourseStatus } from "@/lib/constants";
 import type {
   CourseCounts,
   CourseListResult,
@@ -24,26 +23,17 @@ import type {
 } from "./dto";
 import { parseYouTubeVideoId } from "./youtube";
 
-/** Faculty members only see courses explicitly assigned to them. */
+/**
+ * Course scope for the current office user. Two-role system: only ADMIN
+ * reaches office content management, and ADMIN has global (unscoped) access.
+ */
 export async function courseScopeFilterFor(
   session: SessionUser
 ): Promise<Record<string, unknown> | null> {
-  if (
-    session.role === USER_ROLES.SUPER_ADMIN ||
-    session.role === USER_ROLES.CONTENT_MANAGER
-  ) {
+  if (session.role === USER_ROLES.ADMIN) {
     return {};
   }
-  if (session.role === USER_ROLES.FACULTY) {
-    await connectDB();
-    const assigned = await FacultyCourseAssignment.find({
-      faculty: toObjectId(session.id),
-    })
-      .select("course")
-      .lean();
-    return { _id: { $in: assigned.map((a) => a.course) } };
-  }
-  // Other roles have no course scope unless explicitly granted in future.
+  // No other role manages courses in the two-role system.
   return null;
 }
 

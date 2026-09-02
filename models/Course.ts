@@ -4,8 +4,10 @@ import { Schema } from "mongoose";
 import {
   COURSE_LEVELS,
   COURSE_STATUSES,
+  LEARNING_MODES,
   type CourseLevel,
   type CourseStatus,
+  type LearningMode,
 } from "@/lib/constants";
 
 import { defineModel } from "@/lib/mongodb/model-registry";
@@ -57,14 +59,6 @@ export interface ICourseFaq {
   answer: string;
   enabled: boolean;
 }
-
-export type LearningMode = "online" | "hybrid" | "offline";
-
-export const LEARNING_MODES = {
-  ONLINE: "online",
-  HYBRID: "hybrid",
-  OFFLINE: "offline",
-} as const;
 
 export interface ICourse {
   _id: Types.ObjectId;

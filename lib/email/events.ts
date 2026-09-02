@@ -14,6 +14,7 @@ import {
   generateWelcomeKey,
   generatePasswordResetKey,
 } from "./logging";
+import type { SendEmailResult } from "./types";
 
 export interface VerificationEmailParams {
   studentId: string;
@@ -23,14 +24,14 @@ export interface VerificationEmailParams {
   expiryHours: number;
 }
 
-export async function sendVerificationEmail(params: VerificationEmailParams): Promise<void> {
+export async function sendVerificationEmail(params: VerificationEmailParams): Promise<SendEmailResult> {
   const { html, text } = (await import("./templates/verification")).renderVerificationEmail({
     studentName: params.studentName,
     verificationUrl: params.verificationUrl,
     expiryHours: params.expiryHours,
   });
 
-  await sendTransactionalEmail({
+  const result = await sendTransactionalEmail({
     eventKey: EMAIL_EVENTS.EMAIL_VERIFICATION,
     template: "verification",
     to: params.studentEmail,
@@ -45,6 +46,17 @@ export async function sendVerificationEmail(params: VerificationEmailParams): Pr
       expiryHours: params.expiryHours,
     },
   });
+
+  // Dev-only fallback: never send real verification emails in local/test builds,
+  // but still let developers complete the register -> verify flow.
+  if (!result.success && process.env.NODE_ENV !== "production") {
+    console.log(
+      `[DEV] Verification email not delivered (${result.errorCode ?? "failed"}) for ${params.studentEmail}.\n` +
+        `Open this link to verify the account:\n${params.verificationUrl}`
+    );
+  }
+
+  return result;
 }
 
 export interface PasswordResetEmailParams {

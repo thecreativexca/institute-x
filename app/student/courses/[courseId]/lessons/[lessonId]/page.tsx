@@ -8,10 +8,11 @@ import {
   listStudentLessonResources,
 } from "@/lib/resources/queries";
 import { RESOURCE_ERROR, ResourceError } from "@/lib/resources/errors";
+import { parseYouTubeVideoId, buildYouTubeEmbedUrl } from "@/lib/office/courses/youtube";
 import { ErrorState } from "@/components/ui/error-state";
 import { LessonResources } from "@/components/student/resources/lesson-resources";
 import { StudentPageHeader } from "@/components/student/student-page-header";
-import { ArrowLeft, BookOpen } from "lucide-react";
+import { ArrowLeft, BookOpen, Clapperboard, FileText, ExternalLink } from "lucide-react";
 
 interface RouteParams {
   params: Promise<{ courseId: string; lessonId: string }>;
@@ -95,6 +96,10 @@ export default async function StudentLessonPage({ params }: RouteParams) {
     resourcesFailed = true;
   }
 
+  const videoId = context.videoUrl ? parseYouTubeVideoId(context.videoUrl) : null;
+  const showVideo = videoId !== null && context.contentType !== "pdf";
+  const showPdf = context.contentType === "pdf" && Boolean(context.pdfUrl);
+
   return (
     <div className="mx-auto w-full max-w-4xl">
       <div className="space-y-6">
@@ -114,11 +119,67 @@ export default async function StudentLessonPage({ params }: RouteParams) {
           }
         />
 
+        {showVideo && videoId ? (
+          <section
+            aria-label="Video lesson"
+            className="overflow-hidden rounded-2xl border border-primary-100 bg-white shadow-card"
+          >
+            <div className="flex items-center gap-3 border-b border-primary-100 px-5 py-3.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50">
+                <Clapperboard className="h-5 w-5 text-red-700" aria-hidden="true" />
+              </span>
+              <div>
+                <h2 className="text-sm font-semibold text-slate-900">Video lesson</h2>
+                <p className="text-xs text-slate-500">Stream this lesson video</p>
+              </div>
+            </div>
+            <div className="aspect-video w-full bg-slate-950">
+              <iframe
+                src={buildYouTubeEmbedUrl(videoId)}
+                title={`${context.lessonTitle} — video`}
+                className="h-full w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </div>
+          </section>
+        ) : null}
+
+        {showPdf && context.pdfUrl ? (
+          <section
+            aria-label="PDF lesson"
+            className="overflow-hidden rounded-2xl border border-primary-100 bg-white shadow-card"
+          >
+            <div className="flex items-center justify-between gap-3 border-b border-primary-100 px-5 py-3.5">
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-100">
+                  <FileText className="h-5 w-5 text-accent-800" aria-hidden="true" />
+                </span>
+                <div>
+                  <h2 className="text-sm font-semibold text-slate-900">Lesson PDF</h2>
+                  <p className="text-xs text-slate-500">Read the attached document</p>
+                </div>
+              </div>
+              <a
+                href={context.pdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              >
+                Open PDF <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+              </a>
+            </div>
+            <iframe src={context.pdfUrl} title={`${context.lessonTitle} — PDF`} className="h-[75vh] w-full" />
+          </section>
+        ) : null}
+
         {context.lessonContent ? (
           <section
             aria-label="Lesson description"
             className="rounded-2xl border border-primary-100 bg-white p-5 text-slate-700 shadow-card sm:p-6"
           >
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Lesson notes</h2>
             <p className="whitespace-pre-line leading-relaxed">
               {context.lessonContent}
             </p>

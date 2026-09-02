@@ -1,7 +1,6 @@
 import { z } from "zod";
 
-import { COURSE_LEVELS, COURSE_STATUSES, RESOURCE_ACCESS } from "@/lib/constants";
-import { LEARNING_MODES } from "@/models/Course";
+import { COURSE_LEVELS, COURSE_STATUSES, LEARNING_MODES, RESOURCE_ACCESS } from "@/lib/constants";
 import { objectIdSchema, slugSchema } from "@/lib/validations/common";
 import { parseYouTubeVideoId } from "./youtube";
 

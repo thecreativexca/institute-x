@@ -19,9 +19,6 @@
 import { PERMISSIONS, type Permission } from "@/lib/constants";
 import type { Types } from "mongoose";
 import { hasPermission, hasAllPermissions } from "@/lib/auth/permissions";
-import { connectDB } from "@/lib/db/connect";
-import { toObjectId } from "@/lib/utils/object-id";
-import { FacultyCourseAssignment } from "@/models/FacultyCourseAssignment";
 import { USER_ROLES } from "@/lib/constants";
 import type { SessionUser } from "@/lib/auth/session";
 
@@ -71,51 +68,29 @@ export function abilitiesFor(session: SessionUser | null): ReportAbilities {
 }
 
 /**
- * Resolve the course-scope filter for the current user (spec §105, §115).
- * Faculty see only assigned courses; global roles see everything.
+ * Resolve the course-scope filter for the current user. Two-role system:
+ * only ADMIN reaches reports, and ADMIN has global (unscoped) course access.
+ * The defensive empty filter guarantees a non-admin caller never sees
+ * course-scoped report data.
  */
 export async function courseScopeFilterFor(
   session: SessionUser
 ): Promise<{ _id: { $in: Types.ObjectId[] } } | null> {
-  if (
-    session.role === USER_ROLES.SUPER_ADMIN ||
-    session.role === USER_ROLES.CONTENT_MANAGER ||
-    session.role === USER_ROLES.OFFICE_STAFF
-  ) {
-    return null;
+  if (session.role === USER_ROLES.ADMIN) {
+    return null; // no course filter => all courses
   }
-  if (session.role === USER_ROLES.FACULTY) {
-    await connectDB();
-    const assigned = await FacultyCourseAssignment.find({
-      faculty: toObjectId(session.id),
-    })
-      .select("course")
-      .lean();
-    return { _id: { $in: assigned.map((a) => a.course) } };
-  }
-  return null;
+  return { _id: { $in: [] } };
 }
 
 /**
- * Whether a specific courseId is within the user's scope. Used to gate
- * course-filtered report queries (IDOR protection, spec §110).
+ * Whether a specific courseId is within the user's scope. Two-role: only ADMIN
+ * reaches reports, and ADMIN can scope to any course (IDOR protection, spec §110).
  */
 export async function isCourseInScope(
   session: SessionUser,
-  courseId: string
+  _courseId: string
 ): Promise<boolean> {
-  if (courseScopeFilterFor !== undefined && session.role !== USER_ROLES.FACULTY) {
-    return true;
-  }
-  if (!/^[a-f\d]{24}$/i.test(courseId)) return false;
-  await connectDB();
-  const assignment = await FacultyCourseAssignment.findOne({
-    faculty: toObjectId(session.id),
-    course: toObjectId(courseId),
-  })
-    .select("_id")
-    .lean();
-  return !!assignment;
+  return session.role === USER_ROLES.ADMIN;
 }
 
 export { PERMISSIONS, type Permission };

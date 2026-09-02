@@ -1,7 +1,7 @@
 import type { Types } from "mongoose";
 
 import { connectDB } from "@/lib/db/connect";
-import { RESOURCE_ACCESS } from "@/lib/constants";
+import { RESOURCE_ACCESS, type LessonContentType } from "@/lib/constants";
 import { toObjectId } from "@/lib/utils/object-id";
 import { Course } from "@/models/Course";
 import { Lesson } from "@/models/Lesson";
@@ -31,6 +31,11 @@ export async function getStudentLessonContext(params: {
 }): Promise<{
   lessonTitle: string;
   lessonContent: string | null;
+  contentType: LessonContentType;
+  /** YouTube watch/embed URL when the lesson is a video lesson. */
+  videoUrl: string | null;
+  /** Direct PDF file URL when the lesson body is an uploaded PDF. */
+  pdfUrl: string | null;
   moduleTitle: string | null;
   courseName: string;
   courseId: string;
@@ -45,7 +50,7 @@ export async function getStudentLessonContext(params: {
   }
 
   const lesson = await Lesson.findById(lessonId)
-    .select("title content course module")
+    .select("title content course module contentType videoUrl pdfUrl")
     .lean();
 
   if (!lesson) {
@@ -72,6 +77,9 @@ export async function getStudentLessonContext(params: {
   return {
     lessonTitle: lesson.title,
     lessonContent: lesson.content ?? null,
+    contentType: lesson.contentType ?? "video",
+    videoUrl: lesson.videoUrl ?? null,
+    pdfUrl: lesson.pdfUrl ?? null,
     moduleTitle: module?.title ?? null,
     courseName: course.name,
     courseId: lesson.course.toString(),

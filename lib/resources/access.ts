@@ -13,13 +13,10 @@ import { RESOURCE_ERROR, ResourceError } from "./errors";
 
 /**
  * Roles allowed to upload/manage learning resources.
- * Deliberately narrow (super admins + content managers) ahead of the office
- * portal phase. The role is ALWAYS read from the authenticated server
- * session — never from a client-supplied field.
+ * In two-role system: only ADMIN can manage resources.
  */
 export const RESOURCE_MANAGER_ROLES: readonly string[] = [
-  USER_ROLES.SUPER_ADMIN,
-  USER_ROLES.CONTENT_MANAGER,
+  USER_ROLES.ADMIN,
 ] as const;
 
 export function isResourceManagerRole(role: string): boolean {

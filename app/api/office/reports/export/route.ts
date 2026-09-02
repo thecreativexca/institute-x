@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { getValidatedSession } from "@/lib/auth/helpers";
+import { canAccessAdmin, hasPermission, PERMISSIONS } from "@/lib/auth/permissions";
 import {
   loadReport,
   getStudentAnalytics,
@@ -34,14 +35,18 @@ type ExportType =
 export async function GET(request: NextRequest) {
   const { user: session, error } = await getValidatedSession();
   if (!session || error) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!canAccessAdmin(session.role)) {
+    return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
   }
 
   const body = await request.url;
   const url = new URL(body);
   const type = url.searchParams.get("type") as ExportType | null;
   if (!type) {
-    return NextResponse.json({ error: "Missing type" }, { status: 400 });
+    return NextResponse.json({ success: false, error: "Missing type" }, { status: 400 });
   }
 
   const params: Record<string, string> = {};
@@ -53,7 +58,7 @@ export async function GET(request: NextRequest) {
   const loaded = await loadReport(session, params);
   const { ctx, abilities } = loaded;
   if (!abilities.read) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
   }
 
   switch (type) {
@@ -153,10 +158,10 @@ export async function GET(request: NextRequest) {
       return csvResponse(toCsv(["Category", "Tickets", "Resolved", "Avg resolution (ms)"], rows), "support.csv");
     }
     default:
-      return NextResponse.json({ error: "Unknown export type" }, { status: 400 });
+      return NextResponse.json({ success: false, error: "Unknown export type" }, { status: 400 });
   }
 }
 
 function deny(): NextResponse {
-  return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
 }

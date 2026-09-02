@@ -17,7 +17,6 @@ interface AnnouncementDetailProps {
 const audienceLabels: Record<string, string> = {
   all: "All Users",
   students: "Course Students",
-  staff: "Staff Only",
 };
 
 const statusConfig = {

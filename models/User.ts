@@ -10,9 +10,8 @@ import {
 import { defineModel } from "@/lib/mongodb/model-registry";
 
 /**
- * User — students and staff (foundational architecture).
- * Authentication flows, password hashing and RBAC arrive in later phases;
- * the password hash field already exists so schemas stay stable.
+ * User — students and admins.
+ * Two-role system: ADMIN (full admin portal access) and STUDENT (student portal only).
  */
 export interface IUser {
   _id: Types.ObjectId;
@@ -30,9 +29,6 @@ export interface IUser {
   lastLoginAt?: Date | null;
   lastOfficeLoginAt?: Date | null;
   sessionVersion: number;
-  employeeCode?: string;
-  designation?: string;
-  department?: string;
   emailVerificationToken?: string;
   emailVerificationTokenExpiresAt?: Date | null;
   passwordResetToken?: string;
@@ -67,9 +63,6 @@ const UserSchema = new Schema<IUser>(
     lastLoginAt: { type: Date, default: null },
     lastOfficeLoginAt: { type: Date, default: null },
     sessionVersion: { type: Number, default: 0 },
-    employeeCode: { type: String, trim: true, sparse: true, unique: true },
-    designation: { type: String, trim: true },
-    department: { type: String, trim: true },
     emailVerificationToken: { type: String, select: false },
     emailVerificationTokenExpiresAt: { type: Date, default: null, select: false },
     passwordResetToken: { type: String, select: false },
@@ -82,9 +75,26 @@ UserSchema.index({ emailVerificationToken: 1 });
 UserSchema.index({ passwordResetToken: 1 });
 UserSchema.index({ emailVerificationTokenExpiresAt: 1 });
 UserSchema.index({ passwordResetTokenExpiresAt: 1 });
-// employeeCode is already uniquely+sparsely indexed via its field definition,
-// so no separate schema-level index is declared here (avoids a duplicate).
 UserSchema.index({ role: 1, status: 1 });
-UserSchema.index({ department: 1 });
+
+// Two-role safety net: a User can only ever be saved as `student` or `admin`.
+// Any legacy row that still holds an old role (e.g. "super admin",
+// OFFICE_STAFF, FACULTY, …) is normalized here — BEFORE the role enum
+// validator runs — so loading/saving a stale document can't throw. Because the
+// hook mutates the in-memory document, the corrected role is also what any
+// caller sees immediately after save (e.g. login building the session).
+UserSchema.pre("validate", function (next) {
+  const doc = this as unknown as {
+    get(path: string): unknown;
+    set(path: string, value: unknown): void;
+  };
+  const raw = doc.get("role");
+  if (typeof raw === "string") {
+    const folded = raw.toLowerCase().replace(/[\s_-]+/g, "");
+    const target = folded.includes("student") ? USER_ROLES.STUDENT : USER_ROLES.ADMIN;
+    if (raw !== target) doc.set("role", target);
+  }
+  next();
+});
 
 export const User = defineModel("User", UserSchema);

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Shield, Briefcase, BookOpen, GraduationCap, AlertCircle } from "lucide-react";
+import { Loader2, Shield, GraduationCap, AlertCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,13 +21,8 @@ export interface TestAccountRoleItem {
 /** Non-sensitive icon selection keyed by role. */
 function roleIcon(key: string) {
   switch (key) {
-    case "SUPER_ADMIN":
+    case "ADMIN":
       return <Shield className="h-5 w-5" />;
-    case "OFFICE_STAFF":
-      return <Briefcase className="h-5 w-5" />;
-    case "CONTENT_MANAGER":
-      return <BookOpen className="h-5 w-5" />;
-    case "FACULTY":
     case "STUDENT":
     default:
       return <GraduationCap className="h-5 w-5" />;

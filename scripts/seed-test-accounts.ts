@@ -19,7 +19,7 @@
  */
 
 import { connectDB } from "@/lib/db/connect";
-import { User, Course, FacultyCourseAssignment } from "@/lib/mongodb/models";
+import { User } from "@/lib/mongodb/models";
 import { hashPassword } from "@/lib/auth/password";
 import { USER_ROLES, ACCOUNT_STATUSES } from "@/lib/constants";
 import { TEST_ACCOUNTS, areTestAccountsEnabled, type TestRole } from "@/lib/dev/test-accounts";
@@ -151,33 +151,6 @@ async function seedTestAccounts() {
     console.log("   - Test accounts use a known password for quick login");
     console.log("   - Use the Quick Login buttons on /login and /office/login");
     console.log("");
-
-    // Optional: Create a sample FacultyCourseAssignment for test faculty
-    // Only if there's at least one published course
-    const publishedCourse = await Course.findOne({ status: "published" }).select("_id");
-    if (publishedCourse) {
-      const facultyUser = await User.findOne({ email: "faculty@test.local" });
-      if (facultyUser) {
-        const existingAssignment = await FacultyCourseAssignment.findOne({
-          faculty: facultyUser._id,
-          course: publishedCourse._id,
-        });
-
-        if (!existingAssignment) {
-          await FacultyCourseAssignment.create({
-            faculty: facultyUser._id,
-            course: publishedCourse._id,
-            assignedBy: facultyUser._id, // Self-assigned for test purposes
-          });
-          console.log("📚 Created FacultyCourseAssignment for Test Faculty");
-          console.log(`   Course: ${publishedCourse._id}`);
-        } else {
-          console.log("📚 FacultyCourseAssignment already exists for Test Faculty");
-        }
-      }
-    } else {
-      console.log("ℹ️  No published courses found - skipping FacultyCourseAssignment");
-    }
 
   } catch (error) {
     console.error("❌ Failed to seed test accounts:", error);

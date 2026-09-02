@@ -1,20 +1,21 @@
 #!/usr/bin/env ts-node
 /**
- * Bootstrap Super Admin Script
+ * Bootstrap Admin Script
  *
- * Creates the initial Super Admin account for the Office Portal.
- * Run this script once during initial setup.
+ * Creates the initial ADMIN account for the Office/Admin Portal.
+ * Run this script once during initial setup. There is no public admin
+ * registration — this is the only supported way to create an admin.
  *
  * Usage:
- *   INITIAL_ADMIN_EMAIL=admin@institute.edu.ts \
+ *   INITIAL_ADMIN_EMAIL=admin@institute.edu \
  *   INITIAL_ADMIN_PASSWORD=SecurePassword123 \
- *   INITIAL_ADMIN_NAME="Super Admin" \
+ *   INITIAL_ADMIN_NAME="Institute Admin" \
  *   npx ts-node scripts/bootstrap-super-admin.ts
  *
  * The script will:
- * 1. Check if a SUPER_ADMIN already exists
+ * 1. Check if an ADMIN already exists
  * 2. Validate the provided email
- * 3. Create the SUPER_ADMIN account with verified email
+ * 3. Create the ADMIN account with verified email
  * 4. Log the credentials (password only shown once)
  */
 
@@ -22,18 +23,17 @@ import { connectDB } from "@/lib/db/connect";
 import { User } from "@/lib/mongodb/models";
 import { hashPassword } from "@/lib/auth/password";
 import { USER_ROLES, ACCOUNT_STATUSES } from "@/lib/constants";
-import { Types } from "mongoose";
 
-async function bootstrapSuperAdmin() {
+async function bootstrapAdmin() {
   const email = process.env.INITIAL_ADMIN_EMAIL;
   const password = process.env.INITIAL_ADMIN_PASSWORD;
-  const name = process.env.INITIAL_ADMIN_NAME || "Super Admin";
+  const name = process.env.INITIAL_ADMIN_NAME || "Institute Admin";
 
   if (!email || !password) {
     console.error("❌ Missing required environment variables:");
-    console.error("   INITIAL_ADMIN_EMAIL - Email for the super admin account");
-    console.error("   INITIAL_ADMIN_PASSWORD - Strong password for the super admin account");
-    console.error("   INITIAL_ADMIN_NAME (optional) - Display name for the super admin");
+    console.error("   INITIAL_ADMIN_EMAIL - Email for the admin account");
+    console.error("   INITIAL_ADMIN_PASSWORD - Strong password for the admin account");
+    console.error("   INITIAL_ADMIN_NAME (optional) - Display name for the admin");
     process.exit(1);
   }
 
@@ -57,15 +57,15 @@ async function bootstrapSuperAdmin() {
   try {
     await connectDB();
 
-    // Check if any SUPER_ADMIN already exists
-    const existingSuperAdmin = await User.findOne({ role: "super_admin" });
-    if (existingSuperAdmin) {
-      console.log("⚠️  A SUPER_ADMIN account already exists:");
-      console.log(`   Email: ${existingSuperAdmin.email}`);
-      console.log(`   Name: ${existingSuperAdmin.name}`);
-      console.log(`   Created: ${existingSuperAdmin.createdAt}`);
-      console.log("\n❌ Refusing to create another SUPER_ADMIN. Only one should exist.");
-      console.log("   If you need to reset the super admin, do it manually in the database.");
+    // Check if any ADMIN already exists
+    const existingAdmin = await User.findOne({ role: USER_ROLES.ADMIN });
+    if (existingAdmin) {
+      console.log("⚠️  An ADMIN account already exists:");
+      console.log(`   Email: ${existingAdmin.email}`);
+      console.log(`   Name: ${existingAdmin.name}`);
+      console.log(`   Created: ${existingAdmin.createdAt}`);
+      console.log("\n❌ Refusing to create another ADMIN.");
+      console.log("   If you need to reset the admin, do it manually in the database.");
       process.exit(1);
     }
 
@@ -79,25 +79,25 @@ async function bootstrapSuperAdmin() {
     // Hash password
     const passwordHash = await hashPassword(password);
 
-    // Create super admin user
-    const superAdmin = await User.create({
+    // Create admin user
+    const admin = await User.create({
       name,
       email: email.toLowerCase(),
       passwordHash,
-      role: USER_ROLES.SUPER_ADMIN,
+      role: USER_ROLES.ADMIN,
       status: ACCOUNT_STATUSES.ACTIVE,
       emailVerifiedAt: new Date(), // Pre-verified for bootstrap
       sessionVersion: 1,
     });
 
-    console.log("✅ Super Admin created successfully!");
+    console.log("✅ Admin created successfully!");
     console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    console.log(`Name:      ${superAdmin.name}`);
-    console.log(`Email:     ${superAdmin.email}`);
-    console.log(`Role:      ${superAdmin.role}`);
-    console.log(`Status:    ${superAdmin.status}`);
+    console.log(`Name:      ${admin.name}`);
+    console.log(`Email:     ${admin.email}`);
+    console.log(`Role:      ${admin.role}`);
+    console.log(`Status:    ${admin.status}`);
     console.log(`Verified:  Yes (emailVerifiedAt set)`);
-    console.log(`ID:        ${superAdmin._id}`);
+    console.log(`ID:        ${admin._id}`);
     console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     console.log("");
     console.log("🔐 Credentials (shown only once):");
@@ -110,7 +110,7 @@ async function bootstrapSuperAdmin() {
     console.log("");
 
   } catch (error) {
-    console.error("❌ Failed to create Super Admin:", error);
+    console.error("❌ Failed to create Admin:", error);
     process.exit(1);
   } finally {
     await User.db.close();
@@ -118,4 +118,4 @@ async function bootstrapSuperAdmin() {
 }
 
 // Run the bootstrap
-bootstrapSuperAdmin();
+bootstrapAdmin();

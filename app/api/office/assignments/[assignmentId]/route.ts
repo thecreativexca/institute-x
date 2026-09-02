@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getValidatedSession } from "@/lib/auth/helpers";
-import { canAccessOffice, hasPermission, PERMISSIONS } from "@/lib/auth/permissions";
+import { canAccessAdmin, hasPermission, PERMISSIONS } from "@/lib/auth/permissions";
 import { getOfficeAssignmentById } from "@/lib/office/assignments/queries";
 import { updateAssignment, deleteAssignment } from "@/lib/office/assignments/mutations";
 import { updateAssignmentSchema } from "@/lib/office/assignments/validation";
@@ -16,27 +16,27 @@ export async function GET(
     const { assignmentId } = await params;
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!canAccessOffice(user.role)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!canAccessAdmin(user.role)) {
+      return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
     if (!hasPermission(user.role, PERMISSIONS.ASSIGNMENTS_READ)) {
-      return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 });
+      return NextResponse.json({ success: false, error: "Insufficient permissions" }, { status: 403 });
     }
 
     const assignment = await getOfficeAssignmentById(assignmentId, user.id, user.role);
 
     if (!assignment) {
-      return NextResponse.json({ error: "Assignment not found" }, { status: 404 });
+      return NextResponse.json({ success: false, error: "Assignment not found" }, { status: 404 });
     }
 
     return NextResponse.json({ assignment });
   } catch (error) {
     console.error("Office assignment GET error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -49,15 +49,15 @@ export async function PATCH(
     const { assignmentId } = await params;
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!canAccessOffice(user.role)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!canAccessAdmin(user.role)) {
+      return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
     if (!hasPermission(user.role, PERMISSIONS.ASSIGNMENTS_MANAGE)) {
-      return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 });
+      return NextResponse.json({ success: false, error: "Insufficient permissions" }, { status: 403 });
     }
 
     const formData = await request.formData();
@@ -76,16 +76,16 @@ export async function PATCH(
     const result = await updateAssignment(assignmentId, validated, user.id, user.role);
 
     if ("error" in result) {
-      return NextResponse.json({ error: result.error }, { status: 400 });
+      return NextResponse.json({ success: false, error: result.error }, { status: 400 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof Error && error.name === "ZodError") {
-      return NextResponse.json({ error: "Validation failed", details: error }, { status: 400 });
+      return NextResponse.json({ success: false, error: "Validation failed", details: error }, { status: 400 });
     }
     console.error("Office assignment PATCH error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -98,26 +98,26 @@ export async function DELETE(
     const { assignmentId } = await params;
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!canAccessOffice(user.role)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!canAccessAdmin(user.role)) {
+      return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
     if (!hasPermission(user.role, PERMISSIONS.ASSIGNMENTS_MANAGE)) {
-      return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 });
+      return NextResponse.json({ success: false, error: "Insufficient permissions" }, { status: 403 });
     }
 
     const result = await deleteAssignment(assignmentId, user.id, user.role);
 
     if ("error" in result) {
-      return NextResponse.json({ error: result.error }, { status: 400 });
+      return NextResponse.json({ success: false, error: result.error }, { status: 400 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Office assignment DELETE error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }
