@@ -11,6 +11,8 @@ interface UserData {
   name: string;
   email: string;
   phone?: string;
+  address?: string;
+  education?: string;
   avatarUrl?: string;
   emailVerifiedAt: string | null;
   createdAt: string;
@@ -31,20 +33,22 @@ export default async function StudentProfilePage() {
 
   await connectDB();
   const user = await User.findById(new Types.ObjectId(student.id))
-    .select("name email phone avatarUrl emailVerifiedAt createdAt")
+    .select("name email phone address education avatarUrl emailVerifiedAt createdAt")
     .lean();
 
   if (!user) {
     redirect("/login");
   }
 
-  const userDoc = user as unknown as { _id: Types.ObjectId; name: string; email: string; phone?: string; avatarUrl?: string; emailVerifiedAt?: Date | null; createdAt: Date };
+  const userDoc = user as unknown as { _id: Types.ObjectId; name: string; email: string; phone?: string; address?: string; education?: string; avatarUrl?: string; emailVerifiedAt?: Date | null; createdAt: Date };
 
   const userData: UserData = {
     _id: userDoc._id.toString(),
     name: userDoc.name,
     email: userDoc.email,
     phone: userDoc.phone,
+    address: userDoc.address,
+    education: userDoc.education,
     avatarUrl: userDoc.avatarUrl,
     emailVerifiedAt: userDoc.emailVerifiedAt?.toISOString() ?? null,
     createdAt: userDoc.createdAt.toISOString(),

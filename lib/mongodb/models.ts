@@ -6,6 +6,7 @@
  */
 export { Category, type ICategory } from "@/models/Category";
 export { Course, type ICourse } from "@/models/Course";
+export { Coupon, type ICoupon } from "@/models/Coupon";
 export { Module, type IModule } from "@/models/Module";
 export { Lesson, type ILesson } from "@/models/Lesson";
 export { Session, type ISession } from "@/models/Session";
@@ -14,6 +15,7 @@ export { Progress, type IProgress } from "@/models/Progress";
 export { Assignment, type IAssignment } from "@/models/Assignment";
 export { Submission, type ISubmission } from "@/models/Submission";
 export { Resource, type IResource } from "@/models/Resource";
+export { ReadingProgress, type IReadingProgress } from "@/models/ReadingProgress";
 export { Quiz, type IQuiz } from "@/models/Quiz";
 export { Question, type IQuestion, type IQuestionOption } from "@/models/Question";
 export { QuizAttempt, type IQuizAttempt } from "@/models/QuizAttempt";
@@ -25,6 +27,8 @@ export { User, type IUser } from "@/models/User";
 export { Payment, type IPayment } from "@/models/Payment";
 export { EmailLog, type IEmailLog } from "@/models/EmailLog";
 export { AuditLog, type IAuditLog } from "@/models/AuditLog";
+export { Notification, type INotification } from "@/models/Notification";
+export { InstituteSettings, type IInstituteSettings } from "@/models/InstituteSettings";
 export {
   EMAIL_EVENTS,
   type EmailEventKey,

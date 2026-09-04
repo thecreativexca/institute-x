@@ -29,6 +29,25 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams;
+
+    // The assignment forms lazy-load module/lesson options with
+    // GET ?action=modules&courseId=… and ?action=lessons&moduleId=….
+    const action = searchParams.get("action");
+    if (action === "modules") {
+      const courseId = searchParams.get("courseId");
+      if (!courseId) {
+        return NextResponse.json({ success: false, error: "Course ID required" }, { status: 400 });
+      }
+      return NextResponse.json({ modules: await getAssignmentModules(courseId) });
+    }
+    if (action === "lessons") {
+      const moduleId = searchParams.get("moduleId");
+      if (!moduleId) {
+        return NextResponse.json({ success: false, error: "Module ID required" }, { status: 400 });
+      }
+      return NextResponse.json({ lessons: await getModuleLessons(moduleId) });
+    }
+
     const params = Object.fromEntries(searchParams.entries());
 
     const parsed = assignmentFiltersSchema.safeParse(params);
@@ -85,6 +104,17 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const action = formData.get("action") as string;
 
+    // The assignment form's <input type="datetime-local"> submits a naive local
+    // string like "2026-09-10T14:30" — z.string().datetime() requires seconds
+    // and a timezone, so normalize to a full ISO instant first. Idempotent for
+    // input that is already ISO (e.g. "…Z"); unparseable values pass through so
+    // schema validation can reject them with a proper message.
+    const normalizeDueAt = (value: string | null): string | null => {
+      if (!value) return null;
+      const parsed = new Date(value);
+      return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString();
+    };
+
     if (action === "create") {
       const data = {
         courseId: formData.get("courseId") as string,
@@ -92,7 +122,7 @@ export async function POST(request: NextRequest) {
         lessonId: formData.get("lessonId") as string | null,
         title: formData.get("title") as string,
         instructions: formData.get("instructions") as string,
-        dueAt: formData.get("dueAt") as string | null,
+        dueAt: normalizeDueAt(formData.get("dueAt") as string | null),
         maxScore: parseInt(formData.get("maxScore") as string, 10),
         isPublished: formData.get("isPublished") === "true",
       };

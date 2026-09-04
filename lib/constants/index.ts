@@ -67,6 +67,22 @@ export const ENROLLMENT_STATUSES = {
 
 export type EnrollmentStatus = (typeof ENROLLMENT_STATUSES)[keyof typeof ENROLLMENT_STATUSES];
 
+export const ENROLLMENT_SOURCES = {
+  RAZORPAY: "razorpay",
+  ADMIN_MANUAL: "admin_manual",
+  FREE_COURSE: "free_course",
+} as const;
+
+export type EnrollmentSource = (typeof ENROLLMENT_SOURCES)[keyof typeof ENROLLMENT_SOURCES];
+
+export const ENROLLMENT_ACCESS_TYPES = {
+  LIFETIME: "lifetime",
+  TIME_LIMITED: "time_limited",
+} as const;
+
+export type EnrollmentAccessType =
+  (typeof ENROLLMENT_ACCESS_TYPES)[keyof typeof ENROLLMENT_ACCESS_TYPES];
+
 export const PAYMENT_STATUSES = {
   CREATED: "created",
   PENDING: "pending",

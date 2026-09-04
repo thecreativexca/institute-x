@@ -6,12 +6,14 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Bell,
+  Award,
   BookOpen,
   CalendarClock,
   ChevronDown,
   ClipboardList,
+  ContactRound,
   FileStack,
+  FolderTree,
   HelpCircle,
   LayoutDashboard,
   LifeBuoy,
@@ -20,6 +22,8 @@ import {
   Menu,
   ShieldCheck,
   Settings,
+  TicketPercent,
+  SlidersHorizontal,
   TrendingUp,
   Users,
   Wallet,
@@ -28,6 +32,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { NotificationMenu } from "@/components/notifications/notification-menu";
 import { hasPermission } from "@/lib/auth/permissions";
 import { PERMISSIONS, ROLE_LABELS, type Permission } from "@/lib/constants";
 import { siteConfig } from "@/lib/config/site";
@@ -50,10 +55,14 @@ interface OfficeShellProps {
 const navItems = [
   { href: "/office", label: "Dashboard", icon: LayoutDashboard, permissions: [PERMISSIONS.ADMIN_ACCESS] },
   { href: "/office/students", label: "Students", icon: Users, permissions: [PERMISSIONS.STUDENTS_READ] },
+  { href: "/office/categories", label: "Categories", icon: FolderTree, permissions: [PERMISSIONS.COURSES_READ] },
   { href: "/office/courses", label: "Courses", icon: BookOpen, permissions: [PERMISSIONS.COURSES_READ] },
+  { href: "/office/enrollments", label: "Enrollments", icon: ContactRound, permissions: [PERMISSIONS.ENROLLMENTS_MANAGE] },
   { href: "/office/payments", label: "Payments & Orders", icon: Wallet, permissions: [PERMISSIONS.PAYMENTS_READ] },
+  { href: "/office/coupons", label: "Coupons", icon: TicketPercent, permissions: [PERMISSIONS.PAYMENTS_MANAGE] },
   { href: "/office/sessions", label: "Sessions", icon: CalendarClock, permissions: [PERMISSIONS.SESSIONS_READ] },
   { href: "/office/analytics", label: "Analytics", icon: TrendingUp, permissions: [PERMISSIONS.ANALYTICS_READ] },
+  { href: "/office/certificates", label: "Certificates", icon: Award, permissions: [PERMISSIONS.CERTIFICATES_READ] },
   { href: "/office/resources", label: "Resources", icon: FileStack, permissions: [PERMISSIONS.RESOURCES_MANAGE] },
   {
     href: "/office/assignments",
@@ -69,6 +78,7 @@ const navItems = [
   },
   { href: "/office/announcements", label: "Announcements", icon: Megaphone, permissions: [PERMISSIONS.ANNOUNCEMENTS_MANAGE] },
   { href: "/office/support", label: "Support", icon: LifeBuoy, permissions: [PERMISSIONS.SUPPORT_READ] },
+  { href: "/office/settings", label: "Settings", icon: SlidersHorizontal, permissions: [PERMISSIONS.ADMIN_ACCESS] },
   { href: "/office/account", label: "My Account", icon: Settings, permissions: [PERMISSIONS.ADMIN_ACCESS] },
 ] satisfies Array<{
   href: string;
@@ -81,7 +91,6 @@ export function OfficeShell({ children, session }: OfficeShellProps) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
 
   useEffect(() => {
@@ -148,8 +157,8 @@ export function OfficeShell({ children, session }: OfficeShellProps) {
         </div>
 
         <nav className="relative flex min-h-0 flex-1 flex-col px-4 py-5">
-          <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-300">Workspace</p>
-          <ul className="mt-3 flex flex-col gap-1" role="list">
+          <p className="shrink-0 px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-300">Workspace</p>
+          <ul className="office-nav-scroll mt-3 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-1" role="list">
             {visibleNavItems.map((item) => (
               <li key={item.href}>
                 <Link
@@ -180,7 +189,7 @@ export function OfficeShell({ children, session }: OfficeShellProps) {
             ))}
           </ul>
 
-          <div className="mt-auto pt-6">
+          <div className="shrink-0 pt-6">
             <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-3.5">
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-300 text-xs font-bold text-primary-950">
@@ -217,30 +226,13 @@ export function OfficeShell({ children, session }: OfficeShellProps) {
               </div>
 
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="relative">
-                  <Button variant="ghost" size="sm" className="relative h-10 w-10 rounded-xl p-0" onClick={() => { setNotificationsOpen((open) => !open); setProfileOpen(false); }} aria-label="Notifications" aria-expanded={notificationsOpen} aria-haspopup="true">
-                    <Bell className="h-5 w-5 text-slate-600" aria-hidden="true" />
-                  </Button>
-                  {mounted && notificationsOpen ? (
-                    <div className="absolute right-0 mt-2 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-primary-100 bg-white shadow-2xl shadow-primary-950/10">
-                      <div className="flex items-center justify-between border-b border-primary-100 px-4 py-3.5">
-                        <h3 className="font-semibold text-slate-900">Notifications</h3>
-                        <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">All clear</span>
-                      </div>
-                      <div className="px-5 py-8 text-center">
-                        <Bell className="mx-auto h-8 w-8 text-slate-300" aria-hidden="true" />
-                        <p className="mt-3 text-sm font-medium text-slate-700">You&rsquo;re all caught up</p>
-                        <p className="mt-1 text-xs text-slate-500">New activity will appear here.</p>
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
+                <NotificationMenu />
 
                 <div className="relative">
                   <button
                     type="button"
                     className="flex items-center gap-2 rounded-xl border border-primary-100 bg-white p-1.5 pr-2.5 text-left shadow-sm transition-colors hover:border-primary-200 hover:bg-primary-50/60"
-                    onClick={() => { setProfileOpen((open) => !open); setNotificationsOpen(false); }}
+                    onClick={() => setProfileOpen((open) => !open)}
                     aria-label="Profile menu"
                     aria-expanded={profileOpen}
                     aria-haspopup="true"

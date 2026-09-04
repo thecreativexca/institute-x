@@ -240,7 +240,7 @@ export function StudentCourseDetailClient({ course, enrollment, modules = [], ce
           </CardContent>
         </Card>
 
-        {/* Placeholder for future features */}
+        {/* Learning actions */}
         <div className="grid gap-6 lg:grid-cols-3">
           <Card className="rounded-2xl border-primary-100">
             <CardHeader>
@@ -255,7 +255,9 @@ export function StudentCourseDetailClient({ course, enrollment, modules = [], ce
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-slate-500">Lesson player coming in Phase 7</p>
+              {modules[0]?.lessons[0] ? (
+                <Button asChild className="w-full"><Link href={`/student/courses/${course._id}/lessons/${modules[0].lessons[0].id}`}>Open course player</Link></Button>
+              ) : <p className="text-sm text-slate-500">No published lesson is available yet.</p>}
             </CardContent>
           </Card>
 
@@ -272,7 +274,7 @@ export function StudentCourseDetailClient({ course, enrollment, modules = [], ce
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-slate-500">Assignments coming in later phases</p>
+              <Button asChild variant="outline" className="w-full"><Link href="/student/assignments">View assignments</Link></Button>
             </CardContent>
           </Card>
 

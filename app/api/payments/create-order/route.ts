@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { courseId } = body;
+    const { courseId, couponCode } = body;
 
     if (!courseId) {
       return NextResponse.json(
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await createCoursePaymentOrder(student.id, courseId);
+    const result = await createCoursePaymentOrder(student.id, courseId, typeof couponCode === "string" ? couponCode : undefined);
 
     return NextResponse.json({ success: true, data: result }, { status: 200 });
   } catch (error) {

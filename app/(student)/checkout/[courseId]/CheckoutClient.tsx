@@ -47,6 +47,14 @@ export function CheckoutClient({ course, student }: CheckoutClientProps) {
     keyId: string;
   } | null>(null);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponQuote, setCouponQuote] = useState<{
+    code: string;
+    originalAmount: number;
+    discountAmount: number;
+    finalAmount: number;
+  } | null>(null);
 
   // Load Razorpay script
   useEffect(() => {
@@ -75,7 +83,7 @@ export function CheckoutClient({ course, student }: CheckoutClientProps) {
         const orderResponse = await fetch("/api/payments/create-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ courseId: course._id }),
+          body: JSON.stringify({ courseId: course._id, couponCode: couponQuote?.code }),
         });
         const orderResult = await orderResponse.json();
         if (!orderResponse.ok || !orderResult.success) {
@@ -150,7 +158,32 @@ export function CheckoutClient({ course, student }: CheckoutClientProps) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rzp = new (window as any).Razorpay(options);
     rzp.open();
-  }, [orderData, razorpayLoaded, course._id, course.name, student, router]);
+  }, [orderData, razorpayLoaded, course._id, course.name, student, router, couponQuote]);
+
+  async function applyCoupon() {
+    const code = couponCode.trim();
+    if (!code) { setCouponQuote(null); setOrderData(null); setError("Enter a coupon code."); return; }
+    setCouponLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, courseId: course._id }),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.error || "Coupon could not be applied.");
+      setCouponQuote(result.quote);
+      setCouponCode(result.quote.code);
+      setOrderData(null);
+    } catch (couponError) {
+      setCouponQuote(null);
+      setOrderData(null);
+      setError(couponError instanceof Error ? couponError.message : "Coupon could not be applied.");
+    } finally {
+      setCouponLoading(false);
+    }
+  }
 
   const price = course.price ?? 0;
   const comparePrice = course.compareAtPrice;
@@ -265,9 +298,34 @@ export function CheckoutClient({ course, student }: CheckoutClientProps) {
                     <span className="text-slate-500 line-through">{formatCurrency(comparePrice!, course.currency)}</span>
                   </div>
                 )}
+                <div className="border-t border-slate-200 pt-3">
+                  <label htmlFor="coupon-code" className="text-sm font-medium text-slate-700">Coupon code</label>
+                  <div className="mt-1.5 flex gap-2">
+                    <input
+                      id="coupon-code"
+                      value={couponCode}
+                      onChange={(event) => {
+                        setCouponCode(event.target.value.toUpperCase().replace(/\s/g, ""));
+                        if (couponQuote) { setCouponQuote(null); setOrderData(null); }
+                      }}
+                      onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void applyCoupon(); } }}
+                      placeholder="Enter code"
+                      className="h-10 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-sm uppercase outline-none focus:ring-2 focus:ring-primary-600/30"
+                      maxLength={40}
+                    />
+                    <Button type="button" variant="outline" isLoading={couponLoading} onClick={applyCoupon}>Apply</Button>
+                  </div>
+                  {couponQuote ? <p className="mt-2 text-xs font-medium text-emerald-700">{couponQuote.code} applied successfully.</p> : null}
+                </div>
+                {couponQuote ? (
+                  <div className="flex justify-between text-sm text-emerald-700">
+                    <span>Coupon discount</span>
+                    <span className="font-medium">−{formatCurrency(couponQuote.discountAmount, course.currency)}</span>
+                  </div>
+                ) : null}
                 <div className="flex justify-between text-sm border-t border-slate-200 pt-3">
                   <span className="font-medium text-slate-900">Total</span>
-                  <span className="font-semibold text-slate-900 text-lg">{formatCurrency(price, course.currency)}</span>
+                  <span className="font-semibold text-slate-900 text-lg">{formatCurrency(couponQuote?.finalAmount ?? price, course.currency)}</span>
                 </div>
               </div>
 
@@ -283,7 +341,7 @@ export function CheckoutClient({ course, student }: CheckoutClientProps) {
                 className="w-full"
                 size="lg"
               >
-                {loading ? "Preparing Payment..." : `Pay ${formatCurrency(price, course.currency)}`}
+                {loading ? "Preparing Payment..." : `Pay ${formatCurrency(couponQuote?.finalAmount ?? price, course.currency)}`}
               </Button>
 
               <p className="mt-4 text-center text-xs text-slate-500">

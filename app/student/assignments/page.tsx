@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getValidatedStudent } from "@/lib/auth/helpers";
 import { StudentAssignmentsClient } from "./StudentAssignmentsClient";
+import { getStudentAssignments } from "@/lib/student/assignments";
 
 export const metadata: Metadata = {
   title: "Assignments",
@@ -16,5 +17,6 @@ export default async function StudentAssignmentsPage() {
     redirect("/login");
   }
 
-  return <StudentAssignmentsClient />;
+  const assignments = await getStudentAssignments(student.id);
+  return <StudentAssignmentsClient assignments={assignments} />;
 }

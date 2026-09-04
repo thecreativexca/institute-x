@@ -989,7 +989,7 @@ function LessonRow({
                 <input type="hidden" name="courseId" value={courseId} />
                 <input type="hidden" name="moduleId" value={moduleId} />
                 <input type="hidden" name="lessonId" value={lesson.id} />
-                <input type="hidden" name="isPublished" value="false" />
+                <input type="hidden" name="isPublished" value="true" />
                 <input type="hidden" name="order" value="0" />
                 <div className="mt-3">
                   <FieldShell

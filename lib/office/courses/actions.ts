@@ -9,7 +9,6 @@ import type { SessionUser } from "@/lib/auth/session";
 import { connectDB } from "@/lib/db/connect";
 import { toObjectId } from "@/lib/utils/object-id";
 import { COURSE_STATUSES } from "@/lib/constants";
-import { Category } from "@/models/Category";
 import { Course } from "@/models/Course";
 import { Module } from "@/models/Module";
 import { Lesson } from "@/models/Lesson";
@@ -35,9 +34,14 @@ import {
   updateLessonSchema,
 } from "./validation";
 import { normalizeYouTubeUrl } from "./youtube";
-import type { CategoryCreateResult } from "./dto";
 import { getCoursePublishReadiness } from "./publish-readiness";
 import { applyReorder } from "./ordering";
+
+import { createCategoryAction as createCategoryAdminAction } from "@/lib/office/categories/actions";
+
+export async function createCategoryAction(input: { name: string }) {
+  return createCategoryAdminAction(input);
+}
 
 /**
  * Phase 17 server actions — the ONLY mutation entry point for office course
@@ -199,8 +203,13 @@ export async function createCourseAction(
       };
     }
 
+    // categoryId is the form/schema field name; the model persists it as
+    // `category` (an ObjectId ref). Mirror updateCourseAction — never spread
+    // the raw categoryId into the model.
+    const { categoryId, ...rest } = data;
     const course = await Course.create({
-      ...data,
+      ...rest,
+      category: toObjectId(categoryId),
       slug,
       status: COURSE_STATUSES.DRAFT,
       price: data.isFree ? 0 : data.price,
@@ -307,79 +316,6 @@ export async function updateCourseAction(
   } catch (error) {
     return { ok: false, error: toMessage(error) };
   }
-}
-
-/* ------------------------------- Categories ------------------------------- */
-
-/**
- * Quick-create a category from the course form (inline action, req. 87).
- * If a category with the same name already exists it is reused (returned)
- * rather than creating a duplicate. Permission gate mirrors course creation.
- */
-export async function createCategoryAction(input: {
-  name: string;
-}): Promise<CategoryCreateResult> {
-  try {
-    const user = requirePermission(await requireSession(), COURSE_PERMISSIONS.CREATE);
-
-    const parsed = z
-      .object({
-        name: z
-          .string()
-          .trim()
-          .min(1, "Please enter a category name.")
-          .max(120, "Category name is too long (max 120 characters)."),
-      })
-      .safeParse(input);
-    if (!parsed.success) {
-      return { ok: false, fieldErrors: fieldErrorsFromZod(parsed.error) };
-    }
-    const name = parsed.data.name;
-
-    await connectDB();
-
-    // Reuse an existing category (case-insensitive) instead of duplicating.
-    const existing = await Category.findOne({
-      name: { $regex: `^${escapeRegexForCategory(name)}$`, $options: "i" },
-    })
-      .select("name")
-      .lean();
-    if (existing) {
-      return {
-        ok: true,
-        reused: true,
-        category: { id: existing._id.toString(), name: existing.name || name },
-      };
-    }
-
-    let slug = slugify(name) || "category";
-    if (await Category.exists({ slug })) {
-      // Name is free but its slug is taken — disambiguate with a suffix.
-      let counter = 2;
-      while (await Category.exists({ slug: `${slug}-${counter}` })) counter += 1;
-      slug = `${slug}-${counter}`;
-    }
-
-    const category = await Category.create({ name, slug, sortOrder: 0 });
-
-    await audit(user, "category.create", "category", category._id.toString(), {
-      title: category.name,
-      slug: category.slug,
-    });
-
-    revalidatePath("/office/courses");
-
-    return {
-      ok: true,
-      category: { id: category._id.toString(), name: category.name },
-    };
-  } catch (error) {
-    return { ok: false, error: toMessage(error) };
-  }
-}
-
-function escapeRegexForCategory(input: string): string {
-  return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 /* --------------------------- Status transitions --------------------------- */

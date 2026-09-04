@@ -143,9 +143,19 @@ export function withDeliveryFlag(
   return `${prefix}${flag}/${suffix}`;
 }
 
-/** URL that renders a PDF inline in the browser (when supported). */
+/**
+ * URL used when a resource must load as raw bytes in the browser (pdf.js
+ * reader, inline text viewer, and the streaming download route).
+ *
+ * NOTE: We deliberately do NOT inject Cloudinary's `fl_inline` flag here.
+ * Raw ("resource_type: raw") assets requested with `fl_inline` are rejected
+ * by Cloudinary with HTTP 400, which made every PDF resource render the
+ * "temporarily unavailable" error state. The plain delivery URL works (200,
+ * CORS: *) and is what pdf.js/fetch consumers need; the `attachment`
+ * content-disposition header is irrelevant for fetch-based loading.
+ */
 export function buildInlineUrl(fileUrl: string): string {
-  return withDeliveryFlag(fileUrl, "fl_inline") ?? fileUrl;
+  return fileUrl;
 }
 
 /** URL that forces a download with a friendly filename. */

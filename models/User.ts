@@ -20,6 +20,8 @@ export interface IUser {
   name: string;
   email: string;
   phone?: string;
+  address?: string;
+  education?: string;
   /** bcrypt/argon hash. select:false so it never leaves the DB by default. */
   passwordHash?: string;
   role: UserRole;
@@ -49,6 +51,8 @@ const UserSchema = new Schema<IUser>(
       trim: true,
     },
     phone: { type: String, trim: true },
+    address: { type: String, trim: true, maxlength: 500 },
+    education: { type: String, trim: true, maxlength: 500 },
     passwordHash: { type: String, select: false },
     role: {
       type: String,

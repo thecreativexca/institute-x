@@ -3,14 +3,16 @@ import crypto from "crypto";
 
 import { connectDB } from "@/lib/db/connect";
 import { Course, Payment, Enrollment, User } from "@/lib/mongodb/models";
-import { PAYMENT_STATUSES, ENROLLMENT_STATUSES, PAYMENT_PROVIDERS } from "@/lib/constants";
+import { PAYMENT_STATUSES, ENROLLMENT_STATUSES, PAYMENT_PROVIDERS, ENROLLMENT_SOURCES, ENROLLMENT_ACCESS_TYPES } from "@/lib/constants";
 import { env } from "@/lib/config/env";
 import {
   getRazorpayInstance,
   createRazorpayOrder,
   generateReceiptNumber,
-  calculateCourseAmount,
+  convertToPaise,
 } from "./razorpay";
+import { validateCouponForCheckout } from "./coupons";
+import { notifyUser } from "@/lib/notifications/service";
 
 export interface CreatePaymentOrderResult {
   paymentId: string;
@@ -43,15 +45,20 @@ export interface FinalizePaymentResult {
  */
 export async function createCoursePaymentOrder(
   studentId: string,
-  courseId: string
+  courseId: string,
+  couponCode?: string
 ): Promise<CreatePaymentOrderResult> {
   await connectDB();
 
   const studentObjectId = new Types.ObjectId(studentId);
   const courseObjectId = new Types.ObjectId(courseId);
 
-  // 1. Load student
-  const student = await User.findById(studentObjectId).select("name email phone").lean();
+  // 1. Load student. role/status must be selected — the account check below
+  //    reads them, and an excluded field is `undefined` (which would fail the
+  //    check for every user, not just invalid ones).
+  const student = await User.findById(studentObjectId)
+    .select("name email phone role status")
+    .lean();
   if (!student) {
     throw new Error("Student not found");
   }
@@ -87,6 +94,7 @@ export async function createCoursePaymentOrder(
     course: courseObjectId,
     status: { $in: [PAYMENT_STATUSES.CREATED, PAYMENT_STATUSES.PENDING] },
     provider: PAYMENT_PROVIDERS.RAZORPAY,
+    "metadata.couponCode": couponCode?.trim().toUpperCase() || { $exists: false },
   }).lean();
 
   if (existingPendingPayment) {
@@ -111,7 +119,11 @@ export async function createCoursePaymentOrder(
   }
 
   // 5. Calculate amount (server-side authority)
-  const amountInPaise = calculateCourseAmount(course);
+  const courseAmount = course.price ?? 0;
+  const coupon = couponCode
+    ? await validateCouponForCheckout({ code: couponCode, studentId, courseId, amount: courseAmount })
+    : null;
+  const amountInPaise = convertToPaise(coupon?.finalAmount ?? courseAmount);
   if (amountInPaise <= 0) {
     throw new Error("Course is free - use free enrollment instead");
   }
@@ -131,6 +143,7 @@ export async function createCoursePaymentOrder(
     metadata: {
       courseName: course.name,
       studentName: student.name,
+      ...(coupon ? { couponCode: coupon.code, originalAmount: convertToPaise(coupon.originalAmount), discountAmount: convertToPaise(coupon.discountAmount) } : {}),
     },
   });
 
@@ -273,6 +286,9 @@ export async function finalizeSuccessfulPayment(
       // Update existing enrollment
       enrollment.status = ENROLLMENT_STATUSES.ACTIVE;
       enrollment.paymentStatus = PAYMENT_STATUSES.PAID;
+      enrollment.order = payment._id;
+      enrollment.source = ENROLLMENT_SOURCES.RAZORPAY;
+      enrollment.accessType = ENROLLMENT_ACCESS_TYPES.LIFETIME;
       enrollment.enrolledAt = new Date();
       await enrollment.save({ session });
     } else {
@@ -284,6 +300,9 @@ export async function finalizeSuccessfulPayment(
             course: payment.course,
             status: ENROLLMENT_STATUSES.ACTIVE,
             paymentStatus: PAYMENT_STATUSES.PAID,
+            order: payment._id,
+            source: ENROLLMENT_SOURCES.RAZORPAY,
+            accessType: ENROLLMENT_ACCESS_TYPES.LIFETIME,
             enrolledAt: new Date(),
           },
         ],
@@ -301,6 +320,18 @@ export async function finalizeSuccessfulPayment(
 
     await session.commitTransaction();
     session.endSession();
+
+    try {
+      await notifyUser({
+        recipientId: payment.student,
+        title: "Enrollment activated",
+        message: `Your payment was verified and access to ${(payment.metadata?.courseName as string | undefined) ?? "the course"} is now active.`,
+        type: "success",
+        link: `/student/courses/${typeof payment.course === "object" && "_id" in payment.course ? String(payment.course._id) : String(payment.course)}`,
+      });
+    } catch (notificationError) {
+      console.error("Payment notification failed:", notificationError);
+    }
 
     return { success: true, enrollmentId: enrollment._id.toString() };
   } catch (error) {
@@ -357,6 +388,8 @@ export async function enrollInFreeCourse(
     course: courseObjectId,
     status: ENROLLMENT_STATUSES.ACTIVE,
     paymentStatus: PAYMENT_STATUSES.PAID, // Free courses are considered "paid"
+    source: ENROLLMENT_SOURCES.FREE_COURSE,
+    accessType: ENROLLMENT_ACCESS_TYPES.LIFETIME,
     enrolledAt: new Date(),
   });
 
@@ -379,6 +412,12 @@ export async function enrollInFreeCourse(
       type: "free_enrollment",
     },
   });
+
+  try {
+    await notifyUser({ recipientId: studentObjectId, title: "Enrollment activated", message: `You are now enrolled in ${course.name}.`, type: "success", link: `/student/courses/${course._id.toString()}` });
+  } catch (notificationError) {
+    console.error("Free enrollment notification failed:", notificationError);
+  }
 
   return { success: true, enrollmentId: enrollment._id.toString() };
 }

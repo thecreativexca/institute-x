@@ -48,6 +48,13 @@ interface EditAssignmentFormProps {
   initialLessons: LessonOption[];
 }
 
+/** Render a stored instant (ISO/UTC) as a local <input type="datetime-local"> value. */
+function toLocalInputValue(iso: string): string {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 export function EditAssignmentForm({
   assignment,
   courseOptions,
@@ -64,7 +71,7 @@ export function EditAssignmentForm({
   const [formData, setFormData] = useState({
     title: assignment.title,
     instructions: assignment.instructions,
-    dueAt: assignment.dueAt ? new Date(assignment.dueAt).toISOString().slice(0, 16) : "",
+    dueAt: assignment.dueAt ? toLocalInputValue(assignment.dueAt) : "",
     maxScore: assignment.maxScore.toString(),
     isPublished: assignment.isPublished,
   });
@@ -152,7 +159,10 @@ export function EditAssignmentForm({
       const body = new FormData();
       body.set("title", formData.title.trim());
       body.set("instructions", formData.instructions.trim());
-      if (formData.dueAt) body.set("dueAt", formData.dueAt);
+      // datetime-local holds a naive local time; send the real instant so the
+      // server stores the moment the admin picked, regardless of server TZ.
+      // An empty value means "clear the deadline" (PATCH treats "" as null).
+      body.set("dueAt", formData.dueAt ? new Date(formData.dueAt).toISOString() : "");
       body.set("maxScore", formData.maxScore);
       if (selectedModule) body.set("moduleId", selectedModule);
       if (selectedLesson) body.set("lessonId", selectedLesson);

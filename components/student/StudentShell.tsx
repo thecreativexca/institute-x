@@ -7,8 +7,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Award,
+  CalendarClock,
   BarChart3,
-  Bell,
   BookOpen,
   ChevronDown,
   CircleHelp,
@@ -19,6 +19,7 @@ import {
   LifeBuoy,
   LogOut,
   Menu,
+  Megaphone,
   Sparkles,
   User,
   X,
@@ -26,6 +27,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { NotificationMenu } from "@/components/notifications/notification-menu";
 import { siteConfig } from "@/lib/config/site";
 import { cn } from "@/lib/utils/cn";
 
@@ -43,6 +45,8 @@ interface StudentShellProps {
 const navItems = [
   { href: "/student/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/student/courses", label: "My Courses", icon: BookOpen },
+  { href: "/student/sessions", label: "Sessions", icon: CalendarClock },
+  { href: "/student/announcements", label: "Announcements", icon: Megaphone },
   { href: "/student/progress", label: "Progress", icon: BarChart3 },
   { href: "/student/assignments", label: "Assignments", icon: ClipboardCheck },
   { href: "/student/quizzes", label: "Quizzes", icon: CircleHelp },
@@ -56,7 +60,6 @@ export function StudentShell({ children, session }: StudentShellProps) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
 
   useEffect(() => {
@@ -231,44 +234,13 @@ export function StudentShell({ children, session }: StudentShellProps) {
               </div>
 
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="relative">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="relative h-10 w-10 rounded-xl p-0"
-                    onClick={() => {
-                      setNotificationsOpen((open) => !open);
-                      setProfileOpen(false);
-                    }}
-                    aria-label="Notifications"
-                    aria-expanded={notificationsOpen}
-                    aria-haspopup="true"
-                  >
-                    <Bell className="h-5 w-5 text-slate-600" aria-hidden="true" />
-                  </Button>
-                  {mounted && notificationsOpen ? (
-                    <div className="absolute right-0 mt-2 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-primary-100 bg-white shadow-2xl shadow-primary-950/10">
-                      <div className="flex items-center justify-between border-b border-primary-100 px-4 py-3.5">
-                        <h3 className="font-semibold text-slate-900">Notifications</h3>
-                        <span className="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary-700">All clear</span>
-                      </div>
-                      <div className="px-5 py-8 text-center">
-                        <Bell className="mx-auto h-8 w-8 text-primary-200" aria-hidden="true" />
-                        <p className="mt-3 text-sm font-medium text-slate-700">You&rsquo;re all caught up</p>
-                        <p className="mt-1 text-xs text-slate-500">Course updates will appear here.</p>
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
+                <NotificationMenu />
 
                 <div className="relative">
                   <button
                     type="button"
                     className="flex items-center gap-2 rounded-xl border border-primary-100 bg-white p-1.5 pr-2.5 text-left shadow-sm transition-colors hover:border-primary-200 hover:bg-primary-50/60"
-                    onClick={() => {
-                      setProfileOpen((open) => !open);
-                      setNotificationsOpen(false);
-                    }}
+                    onClick={() => setProfileOpen((open) => !open)}
                     aria-label="Profile menu"
                     aria-expanded={profileOpen}
                     aria-haspopup="true"

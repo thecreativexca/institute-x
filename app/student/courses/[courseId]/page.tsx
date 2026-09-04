@@ -68,10 +68,29 @@ export default async function StudentCourseDetailPage({ params }: RouteParams) {
 
   await connectDB();
 
+  // The [courseId] segment historically carries a Mongo ObjectId, but several
+  // student-facing links (dashboard cards, course list, payment success) build
+  // it from the course SLUG. Resolve both: a 24-char hex value is used as an
+  // id, anything else is looked up as a slug. Unmatched/invalid values 404
+  // instead of throwing a BSONError.
+  const requested = resolvedParams.courseId;
+  let courseObjectId: Types.ObjectId | null = null;
+  if (/^[0-9a-fA-F]{24}$/.test(requested)) {
+    courseObjectId = new Types.ObjectId(requested);
+  } else {
+    const slugCourse = await Course.findOne({ slug: requested })
+      .select("_id")
+      .lean();
+    courseObjectId = slugCourse?._id ?? null;
+  }
+  if (!courseObjectId) {
+    notFound();
+  }
+
   // Verify student owns this course
   const enrollment = await Enrollment.findOne({
     student: new Types.ObjectId(student.id),
-    course: new Types.ObjectId(resolvedParams.courseId),
+    course: courseObjectId,
     status: { $in: ["active", "completed"] },
   }).lean();
 
@@ -79,7 +98,7 @@ export default async function StudentCourseDetailPage({ params }: RouteParams) {
     notFound();
   }
 
-  const course = await Course.findById(resolvedParams.courseId)
+  const course = await Course.findById(courseObjectId)
     .populate("category", "name")
     .lean();
 

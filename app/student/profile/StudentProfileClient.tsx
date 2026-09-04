@@ -6,13 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { StudentPageHeader } from "@/components/student/student-page-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LinkWrapper } from "@/components/ui/link-button";
-import { User, Mail, Phone, Shield, Calendar, Edit2, CheckCircle2, AlertTriangle } from "lucide-react";
+import { User, Mail, Phone, Shield, Calendar, Edit2, CheckCircle2, MapPin, GraduationCap } from "lucide-react";
 
 interface User {
   _id: string;
   name: string;
   email: string;
   phone?: string;
+  address?: string;
+  education?: string;
   avatarUrl?: string;
   emailVerifiedAt: string | null;
   createdAt: string;
@@ -73,6 +75,14 @@ export function StudentProfileClient({ user }: { user: User | null }) {
                       {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"}
                     </p>
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-500">Address</label>
+                    <p className="mt-1 flex items-start gap-2 text-sm font-medium text-slate-900"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />{user?.address ?? "Not provided"}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-500">Education</label>
+                    <p className="mt-1 flex items-start gap-2 text-sm font-medium text-slate-900"><GraduationCap className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />{user?.education ?? "Not provided"}</p>
+                  </div>
                 </div>
                 <Button asChild variant="outline">
                   <LinkWrapper href="/student/profile/edit">
@@ -131,31 +141,6 @@ export function StudentProfileClient({ user }: { user: User | null }) {
           </CardContent>
         </Card>
 
-        {/* Danger Zone */}
-        <Card className="rounded-2xl border-red-200 bg-red-50">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-100">
-                <AlertTriangle className="h-5 w-5 text-red-600" aria-hidden="true" />
-              </div>
-              <div>
-                <CardTitle className="text-base text-red-900">Danger Zone</CardTitle>
-                <CardDescription className="text-xs text-red-700">Irreversible actions</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="font-medium text-red-900">Delete Account</p>
-                <p className="text-sm text-red-700">Permanently delete your account and all data</p>
-              </div>
-              <Button variant="danger" asChild>
-                <LinkWrapper href="/student/profile/delete">Delete Account</LinkWrapper>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
   );
 }

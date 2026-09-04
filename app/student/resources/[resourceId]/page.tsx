@@ -11,7 +11,9 @@ import { buildInlineUrl } from "@/lib/resources/cloudinary";
 import { formatFileSize } from "@/lib/utils/format-file-size";
 import { Lesson } from "@/models/Lesson";
 import { Course } from "@/models/Course";
+import { ReadingProgress } from "@/models/ReadingProgress";
 import { connectDB } from "@/lib/db/connect";
+import { DigitalBookReader } from "@/components/student/resources/digital-book-reader";
 
 interface RouteParams {
   params: Promise<{ resourceId: string }>;
@@ -80,9 +82,12 @@ export default async function StudentResourceViewPage({ params }: RouteParams) {
   const { resource, backHref } = context;
 
   await connectDB();
-  const [lesson, course] = await Promise.all([
+  const [lesson, course, readingProgress] = await Promise.all([
     Lesson.findById(resource.lesson).select("title").lean(),
     Course.findById(resource.course).select("name").lean(),
+    ReadingProgress.findOne({ student: student.id, resource: resource._id })
+      .select("lastPage bookmarks")
+      .lean(),
   ]);
 
   const isPdf = resource.type === RESOURCE_TYPES.PDF;
@@ -94,21 +99,21 @@ export default async function StudentResourceViewPage({ params }: RouteParams) {
   const assetOk = canEmbed ? await isAssetReachable(resource.fileUrl) : true;
 
   return (
-    <div className="mx-auto w-full max-w-6xl">
-      <div className="space-y-6">
-        <div className="student-page-header flex flex-wrap items-start justify-between gap-3">
+    <div className="relative mx-auto w-full max-w-6xl">
+      <div className="space-y-5">
+        <div className="flex flex-wrap items-start justify-between gap-3 rounded-[1.4rem] border border-[#eadfce] bg-white px-4 py-4 shadow-[0_18px_40px_-32px_rgba(62,41,24,0.35)] sm:px-5">
           <div className="min-w-0">
             <Link
               href={backHref}
-              className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+              className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
             >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               Back to lesson
             </Link>
             {course ? (
-              <p className="mt-1 truncate text-xs text-slate-500">{course.name}</p>
+              <p className="mt-1 truncate text-xs uppercase tracking-[0.14em] text-amber-800/70">{course.name}</p>
             ) : null}
-            <h1 className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl">
+            <h1 className="mt-1 font-serif text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
               {resource.title}
             </h1>
             <p className="mt-1 text-sm text-slate-500">
@@ -123,12 +128,12 @@ export default async function StudentResourceViewPage({ params }: RouteParams) {
           </div>
 
           <div className="flex shrink-0 flex-wrap items-center gap-2">
-            {canEmbed && assetOk ? (
+            {canEmbed && assetOk && !isPdf ? (
               <a
                 href={buildInlineUrl(resource.fileUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-primary-200 bg-white px-4 text-sm font-medium text-primary-800 hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-[#eadfce] bg-white px-4 text-sm font-medium text-slate-800 hover:bg-[#f7f1e6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
               >
                 <ExternalLink className="h-4 w-4" aria-hidden="true" />
                 Open in new tab
@@ -137,7 +142,7 @@ export default async function StudentResourceViewPage({ params }: RouteParams) {
             {canDownload ? (
               <a
                 href={downloadHref}
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary-700 px-4 text-sm font-medium text-white hover:bg-primary-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
               >
                 <Download className="h-4 w-4" aria-hidden="true" />
                 Download
@@ -148,12 +153,30 @@ export default async function StudentResourceViewPage({ params }: RouteParams) {
 
 
 
-        {canEmbed && assetOk ? (
+        {isPdf && assetOk ? (
+          <section aria-label={`${resource.title} digital book reader`}>
+            {readingProgress?.lastPage && readingProgress.lastPage > 1 ? (
+              <div className="mb-3 rounded-xl border border-[#eadfce] bg-white px-4 py-3 text-sm text-slate-700">
+                Continue reading from page {readingProgress.lastPage}.
+              </div>
+            ) : null}
+            <DigitalBookReader
+              fileUrl={buildInlineUrl(resource.fileUrl)}
+              resourceId={resource._id.toString()}
+              title={resource.title}
+              initialProgress={
+                readingProgress
+                  ? { lastPage: readingProgress.lastPage, bookmarks: readingProgress.bookmarks ?? [] }
+                  : null
+              }
+            />
+          </section>
+        ) : canEmbed && assetOk ? (
           <section
             aria-label={`${resource.title} viewer`}
             className="overflow-hidden rounded-2xl border border-primary-100 bg-white shadow-card"
           >
-            {/* Browser-native PDF/text rendering with zoom controls. */}
+            {/* Browser-native text rendering for plain-text resources. */}
             <iframe
               src={buildInlineUrl(resource.fileUrl)}
               title={`${resource.title} — document viewer`}

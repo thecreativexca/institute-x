@@ -44,6 +44,7 @@ export async function assertEnrollment(
     student: toObjectId(studentId),
     course: toObjectId(courseId),
     status: { $in: ["active", "completed"] },
+    $or: [{ expiresAt: null }, { expiresAt: { $exists: false } }, { expiresAt: { $gt: new Date() } }],
   })
     .select("_id")
     .lean();

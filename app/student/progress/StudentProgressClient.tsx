@@ -1,150 +1,23 @@
 "use client";
-
+import Link from "next/link";
+import { Award, BarChart2, BookOpen, CheckCircle2, Clock, Flame } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { StudentPageHeader } from "@/components/student/student-page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Progress } from "@/components/ui/progress";
-import { LinkWrapper } from "@/components/ui/link-button";
-import { BarChart2, ChevronRight, BookOpen, Award, Clock, CheckCircle2 } from "lucide-react";
+import { StudentPageHeader } from "@/components/student/student-page-header";
+import type { getStudentProgressOverview } from "@/lib/student/progress-overview";
 
-export function StudentProgressClient() {
-  return (
-      <div className="space-y-6">
-        <StudentPageHeader
-          title="Learning Progress"
-          description="See how far you have come across every course, lesson and learning goal."
-          icon={<BarChart2 className="h-6 w-6" aria-hidden="true" />}
-          eyebrow="Your growth"
-        />
-
-        {/* Overall Progress */}
-        <Card className="overflow-hidden rounded-2xl border-primary-100">
-          <CardHeader>
-            <CardTitle>Overall Progress</CardTitle>
-            <CardDescription>Your combined progress across all courses</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-6 lg:grid-cols-4">
-              <div className="lg:col-span-2">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-slate-600">Total Completion</span>
-                  <span className="text-2xl font-bold text-slate-900">0%</span>
-                </div>
-                <Progress value={0} className="h-4" />
-                <p className="mt-2 text-sm text-slate-500">0 of 0 lessons completed across all courses</p>
-              </div>
-              <div className="rounded-xl bg-primary-50 p-4 text-center">
-                <p className="text-3xl font-bold text-slate-900">0</p>
-                <p className="text-sm text-slate-500">Active Courses</p>
-              </div>
-              <div className="rounded-xl bg-accent-50 p-4 text-center">
-                <p className="text-3xl font-bold text-slate-900">0</p>
-                <p className="text-sm text-slate-500">Completed Courses</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Per Course Progress */}
-        <Card className="rounded-2xl border-primary-100">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Course Progress</CardTitle>
-                <CardDescription>Individual progress for each course</CardDescription>
-              </div>
-              <Button asChild variant="outline" size="sm">
-                <LinkWrapper href="/student/courses">View All Courses <ChevronRight className="h-4 w-4 ml-1" /></LinkWrapper>
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <EmptyState
-              icon={<BarChart2 className="h-12 w-12" aria-hidden="true" />}
-              title="No progress data yet"
-              description="Your course progress will appear here once you start learning."
-              action={
-                <Button asChild>
-                  <LinkWrapper href="/courses">Browse Courses</LinkWrapper>
-                </Button>
-              }
-            />
-          </CardContent>
-        </Card>
-
-        {/* Learning Stats */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="rounded-2xl border-primary-100">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100">
-                  <Clock className="h-6 w-6 text-primary-600" aria-hidden="true" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-slate-900">0h</p>
-                  <p className="text-sm text-slate-500">Learning Hours</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="rounded-2xl border-primary-100">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100">
-                  <CheckCircle2 className="h-6 w-6 text-emerald-600" aria-hidden="true" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-slate-900">0</p>
-                  <p className="text-sm text-slate-500">Lessons Completed</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="rounded-2xl border-primary-100">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent-100">
-                  <BookOpen className="h-6 w-6 text-accent-600" aria-hidden="true" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-slate-900">0</p>
-                  <p className="text-sm text-slate-500">Current Streak</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="rounded-2xl border-primary-100">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent-100">
-                  <Award className="h-6 w-6 text-accent-700" aria-hidden="true" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-slate-900">0</p>
-                  <p className="text-sm text-slate-500">Certificates Earned</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Placeholder for future features */}
-        <Card className="rounded-2xl border-primary-100">
-          <CardHeader>
-            <CardTitle>Detailed Analytics</CardTitle>
-            <CardDescription>Detailed progress charts and insights coming in later phases</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-2xl border border-dashed border-primary-200 bg-primary-50/60 p-8 text-center">
-              <BarChart2 className="mx-auto h-12 w-12 text-primary-400" aria-hidden="true" />
-              <h3 className="mt-4 text-lg font-medium text-slate-900">Advanced Analytics Coming Soon</h3>
-              <p className="mt-1 text-sm text-slate-500">
-                Detailed progress charts, time tracking, and learning insights will be implemented in future phases.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-  );
+export function StudentProgressClient({ overview }: { overview: Awaited<ReturnType<typeof getStudentProgressOverview>> }) {
+  const maxActivity = Math.max(1, ...overview.activity.map((day) => day.count));
+  return <div className="space-y-6">
+    <StudentPageHeader title="Learning Progress" description="See how far you have come across every enrolled course." icon={<BarChart2 className="h-6 w-6" />} eyebrow="Your growth" />
+    <Card className="rounded-2xl border-primary-100"><CardHeader><CardTitle>Overall Progress</CardTitle><CardDescription>Combined lesson completion across your courses</CardDescription></CardHeader><CardContent><div className="grid gap-6 lg:grid-cols-4"><div className="lg:col-span-2"><div className="mb-2 flex items-center justify-between"><span className="text-slate-600">Total Completion</span><span className="text-2xl font-bold text-slate-900">{overview.overallProgress}%</span></div><Progress value={overview.overallProgress} className="h-4" /><p className="mt-2 text-sm text-slate-500">{overview.completedLessons} of {overview.totalLessons} lessons completed</p></div><Metric value={overview.activeCourses} label="Active Courses" /><Metric value={overview.completedCourses} label="Completed Courses" accent /></div></CardContent></Card>
+    <Card className="rounded-2xl border-primary-100"><CardHeader><CardTitle>Course Progress</CardTitle><CardDescription>Individual progress for each enrollment</CardDescription></CardHeader><CardContent>{overview.courses.length ? <div className="space-y-4">{overview.courses.map((entry) => <div key={entry.course._id} className="rounded-xl border border-slate-200 p-4"><div className="flex flex-wrap items-start justify-between gap-3"><div><Link href={`/student/courses/${entry.course._id}`} className="font-semibold text-slate-900 hover:text-primary-700">{entry.course.name}</Link><p className="mt-1 text-xs text-slate-500">{entry.completedLessons} of {entry.totalLessons} lessons</p></div><Badge variant={entry.status === "completed" ? "success" : entry.status === "in_progress" ? "primary" : "neutral"}>{entry.status.replace("_", " ")}</Badge></div><Progress value={entry.progressPercent} className="mt-3 h-2.5" /><div className="mt-2 flex items-center justify-between text-xs text-slate-500"><span>{entry.progressPercent}% complete</span><Link href={entry.currentLesson ? `/student/courses/${entry.course._id}/lessons/${entry.currentLesson.id}` : `/student/courses/${entry.course._id}`} className="font-medium text-primary-700">{entry.status === "not_started" ? "Start" : "Continue"} →</Link></div></div>)}</div> : <EmptyState icon={<BookOpen className="h-10 w-10" />} title="No course progress" description="Enroll in a course to begin tracking progress." action={<Button asChild><Link href="/courses">Browse courses</Link></Button>} />}</CardContent></Card>
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"><Stat icon={Clock} value={`${overview.learningHours}h`} label="Video Learning" /><Stat icon={CheckCircle2} value={overview.completedLessons} label="Lessons Completed" /><Stat icon={Flame} value={overview.streak} label="Day Streak" /><Stat icon={Award} value={overview.certificates} label="Certificates Earned" /></div>
+    <Card className="rounded-2xl border-primary-100"><CardHeader><CardTitle>Last 7 days</CardTitle><CardDescription>Lesson activity recorded each day</CardDescription></CardHeader><CardContent><div className="flex h-44 items-end gap-3 sm:gap-5">{overview.activity.map((day) => <div key={day.label} className="flex flex-1 flex-col items-center gap-2"><span className="text-xs font-semibold text-slate-700">{day.count}</span><div className="w-full max-w-16 rounded-t-lg bg-primary-600 transition-all" style={{ height: `${Math.max(day.count ? 14 : 3, (day.count / maxActivity) * 110)}px` }} /><span className="text-xs text-slate-500">{day.label}</span></div>)}</div></CardContent></Card>
+  </div>;
 }
+function Metric({ value, label, accent = false }: { value: number; label: string; accent?: boolean }) { return <div className={`rounded-xl p-4 text-center ${accent ? "bg-accent-50" : "bg-primary-50"}`}><p className="text-3xl font-bold text-slate-900">{value}</p><p className="text-sm text-slate-500">{label}</p></div>; }
+function Stat({ icon: Icon, value, label }: { icon: typeof Clock; value: string | number; label: string }) { return <Card><CardContent className="flex items-center gap-4 p-5"><span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-100 text-primary-700"><Icon className="h-5 w-5" /></span><div><p className="text-2xl font-bold text-slate-900">{value}</p><p className="text-xs text-slate-500">{label}</p></div></CardContent></Card>; }

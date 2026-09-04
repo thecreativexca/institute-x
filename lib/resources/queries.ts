@@ -6,6 +6,7 @@ import { toObjectId } from "@/lib/utils/object-id";
 import { Course } from "@/models/Course";
 import { Lesson } from "@/models/Lesson";
 import { Module } from "@/models/Module";
+import { Progress } from "@/models/Progress";
 import type { IResource } from "@/models/Resource";
 import { Resource } from "@/models/Resource";
 import {
@@ -39,6 +40,14 @@ export async function getStudentLessonContext(params: {
   moduleTitle: string | null;
   courseName: string;
   courseId: string;
+  completed: boolean;
+  previousLessonId: string | null;
+  nextLessonId: string | null;
+  curriculum: Array<{
+    id: string;
+    title: string;
+    lessons: Array<{ id: string; title: string; completed: boolean }>;
+  }>;
 }> {
   await connectDB();
 
@@ -49,7 +58,7 @@ export async function getStudentLessonContext(params: {
     throw new ResourceError(RESOURCE_ERROR.NOT_FOUND, "Lesson not found.");
   }
 
-  const lesson = await Lesson.findById(lessonId)
+  const lesson = await Lesson.findOne({ _id: lessonId, isPublished: true })
     .select("title content course module contentType videoUrl pdfUrl")
     .lean();
 
@@ -66,13 +75,26 @@ export async function getStudentLessonContext(params: {
   await assertEnrollment(params.studentId, lesson.course.toString());
 
   const [module, course] = await Promise.all([
-    Module.findById(lesson.module).select("title").lean(),
-    Course.findById(lesson.course).select("name").lean(),
+    Module.findOne({ _id: lesson.module, isPublished: true }).select("title").lean(),
+    Course.findOne({ _id: lesson.course, status: "published" }).select("name").lean(),
   ]);
 
-  if (!course) {
+  if (!course || !module) {
     throw new ResourceError(RESOURCE_ERROR.NOT_FOUND, "Course not found.");
   }
+
+  const [modules, lessons, progressRows] = await Promise.all([
+    Module.find({ course: lesson.course, isPublished: true }).select("title sortOrder").sort({ sortOrder: 1, createdAt: 1 }).lean(),
+    Lesson.find({ course: lesson.course, isPublished: true }).select("title module sortOrder").sort({ sortOrder: 1, createdAt: 1 }).lean(),
+    Progress.find({ student: toObjectId(params.studentId), course: lesson.course }).select("lesson status").lean(),
+  ]);
+  const completedIds = new Set(progressRows.filter((row) => row.status === "completed").map((row) => row.lesson.toString()));
+  const moduleOrder = new Map(modules.map((item, index) => [item._id.toString(), index]));
+  const orderedLessons = [...lessons].sort((a, b) => {
+    const moduleDelta = (moduleOrder.get(a.module.toString()) ?? 0) - (moduleOrder.get(b.module.toString()) ?? 0);
+    return moduleDelta || a.sortOrder - b.sortOrder;
+  });
+  const currentIndex = orderedLessons.findIndex((item) => item._id.equals(lesson._id));
 
   return {
     lessonTitle: lesson.title,
@@ -83,6 +105,16 @@ export async function getStudentLessonContext(params: {
     moduleTitle: module?.title ?? null,
     courseName: course.name,
     courseId: lesson.course.toString(),
+    completed: completedIds.has(lesson._id.toString()),
+    previousLessonId: currentIndex > 0 ? orderedLessons[currentIndex - 1]._id.toString() : null,
+    nextLessonId: currentIndex >= 0 && currentIndex < orderedLessons.length - 1 ? orderedLessons[currentIndex + 1]._id.toString() : null,
+    curriculum: modules.map((item) => ({
+      id: item._id.toString(),
+      title: item.title,
+      lessons: orderedLessons
+        .filter((entry) => entry.module.equals(item._id))
+        .map((entry) => ({ id: entry._id.toString(), title: entry.title, completed: completedIds.has(entry._id.toString()) })),
+    })),
   };
 }
 

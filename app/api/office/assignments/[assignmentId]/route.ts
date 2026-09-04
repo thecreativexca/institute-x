@@ -61,10 +61,25 @@ export async function PATCH(
     }
 
     const formData = await request.formData();
+
+    // datetime-local submits a naive string (e.g. "2026-09-10T14:30") that
+    // z.string().datetime() rejects. Normalize to a full ISO instant; keep
+    // undefined = "not provided" distinct from null = "explicitly cleared".
+    const rawDueAt = formData.get("dueAt") as string | null;
+    let dueAt: string | null | undefined;
+    if (rawDueAt === null) {
+      dueAt = undefined;
+    } else if (rawDueAt === "") {
+      dueAt = null;
+    } else {
+      const parsed = new Date(rawDueAt);
+      dueAt = Number.isNaN(parsed.getTime()) ? rawDueAt : parsed.toISOString();
+    }
+
     const data = {
       title: formData.get("title") as string | undefined,
       instructions: formData.get("instructions") as string | undefined,
-      dueAt: formData.get("dueAt") as string | null | undefined,
+      dueAt,
       maxScore: formData.get("maxScore") ? parseInt(formData.get("maxScore") as string, 10) : undefined,
       moduleId: formData.get("moduleId") as string | null | undefined,
       lessonId: formData.get("lessonId") as string | null | undefined,

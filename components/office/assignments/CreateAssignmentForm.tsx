@@ -121,7 +121,9 @@ export function CreateAssignmentForm({ courseOptions }: CreateAssignmentFormProp
       if (selectedLesson) body.set("lessonId", selectedLesson);
       body.set("title", formData.title.trim());
       body.set("instructions", formData.instructions.trim());
-      if (formData.dueAt) body.set("dueAt", formData.dueAt);
+      // datetime-local holds a naive local time; send the real instant so the
+      // server stores the moment the admin picked, regardless of server TZ.
+      if (formData.dueAt) body.set("dueAt", new Date(formData.dueAt).toISOString());
       body.set("maxScore", formData.maxScore);
       body.set("isPublished", formData.isPublished.toString());
 

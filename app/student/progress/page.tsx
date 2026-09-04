@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getValidatedStudent } from "@/lib/auth/helpers";
 import { StudentProgressClient } from "./StudentProgressClient";
+import { getStudentProgressOverview } from "@/lib/student/progress-overview";
 
 export const metadata: Metadata = {
   title: "Progress",
@@ -16,5 +17,6 @@ export default async function StudentProgressPage() {
     redirect("/login");
   }
 
-  return <StudentProgressClient />;
+  const overview = await getStudentProgressOverview(student.id);
+  return <StudentProgressClient overview={overview} />;
 }

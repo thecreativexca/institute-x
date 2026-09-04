@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { RESOURCE_ACCESS } from "@/lib/constants";
-import { buildInlineUrl } from "@/lib/resources/cloudinary";
 import {
   requireStudentResourceOrResponse,
   studentDownloadFileName,
@@ -39,9 +38,9 @@ export async function GET(request: NextRequest, ctx: RouteContext) {
   }
 
   try {
-    // fl_inline ensures Cloudinary does not force its own attachment header;
-    // our response supplies the download headers instead.
-    const upstream = await fetch(buildInlineUrl(resource.fileUrl), {
+    // Plain delivery URL — Cloudinary rejects `fl_inline` on raw assets
+    // with HTTP 400. Our response supplies the download headers anyway.
+    const upstream = await fetch(resource.fileUrl, {
       cache: "no-store",
     });
 

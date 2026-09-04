@@ -8,6 +8,7 @@ import { AUDIENCES, type Audience } from "@/lib/constants";
 import { CreateAnnouncementInput, UpdateAnnouncementInput } from "./validation";
 import { getAnnouncementAudience } from "./queries";
 import { sendAnnouncementEmail } from "@/lib/email/events";
+import { Notification } from "@/models/Notification";
 
 function toObjectId(id: string): Types.ObjectId {
   return new Types.ObjectId(id);
@@ -32,6 +33,7 @@ export async function createAnnouncement(
     title: input.title.trim(),
     body: input.body.trim(),
     audience: input.audience,
+    course: input.audience === AUDIENCES.STUDENTS && input.courseId ? toObjectId(input.courseId) : null,
     createdBy: toObjectId(actorId),
     isActive: input.isActive ?? true,
     publishedAt: input.isActive ? new Date() : null,
@@ -73,6 +75,22 @@ export async function createAnnouncement(
           console.error(`Failed to send announcement email to ${student.email}:`, emailError);
         }
       }
+    }
+  }
+
+  if (input.isActive) {
+    const audienceResult = await getAnnouncementAudience(input.audience, input.courseId);
+    if (audienceResult.studentIds.length) {
+      await Notification.insertMany(
+        audienceResult.studentIds.map((recipient) => ({
+          recipient: toObjectId(recipient),
+          title: announcement.title,
+          message: announcement.body.slice(0, 500),
+          type: "info",
+          link: "/student/announcements",
+        })),
+        { ordered: false }
+      );
     }
   }
 

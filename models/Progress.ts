@@ -19,6 +19,8 @@ export interface IProgress {
   status: ProgressStatus;
   completedAt?: Date | null;
   lastViewedAt?: Date | null;
+  watchedSeconds?: number;
+  totalSeconds?: number;
 }
 
 const ProgressSchema = new Schema<IProgress>(
@@ -48,6 +50,8 @@ const ProgressSchema = new Schema<IProgress>(
     },
     completedAt: { type: Date, default: null },
     lastViewedAt: { type: Date, default: null },
+    watchedSeconds: { type: Number, default: 0, min: 0 },
+    totalSeconds: { type: Number, default: 0, min: 0 },
   },
   { timestamps: true }
 );
