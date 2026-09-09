@@ -410,10 +410,10 @@ export async function getStudentCertificates(studentId: string): Promise<Student
     .sort({ issuedAt: -1 })
     .lean();
 
-  return certificates.map((cert) => ({
+  return certificates.filter((cert) => cert.course).map((cert) => ({
     id: cert._id.toString(),
     certificateNumber: cert.certificateNumber,
-    courseId: cert.course._id.toString(),
+    courseId: cert.course!._id.toString(),
     courseName: (cert.course as unknown as { name: string }).name,
     issuedAt: cert.issuedAt.toISOString(),
     completionDate: cert.completionDate.toISOString(),

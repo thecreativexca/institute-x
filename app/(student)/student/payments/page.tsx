@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 export default async function PaymentsPage() {
   const { user: student, error } = await getValidatedStudent();
   if (!student || error) {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 
   const payments = await getStudentPayments(student.id);

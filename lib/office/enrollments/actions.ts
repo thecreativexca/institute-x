@@ -17,7 +17,7 @@ import { Course } from "@/models/Course";
 import { Enrollment } from "@/models/Enrollment";
 import { User } from "@/models/User";
 import type { EnrollmentActionResult } from "./dto";
-import { notifyUser } from "@/lib/notifications/service";
+import { notifyUser, safeNotify } from "@/lib/notifications/service";
 
 const createSchema = z.object({
   studentEmail: z.string().trim().toLowerCase().email("Enter a valid student email."),
@@ -131,6 +131,43 @@ export async function updateEnrollmentAction(
       entityId: enrollmentId,
       metadata: { action: "status_update", status: enrollment.status, expiresAt: expiry?.toISOString() ?? null },
     });
+    const course = await Course.findById(enrollment.course).select("name").lean();
+    const statusMessages: Record<string, { title: string; message: string; type: "success" | "warning" | "info" }> = {
+      active: {
+        title: "Course access restored",
+        message: `Your access to ${course?.name ?? "your course"} is active again.`,
+        type: "success",
+      },
+      completed: {
+        title: "Course completed",
+        message: `You completed ${course?.name ?? "your course"}.`,
+        type: "success",
+      },
+      cancelled: {
+        title: "Enrollment cancelled",
+        message: `Your enrollment in ${course?.name ?? "your course"} was cancelled.`,
+        type: "warning",
+      },
+      expired: {
+        title: "Enrollment expired",
+        message: `Your access to ${course?.name ?? "your course"} has expired.`,
+        type: "warning",
+      },
+    };
+    const statusNotice = statusMessages[enrollment.status];
+    if (statusNotice) {
+      await safeNotify(
+        () =>
+          notifyUser({
+            recipientId: enrollment.student,
+            title: statusNotice.title,
+            message: statusNotice.message,
+            type: statusNotice.type,
+            link: `/student/courses/${enrollment.course.toString()}`,
+          }),
+        "Enrollment status update",
+      );
+    }
     revalidateEnrollmentPaths(enrollment.student.toString(), enrollment.course.toString());
     return { ok: true, message: "Enrollment updated." };
   } catch (error) {

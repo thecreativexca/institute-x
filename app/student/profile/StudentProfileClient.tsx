@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StudentPageHeader } from "@/components/student/student-page-header";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ProfileAvatarUploader } from "@/components/student/profile-avatar-uploader";
 import { LinkWrapper } from "@/components/ui/link-button";
 import { User, Mail, Phone, Shield, Calendar, Edit2, CheckCircle2, MapPin, GraduationCap } from "lucide-react";
 
@@ -37,11 +37,12 @@ export function StudentProfileClient({ user }: { user: User | null }) {
             <CardDescription>Your account details</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-              <Avatar className="h-24 w-24 border-4 border-white shadow-lg ring-1 ring-primary-100">
-                <AvatarImage src={user?.avatarUrl ?? ""} alt={user?.name ?? "User"} />
-                <AvatarFallback>{user?.name?.charAt(0).toUpperCase() ?? "U"}</AvatarFallback>
-              </Avatar>
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+              <ProfileAvatarUploader
+                name={user?.name ?? "Student"}
+                initialUrl={user?.avatarUrl}
+                compact
+              />
               <div className="flex-1 space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>

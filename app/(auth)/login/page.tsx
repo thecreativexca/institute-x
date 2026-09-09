@@ -2,7 +2,6 @@ import { Suspense } from "react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail } from "lucide-react";
-import { DevTestAccountsSection } from "@/components/auth/dev-test-accounts-section";
 import { LoginForm } from "./LoginForm";
 
 export default function LoginPage() {
@@ -21,9 +20,6 @@ export default function LoginPage() {
         <Suspense fallback={null}>
           <LoginForm />
         </Suspense>
-
-        <hr className="my-6 border-slate-200" />
-        <DevTestAccountsSection mode="all" />
       </CardContent>
     </Card>
   );

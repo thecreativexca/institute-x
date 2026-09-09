@@ -15,6 +15,8 @@ import {
   TrendingUp,
   Users,
   Wallet,
+  BriefcaseBusiness,
+  FolderKanban,
 } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -23,6 +25,10 @@ import { OfficeShell } from "@/components/office/OfficeShell";
 import { getValidatedSession } from "@/lib/auth/helpers";
 import { canAccessOffice, hasPermission } from "@/lib/auth/permissions";
 import { PERMISSIONS, ROLE_LABELS, type Permission, type UserRole } from "@/lib/constants";
+import { connectDB } from "@/lib/db/connect";
+import { InternshipApplication } from "@/models/InternshipApplication";
+import { InternshipEnrollment } from "@/models/InternshipEnrollment";
+import { ProjectSubmission } from "@/models/ProjectSubmission";
 
 export const metadata: Metadata = {
   title: "Office Portal",
@@ -46,6 +52,8 @@ const modules: Array<{
   { href: "/office/analytics", label: "Analytics", description: "Revenue, enrollment and content performance insights.", icon: TrendingUp, iconClassName: "text-[#5f7425]", iconSurfaceClassName: "bg-[#f1f6cf]", permissions: [PERMISSIONS.ANALYTICS_READ] },
   { href: "/office/resources", label: "Resources", description: "Organize lesson documents and downloadable study material.", icon: FileStack, iconClassName: "text-accent-800", iconSurfaceClassName: "bg-accent-100", permissions: [PERMISSIONS.RESOURCES_MANAGE] },
   { href: "/office/assignments", label: "Assignments", description: "Create tasks, review submissions and manage grading.", icon: ClipboardList, iconClassName: "text-primary-700", iconSurfaceClassName: "bg-primary-50", permissions: [PERMISSIONS.ASSIGNMENTS_READ, PERMISSIONS.ASSIGNMENTS_MANAGE, PERMISSIONS.ASSIGNMENTS_GRADE] },
+  { href: "/office/internships", label: "Internships", description: "Manage applications, interns, tasks, progress and evaluations.", icon: BriefcaseBusiness, iconClassName: "text-emerald-800", iconSurfaceClassName: "bg-emerald-50", permissions: [PERMISSIONS.INTERNSHIPS_READ] },
+  { href: "/office/projects", label: "Projects", description: "Publish practical projects and review student submissions.", icon: FolderKanban, iconClassName: "text-accent-800", iconSurfaceClassName: "bg-accent-100", permissions: [PERMISSIONS.PROJECTS_READ] },
   { href: "/office/quizzes", label: "Quizzes", description: "Manage assessments, question banks and learner results.", icon: HelpCircle, iconClassName: "text-accent-700", iconSurfaceClassName: "bg-accent-50", permissions: [PERMISSIONS.QUIZZES_READ, PERMISSIONS.QUIZZES_MANAGE, PERMISSIONS.QUIZ_RESULTS_READ] },
   { href: "/office/announcements", label: "Announcements", description: "Publish timely updates for students and course students audiences.", icon: Megaphone, iconClassName: "text-[#5f7425]", iconSurfaceClassName: "bg-[#f1f6cf]", permissions: [PERMISSIONS.ANNOUNCEMENTS_MANAGE] },
   { href: "/office/support", label: "Support", description: "Respond to learner requests and resolve open tickets.", icon: LifeBuoy, iconClassName: "text-emerald-800", iconSurfaceClassName: "bg-emerald-50", permissions: [PERMISSIONS.SUPPORT_READ] },
@@ -61,6 +69,13 @@ export default async function OfficeHomePage() {
     module.permissions.some((permission) => hasPermission(user.role, permission))
   );
   const roleLabel = ROLE_LABELS[user.role as UserRole] ?? "Office Team";
+  await connectDB();
+  const [openApplications, activeInterns, pendingProjectReviews, internshipCompletions] = await Promise.all([
+    InternshipApplication.countDocuments({ status: "pending" }),
+    InternshipEnrollment.countDocuments({ status: "active" }),
+    ProjectSubmission.countDocuments({ status: { $in: ["submitted", "under_review"] } }),
+    InternshipEnrollment.countDocuments({ status: "completed" }),
+  ]);
 
   return (
     <OfficeShell session={user}>
@@ -90,6 +105,12 @@ export default async function OfficeHomePage() {
             </div>
           </div>
         </header>
+
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Internship operations overview">
+          {[["Open applications", openApplications, "/office/internships"], ["Active interns", activeInterns, "/office/internships"], ["Pending project reviews", pendingProjectReviews, "/office/projects"], ["Internship completions", internshipCompletions, "/office/internships"]].map(([label, value, href]) => (
+            <Link key={String(label)} href={String(href)}><Card className="h-full"><CardContent className="p-5"><p className="text-2xl font-bold text-slate-900">{value}</p><p className="mt-1 text-sm text-slate-500">{label}</p></CardContent></Card></Link>
+          ))}
+        </section>
 
         {visibleModules.length > 0 ? (
           <section aria-labelledby="office-workspaces-heading">

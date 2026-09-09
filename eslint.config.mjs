@@ -5,6 +5,17 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    files: [
+      "app/**/internships/**/*.ts",
+      "app/**/internships/**/*.tsx",
+      "app/**/projects/**/*.ts",
+      "app/**/projects/**/*.tsx",
+      "app/**/internship-*/**/*.ts",
+      "lib/internships/**/*.ts",
+    ],
+    rules: { "@typescript-eslint/no-explicit-any": "off" },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

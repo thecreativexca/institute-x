@@ -1,0 +1,113 @@
+⨯ Error: The destination stream closed early.
+    at ignore-listed frames {
+  digest: '646193090'
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+(node:27268) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[browser] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <LoadingBoundary name="projects/" loading={null}>
+      <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
+        <RedirectBoundary>
+          <RedirectErrorBoundary router={{...}}>
+            <InnerLayoutRouter url="/office/pr..." tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} ...>
+              <SegmentViewNode type="page" pagePath="office/pro...">
+                <SegmentTrieNode>
+                <Page>
+                  <OfficeShell session={{id:"6a97fa...", ...}}>
+                    <div className="office-the...">
+                      <aside className="fixed inse..." aria-label="Office sid...">
+                        <div>
+                        <div>
+                        <nav className="relative f...">
+                          <p>
+                          <ul>
+                          <div className="shrink-0 pt-6">
+                            <div className="rounded-2x...">
+                              <div>
+                              <form action="/api/auth/..." method="POST" className="mt-3 borde...">
+                                <button
+                                  type="submit"
+                                  className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-xs font-medium t..."
+-                                 fdprocessedid="1vau2k"
+                                >
+                      <div className="min-h-scre...">
+                        ...
+                          <div className="mx-auto w-...">
+                            <div className="flex h-[4....">
+                              <div>
+                              <div className="flex items...">
+                                <NotificationMenu>
+                                  <div className="relative">
+                                    <Button variant="ghost" size="sm" className="relative h..." ...>
+                                      <button
+                                        ref={null}
+                                        type="button"
+                                        className="inline-flex items-center justify-center gap-2 font-medium transitio..."
+                                        disabled={false}
+                                        aria-busy={undefined}
+                                        onClick={function onClick}
+                                        aria-label="Notifications"
+                                        aria-expanded={false}
+                                        aria-haspopup="true"
+-                                       fdprocessedid="i2vq8d6"
+                                      >
+                                <div className="relative">
+                                  <button
+                                    type="button"
+                                    className="flex items-center gap-2 rounded-xl border border-primary-100 bg-white p..."
+                                    onClick={function onClick}
+                                    aria-label="Profile menu"
+                                    aria-expanded={false}
+                                    aria-haspopup="true"
+-                                   fdprocessedid="axz63"
+                                  >
+                        ...
+                          <AdminProjectsClient data={{projects:[...], ...}}>
+                            <div className="space-y-6">
+                              <div className="flex flex-...">
+                                <div>
+                                <Button onClick={function onClick}>
+                                  <button
+                                    ref={null}
+                                    type="button"
+                                    className="inline-flex items-center justify-center gap-2 font-medium rounded-md tr..."
+                                    disabled={false}
+                                    aria-busy={undefined}
+                                    onClick={function onClick}
+-                                   fdprocessedid="2duq7g"
+                                  >
+                              ...
+                                <FieldShell label="" optionalLabel={undefined} hint={undefined} error={undefined} ...>
+                                  <div className="flex w-ful...">
+                                    <Label>
+                                    <div className="relative">
+                                      <input
+                                        ref={null}
+                                        id="_R_4lpbn5rknelb_"
+                                        name={undefined}
+                                        required={undefined}
+                                        aria-invalid={undefined}
+                                        aria-describedby={undefined}
+                                        className="w-full rounded-md border bg-white px-3 text-slate-900 placeholder:t..."
+                                        value=""
+                                        onChange={function onChange}
+                                        placeholder="Search projects"
+-                                       fdprocessedid="8rd6ns"
+                                      >
+                              ...
+              ...
+            ...
+ 

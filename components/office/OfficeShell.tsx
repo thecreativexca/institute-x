@@ -27,15 +27,17 @@ import {
   TrendingUp,
   Users,
   Wallet,
+  BriefcaseBusiness,
+  FolderKanban,
   X,
 } from "lucide-react";
 
+import { Logo } from "@/components/layout/logo";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { NotificationMenu } from "@/components/notifications/notification-menu";
 import { hasPermission } from "@/lib/auth/permissions";
 import { PERMISSIONS, ROLE_LABELS, type Permission } from "@/lib/constants";
-import { siteConfig } from "@/lib/config/site";
 import { cn } from "@/lib/utils/cn";
 
 interface OfficeShellProps {
@@ -76,6 +78,8 @@ const navItems = [
     icon: HelpCircle,
     permissions: [PERMISSIONS.QUIZZES_READ, PERMISSIONS.QUIZZES_MANAGE, PERMISSIONS.QUIZ_RESULTS_READ],
   },
+  { href: "/office/internships", label: "Internships", icon: BriefcaseBusiness, permissions: [PERMISSIONS.INTERNSHIPS_READ] },
+  { href: "/office/projects", label: "Projects", icon: FolderKanban, permissions: [PERMISSIONS.PROJECTS_READ] },
   { href: "/office/announcements", label: "Announcements", icon: Megaphone, permissions: [PERMISSIONS.ANNOUNCEMENTS_MANAGE] },
   { href: "/office/support", label: "Support", icon: LifeBuoy, permissions: [PERMISSIONS.SUPPORT_READ] },
   { href: "/office/settings", label: "Settings", icon: SlidersHorizontal, permissions: [PERMISSIONS.ADMIN_ACCESS] },
@@ -137,15 +141,10 @@ export function OfficeShell({ children, session }: OfficeShellProps) {
       >
         <div aria-hidden="true" className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-accent-300/15 blur-3xl" />
         <div className="relative flex h-[4.5rem] items-center justify-between border-b border-white/10 px-5">
-          <Link href="/office" className="flex min-w-0 items-center gap-3" onClick={() => setSidebarOpen(false)}>
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent-200 to-accent-400 text-sm font-bold text-primary-950 shadow-lg shadow-primary-950/25">
-              {siteConfig.shortName}
-            </span>
-            <span className="min-w-0">
-              <span className="block truncate text-sm font-semibold tracking-wide text-white">Office Portal</span>
-              <span className="block truncate text-xs text-primary-200">Institute operations</span>
-            </span>
-          </Link>
+          <div className="min-w-0" onClick={() => setSidebarOpen(false)}>
+            <Logo href="/office" variant="compact" />
+            <p className="mt-2 truncate text-xs text-primary-200">Office workspace</p>
+          </div>
           <button
             type="button"
             className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-300 hover:bg-white/10 hover:text-white lg:hidden"

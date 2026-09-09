@@ -16,7 +16,7 @@ export function Footer() {
       <Container className="py-12 lg:py-14">
         <div className="relative grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-4">
-            <Logo tone="inverse" />
+            <Logo />
             <p className="max-w-xs text-sm leading-relaxed text-primary-100">
               {siteConfig.description}
             </p>

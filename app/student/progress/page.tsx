@@ -14,7 +14,7 @@ export default async function StudentProgressPage() {
   const { user: student, error } = await getValidatedStudent();
 
   if (!student || error) {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 
   const overview = await getStudentProgressOverview(student.id);

@@ -11,6 +11,7 @@ import { Session } from "@/models/Session";
 import { Course } from "@/models/Course";
 import { SESSION_STATUSES, USER_ROLES } from "@/lib/constants";
 import { recordAuditEvent } from "@/lib/audit/log";
+import { notifyCourseStudents, safeNotify } from "@/lib/notifications/service";
 import type { SessionUser } from "@/lib/auth/session";
 import { sessionFormSchema, sessionFormToDate, type SessionFormInput } from "./validation";
 
@@ -116,6 +117,19 @@ export async function createSessionAction(
       entityId: doc._id.toString(),
       metadata: { courseId: input.courseId, title: input.title, date: input.date },
     });
+
+    if (input.isDisplayed && input.status !== SESSION_STATUSES.CANCELLED) {
+      await safeNotify(
+        () =>
+          notifyCourseStudents(input.courseId, {
+            title: "New class session scheduled",
+            message: `“${input.title}” is scheduled on ${input.date}.`,
+            type: "info",
+            link: "/student/sessions",
+          }),
+        "Session create",
+      );
+    }
 
     revalidatePath("/office/sessions");
     return { ok: true, message: "Class scheduled successfully." };

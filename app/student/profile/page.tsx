@@ -28,7 +28,7 @@ export default async function StudentProfilePage() {
   const { user: student, error } = await getValidatedStudent();
 
   if (!student || error) {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 
   await connectDB();
@@ -37,7 +37,7 @@ export default async function StudentProfilePage() {
     .lean();
 
   if (!user) {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 
   const userDoc = user as unknown as { _id: Types.ObjectId; name: string; email: string; phone?: string; address?: string; education?: string; avatarUrl?: string; emailVerifiedAt?: Date | null; createdAt: Date };

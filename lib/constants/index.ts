@@ -128,6 +128,7 @@ export type CertificateStatus = (typeof CERTIFICATE_STATUSES)[keyof typeof CERTI
 
 export const CERTIFICATE_TYPES = {
   COURSE_COMPLETION: "course_completion",
+  INTERNSHIP: "internship",
   TRAINING_COMPLETION: "training_completion",
 } as const;
 
@@ -275,6 +276,13 @@ export const PERMISSIONS = {
   ASSIGNMENTS_MANAGE: "assignments.manage",
   ASSIGNMENTS_GRADE: "assignments.grade",
 
+  // Institute internship and project management
+  INTERNSHIPS_READ: "internships.read",
+  INTERNSHIPS_MANAGE: "internships.manage",
+  PROJECTS_READ: "projects.read",
+  PROJECTS_MANAGE: "projects.manage",
+  PROJECTS_GRADE: "projects.grade",
+
   // Quiz management
   QUIZZES_READ: "quizzes.read",
   QUIZZES_MANAGE: "quizzes.manage",
@@ -336,6 +344,11 @@ export const ROLE_PERMISSIONS: Record<UserRole, readonly Permission[]> = {
     PERMISSIONS.ASSIGNMENTS_READ,
     PERMISSIONS.ASSIGNMENTS_MANAGE,
     PERMISSIONS.ASSIGNMENTS_GRADE,
+    PERMISSIONS.INTERNSHIPS_READ,
+    PERMISSIONS.INTERNSHIPS_MANAGE,
+    PERMISSIONS.PROJECTS_READ,
+    PERMISSIONS.PROJECTS_MANAGE,
+    PERMISSIONS.PROJECTS_GRADE,
     PERMISSIONS.QUIZZES_READ,
     PERMISSIONS.QUIZZES_MANAGE,
     PERMISSIONS.QUIZ_RESULTS_READ,

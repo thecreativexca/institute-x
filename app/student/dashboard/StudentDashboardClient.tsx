@@ -127,6 +127,7 @@ interface StudentDashboardClientProps {
   certificates: CertificatePreview[];
   certificatesReadyCount: number;
   profile: StudentProfilePreview | null;
+  career: { enrollment?: { internship: { _id: string; title: string }; progressPercentage: number } | null; activeProjects: number };
 }
 
 const statItems: StatItem[] = [
@@ -181,6 +182,7 @@ export function StudentDashboardClient({
   certificates,
   certificatesReadyCount,
   profile,
+  career,
 }: StudentDashboardClientProps) {
   const statsWithValues = [
     { ...statItems[0], value: stats.enrolledCourses },
@@ -219,6 +221,10 @@ export function StudentDashboardClient({
             </Button>
           </div>
         </section>
+
+        {(career.enrollment || career.activeProjects > 0) && (
+          <Card className="border-accent-200 bg-accent-50/50"><CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center"><div className="flex-1"><p className="text-xs font-semibold uppercase tracking-wider text-primary-600">Career experience</p><h2 className="mt-1 font-semibold text-slate-900">{career.enrollment?.internship?.title ?? `${career.activeProjects} active project${career.activeProjects === 1 ? "" : "s"}`}</h2><p className="mt-1 text-sm text-slate-600">{career.enrollment ? `${career.enrollment.progressPercentage}% internship progress` : "Continue your assigned practical projects."}</p></div><Button asChild><Link href={career.enrollment ? `/student/internships/${career.enrollment.internship._id}` : "/student/projects"}>Continue <ChevronRight className="h-4 w-4" /></Link></Button></CardContent></Card>
+        )}
 
         {/* Statistics Cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

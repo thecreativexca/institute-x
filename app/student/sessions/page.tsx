@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 
 export default async function StudentSessionsPage() {
   const { user, error } = await getValidatedStudent();
-  if (!user || error) redirect("/login");
+  if (!user || error) redirect("/login?reauth=1");
   const sessions = await listStudentSessions(user.id);
   const today = new Date(new Date().toDateString());
   const upcoming = sessions.filter((session) => new Date(session.date) >= today && session.status === "scheduled");

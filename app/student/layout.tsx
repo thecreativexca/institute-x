@@ -13,7 +13,7 @@ export default async function StudentLayout({
   const { user: session, error } = await getValidatedStudent();
 
   if (!session || error) {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 
   await connectDB();

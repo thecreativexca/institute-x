@@ -82,5 +82,5 @@ export async function getCertificatesForCourseIds(
   })
     .select("course status")
     .lean();
-  return new Set(certs.filter((c) => c.status === "issued").map((c) => c.course.toString()));
+  return new Set(certs.filter((c) => c.status === "issued" && c.course).map((c) => c.course!.toString()));
 }

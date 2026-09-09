@@ -59,11 +59,11 @@ export async function requireAdmin(): Promise<{
   const result = await validateSession();
 
   if (!result.user) {
-    redirect("/office/login");
+    redirect("/office/login?reauth=1");
   }
 
   if (!isAdmin(result.user.role) || result.user.status !== "active") {
-    redirect("/office/login");
+    redirect("/office/login?reauth=1");
   }
 
   return { user: result.user };
@@ -79,11 +79,11 @@ export async function requireStudent(): Promise<{
   const result = await validateSession();
 
   if (!result.user) {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 
   if (!isStudent(result.user.role) || result.user.status !== "active") {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 
   return { user: result.user };
@@ -153,6 +153,6 @@ export async function redirectIfAuthenticated(): Promise<void> {
 export async function redirectIfNotStudent(): Promise<void> {
   const result = await validateSession();
   if (!result.user || !isStudent(result.user.role)) {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 }

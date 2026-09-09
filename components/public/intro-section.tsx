@@ -1,5 +1,6 @@
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { siteConfig } from "@/lib/config/site";
 
 /**
  * Short institute introduction.
@@ -12,9 +13,9 @@ export function IntroSection() {
       <Container className="py-16 sm:py-20">
         <SectionHeading
           align="center"
-          eyebrow="About the institute"
+          eyebrow={`About ${siteConfig.name}`}
           title="Structured training for real workplace skills"
-          description="Our programs follow a clear curriculum — from fundamentals to practical application — so learners build confidence step by step with guided practice and regular assessment."
+          description={`${siteConfig.name} programs follow a clear curriculum — from fundamentals to practical application — so learners build confidence step by step with guided practice and regular assessment.`}
         />
         <div className="mx-auto mt-10 grid max-w-4xl grid-cols-1 gap-6 text-center sm:grid-cols-3">
           {[

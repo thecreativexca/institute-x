@@ -22,13 +22,15 @@ import {
   Megaphone,
   Sparkles,
   User,
+  BriefcaseBusiness,
+  FolderKanban,
   X,
 } from "lucide-react";
 
+import { Logo } from "@/components/layout/logo";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { NotificationMenu } from "@/components/notifications/notification-menu";
-import { siteConfig } from "@/lib/config/site";
 import { cn } from "@/lib/utils/cn";
 
 interface StudentShellProps {
@@ -49,6 +51,8 @@ const navItems = [
   { href: "/student/announcements", label: "Announcements", icon: Megaphone },
   { href: "/student/progress", label: "Progress", icon: BarChart3 },
   { href: "/student/assignments", label: "Assignments", icon: ClipboardCheck },
+  { href: "/student/internships", label: "Internships", icon: BriefcaseBusiness },
+  { href: "/student/projects", label: "Projects", icon: FolderKanban },
   { href: "/student/quizzes", label: "Quizzes", icon: CircleHelp },
   { href: "/student/certificates", label: "Certificates", icon: Award },
   { href: "/student/payments", label: "Payments", icon: CreditCard },
@@ -123,20 +127,10 @@ export function StudentShell({ children, session }: StudentShellProps) {
         <div aria-hidden="true" className="student-grid-pattern absolute inset-0 opacity-35" />
 
         <div className="relative flex h-[4.5rem] items-center justify-between border-b border-white/10 px-5">
-          <Link
-            href="/student/dashboard"
-            className="flex min-w-0 items-center gap-3"
-            onClick={() => setSidebarOpen(false)}
-            aria-label={`${siteConfig.name} Student Portal`}
-          >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent-200 to-accent-400 text-sm font-bold text-primary-950 shadow-lg shadow-primary-950/25">
-              {siteConfig.shortName}
-            </span>
-            <span className="min-w-0">
-              <span className="block truncate text-sm font-semibold tracking-wide text-white">Student Portal</span>
-              <span className="block truncate text-xs text-primary-200">My learning space</span>
-            </span>
-          </Link>
+          <div className="min-w-0" onClick={() => setSidebarOpen(false)}>
+            <Logo href="/student/dashboard" variant="compact" />
+            <p className="mt-2 truncate text-xs text-primary-200">Student learning portal</p>
+          </div>
           <button
             type="button"
             className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-primary-100 hover:bg-white/10 hover:text-white lg:hidden"
@@ -148,8 +142,8 @@ export function StudentShell({ children, session }: StudentShellProps) {
         </div>
 
         <nav className="relative flex min-h-0 flex-1 flex-col px-4 py-5">
-          <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-300">Learning</p>
-          <ul className="mt-3 flex flex-col gap-1" role="list">
+          <p className="shrink-0 px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-300">Learning</p>
+          <ul className="office-nav-scroll mt-3 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-1" role="list">
             {navItems.map((item) => {
               const active = isActive(item.href);
               return (
@@ -183,7 +177,7 @@ export function StudentShell({ children, session }: StudentShellProps) {
             })}
           </ul>
 
-          <div className="mt-auto pt-6">
+          <div className="shrink-0 pt-6">
             <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-3.5">
               <div className="flex items-center gap-3">
                 {avatar("h-10 w-10")}

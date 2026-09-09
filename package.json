@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "seed:test-accounts": "tsx scripts/seed-test-accounts.ts"
+    "lint": "eslint"
   },
   "dependencies": {
     "@radix-ui/react-collapsible": "^1.1.20",

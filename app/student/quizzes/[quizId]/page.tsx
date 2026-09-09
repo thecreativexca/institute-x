@@ -21,7 +21,7 @@ interface RouteParams {
 export default async function StudentQuizDetailPage({ params }: RouteParams) {
   const { user: student, error } = await getValidatedStudent();
   if (!student || error) {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 
   const resolved = await params;

@@ -8,6 +8,11 @@ import { User } from "@/models/User";
 import { AuditLog } from "@/models/AuditLog";
 import { Types } from "mongoose";
 import { SUBMISSION_STATUSES, type SubmissionStatus } from "@/lib/constants";
+import {
+  notifyCourseStudents,
+  notifyUser,
+  safeNotify,
+} from "@/lib/notifications/service";
 import { CreateAssignmentInput, UpdateAssignmentInput, GradeSubmissionInput } from "./validation";
 
 function toObjectId(id: string): Types.ObjectId {
@@ -86,6 +91,16 @@ export async function createAssignment(
       entityId: assignment._id,
       metadata: { title: input.title },
     });
+    await safeNotify(
+      () =>
+        notifyCourseStudents(assignment.course, {
+          title: "New assignment published",
+          message: `“${assignment.title}” is now available in ${course.name}.`,
+          type: "info",
+          link: "/student/assignments",
+        }),
+      "Assignment publish",
+    );
   }
 
   return { assignmentId: assignment._id.toString() };
@@ -171,6 +186,17 @@ export async function updateAssignment(
         entityId: assignment._id,
         metadata: { title: assignment.title },
       });
+      const course = await Course.findById(assignment.course).select("name").lean();
+      await safeNotify(
+        () =>
+          notifyCourseStudents(assignment.course, {
+            title: "New assignment published",
+            message: `“${assignment.title}” is now available${course?.name ? ` in ${course.name}` : ""}.`,
+            type: "info",
+            link: "/student/assignments",
+          }),
+        "Assignment publish",
+      );
     } else if (wasPublished && !input.isPublished) {
       await AuditLog.create({
         actorUserId: toObjectId(actorId),
@@ -337,6 +363,24 @@ export async function gradeSubmission(
       console.error("Failed to send assignment graded email:", emailError);
     }
   }
+
+  await safeNotify(
+    () =>
+      notifyUser({
+        recipientId: submission.student,
+        title:
+          input.status === "returned_for_resubmission"
+            ? "Assignment needs revision"
+            : "Assignment graded",
+        message:
+          input.feedback.trim() ||
+          `Your submission for “${assignment.title}” was reviewed.`,
+        type:
+          input.status === "returned_for_resubmission" ? "warning" : "success",
+        link: "/student/assignments",
+      }),
+    "Assignment grade",
+  );
 
   return { success: true };
 }

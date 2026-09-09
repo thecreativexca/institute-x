@@ -7,6 +7,7 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { siteConfig } from "@/lib/config/site";
 import { formatCurrency } from "@/lib/payments/razorpay";
 
 interface CheckoutCourse {
@@ -109,7 +110,7 @@ export function CheckoutClient({ course, student }: CheckoutClientProps) {
       key: paymentOrder.keyId,
       amount: paymentOrder.amount,
       currency: paymentOrder.currency,
-      name: "Skill Development Institute",
+      name: siteConfig.name,
       description: course.name,
       order_id: paymentOrder.razorpayOrderId,
       prefill: {

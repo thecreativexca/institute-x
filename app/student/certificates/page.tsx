@@ -15,7 +15,7 @@ export default async function StudentCertificatesPage() {
   const { user: student, error } = await getValidatedStudent();
 
   if (!student || error) {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 
   const [certificates, eligible] = await Promise.all([

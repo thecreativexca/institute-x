@@ -32,6 +32,7 @@ import {
 } from "./cloudinary";
 import { certificateToDetail } from "./translate";
 import { sendCertificateIssuedEmail } from "./email";
+import { notifyUser, safeNotify } from "@/lib/notifications/service";
 import type { CertificateDetail, EligibleEnrollment } from "@/types/certificate";
 
 function isDuplicateKeyError(error: unknown): boolean {
@@ -183,6 +184,18 @@ export async function issueCertificateForEnrollment(params: {
         );
       });
 
+      await safeNotify(
+        () =>
+          notifyUser({
+            recipientId: studentId,
+            title: "Certificate issued",
+            message: `Your certificate for ${course.name} is ready to download.`,
+            type: "success",
+            link: `/student/certificates/${created._id.toString()}`,
+          }),
+        "Certificate issue",
+      );
+
       return certificateToDetail(created);
     } catch (error) {
       // Compensation: remove the freshly uploaded PDF on any failed create.
@@ -220,7 +233,7 @@ export async function listCertificateEligibleEnrollments(
     .select("enrollment")
     .lean();
   const issuedEnrollmentIds = new Set(
-    existing.map((c) => c.enrollment.toString())
+    existing.flatMap((c) => c.enrollment ? [c.enrollment.toString()] : [])
   );
 
   const enrollments = await Enrollment.find({

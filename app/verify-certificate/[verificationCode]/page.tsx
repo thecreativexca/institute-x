@@ -28,7 +28,7 @@ export default async function VerifyCertificateResultPage({ params }: RouteParam
         <img
           src={siteConfig.logo}
           alt={`${siteConfig.name} logo`}
-          className="mx-auto mb-4 h-16 w-16"
+          className="mx-auto mb-4 h-12 w-auto max-w-[16rem] object-contain sm:h-14"
         />
         <h1 className="text-3xl font-bold text-slate-900">Certificate Verification</h1>
         <p className="mt-2 text-slate-600">

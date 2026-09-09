@@ -75,11 +75,28 @@ export function proxy(request: NextRequest) {
   const requestedPath = `${pathname}${search}`;
   const session = readOptimisticSession(request);
 
+  // Forward the requested path to the page so server layouts that guard whole
+  // segments (e.g. /office/*) can skip public auth routes nested inside them.
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname);
+
+  // A Server Component can discover that an otherwise well-formed cookie is
+  // stale (for example after a password change), but Next.js only permits
+  // cookie mutation in a proxy, Server Action, or Route Handler. The protected
+  // page redirects here with this one-shot flag so the proxy can clear the
+  // invalid cookie without creating an auth redirect loop.
+  if (
+    request.nextUrl.searchParams.get("reauth") === "1" &&
+    (pathname === "/login" || pathname === "/office/login")
+  ) {
+    return clearSessionAndRedirect(request, pathname);
+  }
+
   if (matchesAny(pathname, OFFICE_AUTH_PATHS)) {
     if (session && isOfficeRole(session.role) && session.status === "active") {
       return NextResponse.redirect(new URL("/office", request.url));
     }
-    return NextResponse.next();
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   if (matchesPath(pathname, "/student")) {
@@ -97,7 +114,7 @@ export function proxy(request: NextRequest) {
     if (session.role !== "student") {
       return clearSessionAndRedirect(request, "/login");
     }
-    return NextResponse.next();
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   if (matchesPath(pathname, "/office")) {
@@ -115,7 +132,7 @@ export function proxy(request: NextRequest) {
     if (!isOfficeRole(session.role)) {
       return clearSessionAndRedirect(request, "/office/login");
     }
-    return NextResponse.next();
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   if (matchesAny(pathname, AUTH_PATHS) && session) {
@@ -128,7 +145,7 @@ export function proxy(request: NextRequest) {
   }
 
   if (matchesAny(pathname, PUBLIC_PATHS)) {
-    return NextResponse.next();
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   return NextResponse.next();

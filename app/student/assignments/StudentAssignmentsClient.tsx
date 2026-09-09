@@ -12,6 +12,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { FieldShell, controlClassName } from "@/components/ui/field";
 import { Modal } from "@/components/ui/modal";
 import type { StudentAssignmentItem } from "@/lib/student/assignments";
+import { refreshNotifications } from "@/lib/notifications/client";
 
 export function StudentAssignmentsClient({ assignments }: { assignments: StudentAssignmentItem[] }) {
   const [selected, setSelected] = useState<StudentAssignmentItem | null>(null);
@@ -62,6 +63,7 @@ function SubmissionModal({ assignment, onClose }: { assignment: StudentAssignmen
       const response = await fetch(`/api/student/assignments/${assignment.id}/submit`, { method: "POST", body: data });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Unable to submit assignment.");
+      refreshNotifications();
       onClose(); router.refresh();
     } catch (submitError) { setError(submitError instanceof Error ? submitError.message : "Unable to submit assignment."); }
     finally { setSubmitting(false); }

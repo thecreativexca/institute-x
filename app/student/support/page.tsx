@@ -13,7 +13,7 @@ export default async function StudentSupportPage() {
   const { user: student, error } = await getValidatedStudent();
 
   if (!student || error) {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 
   return <StudentSupportClient />;

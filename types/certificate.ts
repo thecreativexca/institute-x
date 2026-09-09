@@ -1,4 +1,4 @@
-import type { CertificateStatus } from "@/lib/constants";
+import type { CertificateStatus, CertificateType } from "@/lib/constants";
 
 /**
  * Client-safe DTO types for the certificate system (Phase 12).
@@ -13,6 +13,7 @@ export interface CertificateListItem {
   issuedAt: string;
   completionDate: string;
   status: CertificateStatus;
+  certificateType: CertificateType;
 }
 
 export interface CertificateDetail extends CertificateListItem {

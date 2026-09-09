@@ -3,6 +3,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { HeroVisual } from "@/components/public/hero-visual";
+import { siteConfig } from "@/lib/config/site";
 import { ArrowRight, BadgeCheck, BookOpenCheck } from "lucide-react";
 
 /**
@@ -20,22 +21,22 @@ export function HeroSection() {
             <div className="text-center lg:text-left">
               <p className="inline-flex items-center gap-2 rounded-full border border-accent-300 bg-accent-100/80 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-primary-900 shadow-sm">
                 <BadgeCheck className="h-4 w-4 text-primary-700" aria-hidden="true" />
-                SKILL DEVELOPMENT & PROFESSIONAL TRAINING
+                {siteConfig.name.toUpperCase()}
               </p>
               <h1
                 id="hero-heading"
                 className="mt-6 text-balance text-4xl font-bold tracking-[-0.035em] text-primary-950 sm:text-5xl lg:text-[3.65rem] lg:leading-[1.05]"
               >
-                Learn practical skills.<br />
+                Creative learning.<br />
                 <span className="relative inline-block text-primary-700">
-                  Build your career.
+                  Professional growth.
                   <span aria-hidden="true" className="absolute inset-x-0 -bottom-1 h-2 -rotate-1 rounded-full bg-accent-300/65 -z-10" />
                 </span>
               </h1>
               <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-7 text-slate-600 sm:text-lg lg:mx-0">
-                Our institute provides structured, career-focused courses designed for
-                students, job seekers, and professionals. From basic computer skills to
-                full-stack development — gain practical expertise through guided learning.
+                {siteConfig.name} provides structured, career-focused courses designed for
+                students, job seekers, and professionals — from foundational skills to
+                advanced digital careers through guided learning.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
                 <Link href="/courses" className={buttonVariants("primary", "lg", "w-full rounded-xl shadow-lg shadow-primary-900/10 sm:w-auto")}>

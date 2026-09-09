@@ -37,7 +37,7 @@ export function getResendFromEmail(): string {
 /** Resend from name (server-only, optional). */
 export function getResendFromName(): string {
   const value = process.env.RESEND_FROM_NAME;
-  return value && value.trim() !== "" ? value.trim() : "Skill Development Institute";
+  return value && value.trim() !== "" ? value.trim() : "Creative X Tycoon";
 }
 
 /** Whether email delivery is enabled (useful for dev/test). */

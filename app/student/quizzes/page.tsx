@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function StudentQuizzesPage() {
   const { user: student, error } = await getValidatedStudent();
   if (!student || error) {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 
   const quizzes = await getStudentQuizSummaries(student.id);

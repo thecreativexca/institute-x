@@ -17,7 +17,7 @@ type RouteParams = { params: Promise<{ certificateId: string }> };
 export default async function CertificateDetailPage({ params }: RouteParams) {
   const { user: student, error } = await getValidatedStudent();
   if (!student || error) {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 
   const { certificateId } = await params;

@@ -32,8 +32,9 @@ export interface ICertificate {
   createdAt: Date;
   updatedAt: Date;
   student: Types.ObjectId;
-  course: Types.ObjectId;
-  enrollment: Types.ObjectId;
+  course?: Types.ObjectId | null;
+  enrollment?: Types.ObjectId | null;
+  internshipEnrollment?: Types.ObjectId | null;
   certificateNumber: string;
   verificationCode: string;
   certificateType: CertificateType;
@@ -58,18 +59,19 @@ const CertificateSchema = new Schema<ICertificate>(
     student: {
       type: Schema.Types.ObjectId,
       ref: User.modelName,
-      required: true,
+      default: null,
       index: true,
     },
     course: {
       type: Schema.Types.ObjectId,
       ref: Course.modelName,
-      required: true,
+      default: null,
     },
+    internshipEnrollment: { type: Schema.Types.ObjectId, ref: "InternshipEnrollment", default: null },
     enrollment: {
       type: Schema.Types.ObjectId,
       ref: Enrollment.modelName,
-      required: true,
+      default: null,
     },
     certificateNumber: { type: String, required: true, unique: true },
     verificationCode: { type: String, required: true, unique: true },
@@ -100,8 +102,17 @@ const CertificateSchema = new Schema<ICertificate>(
   { timestamps: true }
 );
 
+// Mongoose 9 middleware is promise-based: there is no `next` callback, so
+// errors are reported by throwing inside the async hook.
+CertificateSchema.pre("validate", async function () {
+  if (!this.enrollment && !this.internshipEnrollment) {
+    throw new Error("Certificate must belong to a course enrollment or internship.");
+  }
+});
+
 // One certificate per enrollment (prevents double-click/refresh/retry dupes).
-CertificateSchema.index({ enrollment: 1 }, { unique: true });
+CertificateSchema.index({ enrollment: 1 }, { unique: true, partialFilterExpression: { enrollment: { $type: "objectId" } } });
+CertificateSchema.index({ internshipEnrollment: 1 }, { unique: true, partialFilterExpression: { internshipEnrollment: { $type: "objectId" } } });
 // Fast lookups by owner / course / issued ordering.
 CertificateSchema.index({ student: 1, issuedAt: -1 });
 CertificateSchema.index({ course: 1 });

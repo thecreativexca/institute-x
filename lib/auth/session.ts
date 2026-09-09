@@ -95,7 +95,6 @@ export async function validateSession(): Promise<{
   }
 
   if (session.status !== "active") {
-    await destroySession();
     return { user: null, error: "Account is not active" };
   }
 
@@ -105,17 +104,14 @@ export async function validateSession(): Promise<{
   );
 
   if (!dbUser) {
-    await destroySession();
     return { user: null, error: "User not found" };
   }
 
   if (dbUser.status !== "active") {
-    await destroySession();
     return { user: null, error: "Account is not active" };
   }
 
   if ((dbUser.sessionVersion ?? 0) !== session.sessionVersion) {
-    await destroySession();
     return { user: null, error: "Session has expired" };
   }
 

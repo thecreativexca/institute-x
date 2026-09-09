@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { ShieldCheck } from "lucide-react";
 import { OfficeAuthShell } from "@/components/office/office-auth-shell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DevTestAccountsSection } from "@/components/auth/dev-test-accounts-section";
 import { OfficeLoginForm } from "./OfficeLoginForm";
 
 export default function OfficeLoginPage() {
@@ -23,9 +22,6 @@ export default function OfficeLoginPage() {
           <Suspense fallback={null}>
             <OfficeLoginForm />
           </Suspense>
-
-          <hr className="my-6 border-slate-200" />
-          <DevTestAccountsSection mode="office" />
         </CardContent>
       </Card>
     </OfficeAuthShell>

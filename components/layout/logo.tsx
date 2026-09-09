@@ -5,48 +5,36 @@ import { siteConfig } from "@/lib/config/site";
 import { cn } from "@/lib/utils/cn";
 
 export interface LogoProps {
-  /** Render the full wordmark or just the icon. */
-  variant?: "full" | "icon";
-  tone?: "default" | "inverse";
+  variant?: "full" | "compact" | "auth";
   className?: string;
+  href?: string;
 }
 
-/** Institute logo linking home. Uses the centralized site configuration. */
-export function Logo({ variant = "full", tone = "default", className }: LogoProps) {
+const sizeByVariant = {
+  compact: "h-9 w-auto sm:h-10",
+  full: "h-10 w-auto sm:h-11",
+  auth: "h-12 w-auto sm:h-14",
+} as const;
+
+export function Logo({
+  variant = "full",
+  className,
+  href = "/",
+}: LogoProps) {
   return (
     <Link
-      href="/"
+      href={href}
       aria-label={`${siteConfig.name} — Home`}
-      className={cn("inline-flex items-center gap-2.5", className)}
+      className={cn("inline-flex min-w-0 items-center", className)}
     >
       <Image
         src={siteConfig.logo}
-        alt=""
-        width={40}
-        height={40}
+        alt={siteConfig.name}
+        width={320}
+        height={80}
         priority
-        className="h-10 w-10 rounded-lg"
+        className={cn("max-w-none object-contain", sizeByVariant[variant])}
       />
-      {variant === "full" ? (
-        <span className="flex flex-col leading-tight">
-          <span
-            className={cn(
-              "text-base font-semibold tracking-tight",
-              tone === "inverse" ? "text-white" : "text-slate-900"
-            )}
-          >
-            {siteConfig.name}
-          </span>
-          <span
-            className={cn(
-              "hidden text-xs sm:block",
-              tone === "inverse" ? "text-primary-100" : "text-slate-500"
-            )}
-          >
-            Skill Development &amp; Training
-          </span>
-        </span>
-      ) : null}
     </Link>
   );
 }

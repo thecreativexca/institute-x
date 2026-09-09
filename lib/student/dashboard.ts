@@ -8,6 +8,8 @@ import { Announcement } from "@/models/Announcement";
 import { Lesson } from "@/models/Lesson";
 import { Module } from "@/models/Module";
 import { Types } from "mongoose";
+import { InternshipEnrollment } from "@/models/InternshipEnrollment";
+import { listStudentProjects, serialize } from "@/lib/internships/service";
 
 export interface DashboardStats {
   enrolledCourses: number;
@@ -86,6 +88,13 @@ export interface StudentProfilePreview {
   phone?: string;
   avatarUrl?: string;
   emailVerifiedAt: string | null;
+}
+
+export async function getCareerWidget(studentId: string) {
+  await connectDB();
+  const enrollment = await InternshipEnrollment.findOne({ student: toObjectId(studentId), status: { $in: ["selected", "active", "paused"] } }).populate("internship", "title").sort({ updatedAt: -1 }).lean();
+  const projects = await listStudentProjects(studentId);
+  return serialize({ enrollment, activeProjects: projects.filter((p: { submission?: { status?: string } | null }) => !p.submission || !["approved", "completed"].includes(p.submission.status ?? "")).length });
 }
 
 function toObjectId(id: string): Types.ObjectId {

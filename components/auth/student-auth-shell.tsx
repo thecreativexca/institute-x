@@ -13,7 +13,7 @@ export function StudentAuthShell({ children }: { children: React.ReactNode }) {
           <div aria-hidden="true" className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-accent-300/18 blur-3xl" />
           <div aria-hidden="true" className="absolute -bottom-28 -left-24 h-72 w-72 rounded-full bg-primary-400/20 blur-3xl" />
           <div className="relative">
-            <Logo tone="inverse" />
+            <Logo variant="auth" />
             <span className="mt-12 inline-flex items-center gap-2 rounded-full border border-accent-200/25 bg-accent-200/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-accent-200">
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" /> Student learning portal
             </span>
@@ -37,7 +37,7 @@ export function StudentAuthShell({ children }: { children: React.ReactNode }) {
 
         <section className="flex min-w-0 flex-col bg-[#fffef8] p-5 sm:p-8 lg:p-10 xl:p-12">
           <div className="mb-7 flex items-center justify-between gap-4 lg:hidden">
-            <Logo />
+            <Logo variant="auth" />
             <Link href="/" className="text-xs font-semibold text-primary-700 hover:text-primary-900">Back to website</Link>
           </div>
           <div className="hidden justify-end lg:flex">

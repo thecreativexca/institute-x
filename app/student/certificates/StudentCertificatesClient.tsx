@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,6 +39,8 @@ function formatDate(iso: string): string {
 }
 
 export function StudentCertificatesClient({ certificates, eligible }: Props) {
+  const [certificateFilter, setCertificateFilter] = useState<"course" | "internship">("course");
+  const visibleCertificates = certificates.filter((certificate) => certificateFilter === "internship" ? certificate.certificateType === "internship" : certificate.certificateType !== "internship");
   const hasCertificates = certificates.length > 0;
   const hasEligible = eligible.length > 0;
 
@@ -45,7 +48,7 @@ export function StudentCertificatesClient({ certificates, eligible }: Props) {
       <div className="space-y-6">
         <StudentPageHeader
           title="Certificates"
-          description="Generate, download and verify your official course achievements."
+          description="Download and verify your official course and internship achievements."
           icon={<Award className="h-6 w-6" aria-hidden="true" />}
           eyebrow="Your achievements"
         />
@@ -77,6 +80,10 @@ export function StudentCertificatesClient({ certificates, eligible }: Props) {
             </CardContent>
           </Card>
         ) : null}
+        <div className="flex gap-2 border-b border-slate-200">
+          <button type="button" onClick={() => setCertificateFilter("course")} className={`border-b-2 px-3 py-2 text-sm ${certificateFilter === "course" ? "border-primary-600 font-semibold text-primary-800" : "border-transparent text-slate-500"}`}>Course Certificates</button>
+          <button type="button" onClick={() => setCertificateFilter("internship")} className={`border-b-2 px-3 py-2 text-sm ${certificateFilter === "internship" ? "border-primary-600 font-semibold text-primary-800" : "border-transparent text-slate-500"}`}>Internship Certificates</button>
+        </div>
 {/* Earned certificates */}
         {hasCertificates ? (
           <Card className="rounded-2xl border-primary-100">
@@ -85,7 +92,8 @@ export function StudentCertificatesClient({ certificates, eligible }: Props) {
               <CardDescription>Official certificates issued for completed courses</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {certificates.map((cert) => (
+              {visibleCertificates.length === 0 ? <p className="py-6 text-center text-sm text-slate-500">No {certificateFilter} certificates yet.</p> : null}
+              {visibleCertificates.map((cert) => (
                 <div
                   key={cert.id}
                   className="flex flex-col gap-3 rounded-xl border border-primary-100 bg-gradient-to-r from-white to-primary-50/40 p-4 transition-colors hover:border-primary-200 sm:flex-row sm:items-center sm:justify-between"

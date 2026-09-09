@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { siteConfig } from "@/lib/config/site";
 import { formatCurrency } from "@/lib/payments/razorpay";
 import { PAYMENT_STATUSES } from "@/lib/constants";
 import { Card } from "@/components/ui/card";
@@ -110,7 +111,7 @@ export function PaymentDetailClient({ payment }: PaymentDetailClientProps) {
         <Card className="overflow-hidden rounded-2xl border-primary-100 p-6 print-only:hidden">
           <div className="-mx-6 -mt-6 mb-6 border-b border-primary-100 bg-gradient-to-r from-primary-50 to-accent-50 p-6 text-center">
             <h3 className="text-lg font-semibold text-slate-900">Payment Receipt</h3>
-            <p className="text-sm text-slate-500">Skill Development Institute</p>
+            <p className="text-sm text-slate-500">{siteConfig.name}</p>
           </div>
 
           <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-6">
@@ -172,8 +173,8 @@ export function PaymentDetailClient({ payment }: PaymentDetailClientProps) {
         {/* Print-friendly receipt */}
         <div className="hidden print:block max-w-2xl mx-auto p-8 border border-slate-300 bg-white">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-slate-900">Skill Development Institute</h2>
-            <p className="text-slate-600">Learn practical skills. Build a professional career.</p>
+            <h2 className="text-2xl font-bold text-slate-900">{siteConfig.name}</h2>
+            <p className="text-slate-600">{siteConfig.tagline}</p>
           </div>
           <hr className="border-slate-300 mb-6" />
           <h3 className="text-lg font-semibold text-slate-900 text-center mb-6">Payment Receipt</h3>

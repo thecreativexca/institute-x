@@ -62,6 +62,7 @@ export function buildCertificateNumber(
   year: number,
   certificateType: string
 ): string {
+  if (certificateType === "internship") return `INT-${year}-${padNumber(sequenceValue, 6)}`;
   const prefix = siteConfig.certificate.prefix ?? "INST";
   const typeCode = siteConfig.certificate.typeCode ?? "CN";
   return `${prefix}-${year}-${typeCode}-${padNumber(sequenceValue, 6)}`;

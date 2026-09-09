@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Mail, Lock, User, Phone } from "lucide-react";
 import { getSafeInternalPath } from "@/lib/auth/redirects";
+import { siteConfig } from "@/lib/config/site";
 
 interface FormData {
   name: string;
@@ -178,7 +179,7 @@ export default function RegisterPage() {
         </div>
         <CardTitle as="h1">Create Your Student Account</CardTitle>
         <CardDescription>
-          Join {process.env.NEXT_PUBLIC_SITE_NAME || "Skill Development Institute"} to access courses and track your progress.
+          Join {siteConfig.name} to access courses and track your progress.
         </CardDescription>
       </CardHeader>
       <CardContent className="px-6 pb-7 sm:px-8 sm:pb-8">

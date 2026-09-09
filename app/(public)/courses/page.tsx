@@ -24,11 +24,11 @@ import { getPublishedCourses } from "@/lib/catalog/public-courses";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Skill Development Courses",
+  title: "Courses",
   description:
-    "Explore our professional skill development courses across Basic & Office Skills, Web & Programming, Creative & Digital Skills, Communication & Personal Development, and Healthcare & Wellness.",
+    "Explore Creative X Tycoon courses across technology, design, digital skills, communication, and professional development.",
   openGraph: {
-    title: "Skill Development Courses",
+    title: "Courses | Creative X Tycoon",
     description:
       "Choose from practical, career-focused courses designed to help you build valuable skills.",
     type: "website",
@@ -80,7 +80,7 @@ export default async function CoursesPage({
           <div>
             <span className="mb-3 inline-flex rounded-full border border-accent-300 bg-accent-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-primary-900">Course catalog</span>
             <h1 className="max-w-4xl text-3xl font-bold tracking-[-0.03em] text-primary-950 sm:text-4xl lg:text-5xl">
-              {activeCategory ? `${activeCategory.name} Courses` : "Explore Our Skill Development Courses"}
+              {activeCategory ? `${activeCategory.name} Courses` : "Explore Creative X Tycoon Courses"}
             </h1>
             <p className="mt-2 text-base leading-relaxed text-slate-600">
               {activeCategory

@@ -16,6 +16,7 @@ export function certificateToListItem(
     | "issuedAt"
     | "completionDate"
     | "status"
+    | "certificateType"
   >
 ): CertificateListItem {
   return {
@@ -26,6 +27,7 @@ export function certificateToListItem(
     issuedAt: cert.issuedAt.toISOString(),
     completionDate: cert.completionDate.toISOString(),
     status: cert.status,
+    certificateType: cert.certificateType ?? "course_completion",
   };
 }
 
@@ -40,6 +42,7 @@ export function certificateToDetail(
     | "issuedAt"
     | "completionDate"
     | "status"
+    | "certificateType"
     | "pdfUrl"
     | "revokedAt"
   >

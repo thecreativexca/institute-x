@@ -51,7 +51,7 @@ export default async function StudentResourceViewPage({ params }: RouteParams) {
   const { user: student } = await getValidatedStudent();
 
   if (!student) {
-    redirect("/login");
+    redirect("/login?reauth=1");
   }
 
   const resolved = await params;
