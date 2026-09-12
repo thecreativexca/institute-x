@@ -125,7 +125,6 @@ interface StudentDashboardClientProps {
   pendingTasks: PendingTask[];
   announcements: AnnouncementItem[];
   certificates: CertificatePreview[];
-  certificatesReadyCount: number;
   profile: StudentProfilePreview | null;
   career: { enrollment?: { internship: { _id: string; title: string }; progressPercentage: number } | null; activeProjects: number };
 }
@@ -180,7 +179,6 @@ export function StudentDashboardClient({
   pendingTasks,
   announcements,
   certificates,
-  certificatesReadyCount,
   profile,
   career,
 }: StudentDashboardClientProps) {
@@ -198,7 +196,7 @@ export function StudentDashboardClient({
   return (
     <div className="space-y-7">
         {/* Welcome Section */}
-        <section className="relative overflow-hidden rounded-[1.75rem] border border-primary-900 bg-[#10291e] px-6 py-7 text-white shadow-2xl shadow-primary-950/15 sm:px-8 sm:py-9">
+        <section className="relative overflow-hidden rounded-[1.75rem] border border-primary-900 bg-[#103a50] px-6 py-7 text-white shadow-2xl shadow-primary-950/15 sm:px-8 sm:py-9">
           <div aria-hidden="true" className="student-grid-pattern absolute inset-0 opacity-55" />
           <div aria-hidden="true" className="absolute -right-14 -top-20 h-64 w-64 rounded-full bg-accent-300/20 blur-3xl" />
           <div aria-hidden="true" className="absolute -bottom-24 left-1/3 h-52 w-52 rounded-full bg-primary-400/20 blur-3xl" />
@@ -419,7 +417,7 @@ export function StudentDashboardClient({
                         className={cn(
                           "flex h-8 w-8 items-center justify-center rounded-full shrink-0",
                           activity.status === "completed"
-                            ? "bg-emerald-100 text-emerald-600"
+                            ? "bg-amber-100 text-amber-700"
                             : "bg-primary-100 text-primary-600"
                         )}
                       >
@@ -569,18 +567,20 @@ export function StudentDashboardClient({
           </Card>
 
           {/* Certificates */}
-          {certificatesReadyCount > 0 && (
+          {certificates.length > 0 && (
             <Card className="border-amber-200 bg-amber-50/60">
               <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:p-6">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
-                    <Award className="h-5 w-5 text-amber-700" aria-hidden="true" />
+                    <Award className="h-5 w-5 text-amber-800" aria-hidden="true" />
                   </div>
                   <div>
                     <p className="font-medium text-slate-900">
-                      {certificatesReadyCount} certificate{certificatesReadyCount > 1 ? "s" : ""} ready
+                      Certificates
                     </p>
-                    <p className="text-sm text-slate-600">Generate your official certificate now.</p>
+                    <p className="text-sm text-slate-600">
+                      {certificates.length} certificate{certificates.length > 1 ? "s" : ""} available
+                    </p>
                   </div>
                 </div>
                 <Button asChild variant="primary" size="sm">
@@ -611,17 +611,21 @@ export function StudentDashboardClient({
                     <Link
                       key={cert.id}
                       href={`/student/certificates/${cert.id}`}
-                      className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-emerald-50 hover:border-emerald-300 transition-colors"
+                      className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-amber-50 hover:border-amber-300 transition-colors"
                     >
-                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100">
-                        <Award className="h-6 w-6 text-emerald-600" aria-hidden="true" />
+                      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-100">
+                        <Award className="h-6 w-6 text-amber-700" aria-hidden="true" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-slate-900 truncate">{cert.courseTitle}</p>
                         <p className="text-sm text-slate-500">{cert.certificateNumber}</p>
                         <p className="text-xs text-slate-400">Issued {formatDate(cert.issuedAt)}</p>
                       </div>
-                      <Badge variant="success">Valid</Badge>
+                      {cert.status === "revoked" ? (
+                        <Badge variant="danger">Revoked</Badge>
+                      ) : (
+                        <Badge variant="success">Valid</Badge>
+                      )}
                     </Link>
                   ))}
                   {certificates.length > 4 && (
@@ -633,8 +637,8 @@ export function StudentDashboardClient({
               ) : (
                 <EmptyState
                   icon={<Award className="h-12 w-12" aria-hidden="true" />}
-                  title="No certificates earned yet"
-                  description="Complete courses to earn certificates."
+                  title="No certificates issued yet."
+                  description="Your certificates will appear here once they are issued by the institute."
                 />
               )}
             </CardContent>

@@ -97,7 +97,7 @@ export default async function PaymentsPage({ searchParams }: PaymentsPageProps) 
         </header>
 
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-          <KpiTile icon={IndianRupee} label="Gross collected" value={formatCurrencyFromPaise(summary.grossPaise)} sub={`${summary.paidCount} paid`} tone="text-emerald-700" />
+          <KpiTile icon={IndianRupee} label="Gross collected" value={formatCurrencyFromPaise(summary.grossPaise)} sub={`${summary.paidCount} paid`} tone="text-amber-800" />
           <KpiTile icon={Wallet} label="Net revenue" value={formatCurrencyFromPaise(summary.netPaise)} sub="after refunds" tone="text-primary-700" />
           <KpiTile icon={RotateCcw} label="Refunded" value={formatCurrencyFromPaise(summary.refundedPaise)} sub={`${summary.refundedCount} orders`} tone="text-slate-700" />
           <KpiTile icon={Hourglass} label="Pending" value={String(summary.pendingCount)} sub="created / pending" tone="text-accent-700" />

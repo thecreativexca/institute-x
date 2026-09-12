@@ -147,7 +147,7 @@ export function PaymentDetailClient({ payment }: PaymentDetailClientProps) {
             </div>
             <div>
               <dt className="text-slate-500">Status</dt>
-              <dd className="font-medium text-emerald-700">{statusLabels[status] || status}</dd>
+              <dd className="font-medium text-amber-800">{statusLabels[status] || status}</dd>
             </div>
             {payment.razorpayPaymentId && (
               <div className="sm:col-span-2">

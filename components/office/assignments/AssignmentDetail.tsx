@@ -110,7 +110,7 @@ export function AssignmentDetail({ assignment, canManage, canGrade }: Assignment
                     <button
                       role="menuitem"
                       onClick={handlePublish}
-                      className="w-full px-4 py-2 text-left text-sm text-green-600 hover:bg-green-50 flex items-center gap-2"
+                      className="w-full px-4 py-2 text-left text-sm text-amber-700 hover:bg-amber-50 flex items-center gap-2"
                     >
                       <CheckCircle className="h-4 w-4" aria-hidden="true" />
                       Publish
@@ -170,7 +170,7 @@ export function AssignmentDetail({ assignment, canManage, canGrade }: Assignment
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-600">Graded</span>
-                <span className="font-medium text-emerald-600">{assignment.gradedSubmissions}</span>
+                <span className="font-medium text-amber-700">{assignment.gradedSubmissions}</span>
               </div>
             </div>
           </CardContent>

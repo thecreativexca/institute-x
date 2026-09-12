@@ -14,7 +14,7 @@ interface BarListProps {
 }
 
 /** Horizontal bar list — best for top-N course rankings (spec §77). */
-export function BarList({ title, rows, formatValue, color = "#2aa35f" }: BarListProps) {
+export function BarList({ title, rows, formatValue, color = "#2d9dd1" }: BarListProps) {
   if (rows.length === 0) {
     return <div className="py-10 text-center text-sm text-slate-400">No data available for this period.</div>;
   }

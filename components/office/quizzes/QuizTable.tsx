@@ -208,7 +208,7 @@ export function QuizTable({
                                 <button
                                   role="menuitem"
                                   onClick={() => handlePublishCheck(quiz.id)}
-                                  className="w-full px-4 py-2 text-left text-sm text-green-600 hover:bg-green-50 flex items-center gap-2"
+                                  className="w-full px-4 py-2 text-left text-sm text-amber-700 hover:bg-amber-50 flex items-center gap-2"
                                 >
                                   <CheckCircle className="h-4 w-4" aria-hidden="true" />
                                   Publish

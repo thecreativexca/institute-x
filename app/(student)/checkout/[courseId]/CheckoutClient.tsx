@@ -316,10 +316,10 @@ export function CheckoutClient({ course, student }: CheckoutClientProps) {
                     />
                     <Button type="button" variant="outline" isLoading={couponLoading} onClick={applyCoupon}>Apply</Button>
                   </div>
-                  {couponQuote ? <p className="mt-2 text-xs font-medium text-emerald-700">{couponQuote.code} applied successfully.</p> : null}
+                  {couponQuote ? <p className="mt-2 text-xs font-medium text-amber-800">{couponQuote.code} applied successfully.</p> : null}
                 </div>
                 {couponQuote ? (
-                  <div className="flex justify-between text-sm text-emerald-700">
+                  <div className="flex justify-between text-sm text-amber-800">
                     <span>Coupon discount</span>
                     <span className="font-medium">−{formatCurrency(couponQuote.discountAmount, course.currency)}</span>
                   </div>

@@ -368,7 +368,7 @@ export function InternshipAdminDetail({ data }: { data: any }) {
               .map((enrollment: any) => (
                 <Card key={enrollment._id}>
                   <CardContent className="flex items-center gap-3 p-4">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                    <CheckCircle2 className="h-5 w-5 text-amber-700" />
                     <span className="flex-1">{enrollment.student?.name}</span>
                     <Button
                       size="sm"

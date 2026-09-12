@@ -63,7 +63,7 @@ export default function OfficeResetPasswordPage() {
     <OfficeAuthShell>
       <Card className="office-auth-card rounded-3xl">
         <CardHeader className="items-center px-6 pb-4 pt-8 text-center sm:px-8">
-          <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${isComplete ? "bg-emerald-100 text-emerald-700" : isInvalid ? "bg-red-100 text-red-700" : "bg-accent-100 text-accent-800"}`}>
+          <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${isComplete ? "bg-amber-100 text-amber-800" : isInvalid ? "bg-red-100 text-red-700" : "bg-accent-100 text-accent-800"}`}>
             {isComplete ? <CheckCircle className="h-6 w-6" /> : isInvalid ? <XCircle className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
           </span>
           <CardTitle as="h1" className="mt-3">

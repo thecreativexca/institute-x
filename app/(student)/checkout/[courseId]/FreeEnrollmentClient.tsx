@@ -50,15 +50,15 @@ export function FreeEnrollmentClient({ course }: FreeEnrollmentClientProps) {
     <main id="main-content" className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
       <Card className="w-full max-w-lg">
         <CardContent className="p-6 text-center sm:p-8">
-          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-amber-800">
             <Gift className="h-7 w-7" aria-hidden="true" />
           </span>
-          <p className="mt-5 text-sm font-semibold uppercase tracking-wide text-emerald-700">Free course</p>
+          <p className="mt-5 text-sm font-semibold uppercase tracking-wide text-amber-800">Free course</p>
           <h1 className="mt-2 text-2xl font-bold text-slate-900">Enroll in {course.name}</h1>
           {course.shortDescription ? (
             <p className="mt-3 text-sm leading-relaxed text-slate-600">{course.shortDescription}</p>
           ) : null}
-          <div className="mt-6 flex items-center justify-center gap-2 rounded-lg bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+          <div className="mt-6 flex items-center justify-center gap-2 rounded-lg bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900">
             <CheckCircle className="h-5 w-5" aria-hidden="true" />
             No payment is required
           </div>

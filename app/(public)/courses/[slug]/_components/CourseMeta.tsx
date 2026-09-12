@@ -36,7 +36,7 @@ export function CourseMeta({ course, category }: CourseMetaProps) {
       <div className="rounded-2xl border border-primary-200 bg-white p-6 shadow-card-hover">
         <div className="text-center mb-4">
           {isFree ? (
-            <span className="text-3xl font-bold text-emerald-600">FREE</span>
+            <span className="text-3xl font-bold text-amber-700">FREE</span>
           ) : (
             <>
               <span className="text-3xl font-bold text-slate-900">
@@ -61,7 +61,7 @@ export function CourseMeta({ course, category }: CourseMetaProps) {
             "Email support from instructors",
           ].map((feature) => (
             <li key={feature} className="flex items-start gap-2 text-sm text-slate-700">
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5 text-emerald-600 flex-shrink-0 mt-0.5">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5 text-amber-700 flex-shrink-0 mt-0.5">
                 <path d="m5 13 4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               {feature}
@@ -124,7 +124,7 @@ export function CourseMeta({ course, category }: CourseMetaProps) {
             <dt className="text-slate-500">Price</dt>
             <dd className="font-medium text-slate-900">
               {isFree ? (
-                <span className="text-emerald-600">FREE</span>
+                <span className="text-amber-700">FREE</span>
               ) : (
                 <>
                   ₹{price.toLocaleString("en-IN")}

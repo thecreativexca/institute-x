@@ -24,7 +24,7 @@ export function VerificationResultCard({
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
             <ShieldX className="h-7 w-7 text-red-600" aria-hidden="true" />
           </div>
-          <CardTitle className="text-xl">Certificate could not be verified</CardTitle>
+          <CardTitle className="text-xl">Certificate Not Found</CardTitle>
         </CardHeader>
         <CardContent className="text-center text-slate-600">
           <p>No matching certificate was found for the identifier you entered.</p>
@@ -48,6 +48,9 @@ export function VerificationResultCard({
         </CardHeader>
         <CardContent className="space-y-3 text-center">
           <p className="font-medium text-slate-900">{result.certificateNumber}</p>
+          {result.certificateTitle ? (
+            <p className="text-sm text-slate-700">{result.certificateTitle}</p>
+          ) : null}
           <p className="text-sm text-slate-600">
             This certificate has been revoked and is no longer valid.
           </p>
@@ -57,10 +60,10 @@ export function VerificationResultCard({
   }
 
   return (
-    <Card className="border-emerald-200">
+    <Card className="border-amber-200">
       <CardHeader className="items-center text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
-          <ShieldCheck className="h-7 w-7 text-emerald-600" aria-hidden="true" />
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-100">
+          <ShieldCheck className="h-7 w-7 text-amber-700" aria-hidden="true" />
         </div>
         <CardTitle className="text-xl">✓ Certificate Verified</CardTitle>
         <Badge variant="success">Valid</Badge>
@@ -74,6 +77,12 @@ export function VerificationResultCard({
           <div>
             <dt className="text-xs uppercase tracking-wide text-slate-400">Certificate Holder</dt>
             <dd className="font-medium text-slate-900">{result.studentName}</dd>
+          </div>
+          <div>
+            <dt className="text-xs uppercase tracking-wide text-slate-400">Certificate</dt>
+            <dd className="text-slate-900">
+              {result.certificateTitle ?? result.courseName}
+            </dd>
           </div>
           <div>
             <dt className="text-xs uppercase tracking-wide text-slate-400">Course</dt>

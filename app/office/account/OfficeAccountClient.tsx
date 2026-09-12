@@ -236,7 +236,7 @@ export function OfficeAccountClient({ account }: { account: OfficeAccount }) {
 
       <Card className="overflow-hidden rounded-2xl border-primary-100">
         <div className="grid lg:grid-cols-[0.7fr_1.3fr]">
-          <div className="bg-[#10291e] p-6 text-white sm:p-7">
+          <div className="bg-[#103a50] p-6 text-white sm:p-7">
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-300 text-primary-950"><LockKeyhole className="h-5 w-5" aria-hidden="true" /></span>
             <h2 className="mt-4 text-lg font-semibold">Password &amp; security</h2>
             <p className="mt-2 text-sm leading-6 text-primary-100">Choose a strong password you do not use elsewhere. Changing it signs this account out of existing sessions.</p>

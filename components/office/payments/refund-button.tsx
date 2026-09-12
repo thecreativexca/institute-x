@@ -71,7 +71,7 @@ export function RefundButton({ payment }: { payment: RefundTarget }) {
           </p>
         ) : null}
         {message ? (
-          <p role="status" className="mt-3 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">
+          <p role="status" className="mt-3 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900">
             {message}
           </p>
         ) : null}

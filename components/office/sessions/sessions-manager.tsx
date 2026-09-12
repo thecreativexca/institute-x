@@ -314,7 +314,7 @@ export function SessionsManager({ sessions, courseOptions, canManage }: Sessions
         <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p>
       ) : null}
       {status ? (
-        <p role="status" className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">{status}</p>
+        <p role="status" className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900">{status}</p>
       ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">

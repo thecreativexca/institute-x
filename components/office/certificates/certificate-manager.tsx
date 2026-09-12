@@ -1,17 +1,152 @@
 "use client";
-import { useState, useTransition } from "react";
+
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ExternalLink } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+
+import { Alert } from "@/components/ui/alert";
+import { Award, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Modal } from "@/components/ui/modal";
-import { revokeCertificateAction } from "@/lib/office/certificates/actions";
+import { EmptyState } from "@/components/ui/empty-state";
+import { LinkWrapper } from "@/components/ui/link-button";
+import type {
+  OfficeCertificateListResult,
+  OfficeCertificateRow,
+} from "@/lib/office/certificates/dto";
+import { CertificateDialogs, type CertificateDialogMode } from "./certificate-dialogs";
+import {
+  CertificateFilters,
+  type CertificateFilterValues,
+} from "./certificate-filters";
+import { CertificateTable } from "./certificate-table";
+import { Pagination } from "./Pagination";
 
-export interface OfficeCertificate { id: string; certificateNumber: string; verificationCode: string; studentName: string; courseName: string; issuedAt: string; status: string; pdfUrl: string; revocationReason: string | null }
-export function CertificateManager({ certificates }: { certificates: OfficeCertificate[] }) {
-  const router = useRouter(); const [selected, setSelected] = useState<OfficeCertificate | null>(null); const [reason, setReason] = useState(""); const [pending, startTransition] = useTransition(); const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
-  return <div className="space-y-4">{notice ? <div className={`rounded-xl border px-4 py-3 text-sm ${notice.ok ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-red-200 bg-red-50 text-red-800"}`}>{notice.text}</div> : null}{certificates.map((certificate) => <Card key={certificate.id}><CardContent className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center"><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><h2 className="font-semibold text-slate-900">{certificate.certificateNumber}</h2><Badge variant={certificate.status === "issued" ? "success" : "danger"}>{certificate.status}</Badge></div><p className="mt-1 text-sm text-slate-700">{certificate.studentName} · {certificate.courseName}</p><p className="mt-1 text-xs text-slate-500">Issued {new Date(certificate.issuedAt).toLocaleDateString("en-IN")} · Verification {certificate.verificationCode}</p>{certificate.revocationReason ? <p className="mt-2 text-xs text-red-700">Reason: {certificate.revocationReason}</p> : null}</div><div className="flex flex-wrap gap-2"><a href={certificate.pdfUrl} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-300 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"><ExternalLink className="h-4 w-4" /> PDF</a>{certificate.status === "issued" ? <Button variant="danger" size="sm" onClick={() => { setReason(""); setSelected(certificate); }}>Revoke</Button> : null}</div></CardContent></Card>)}
-    <Modal open={Boolean(selected)} onClose={() => !pending && setSelected(null)} title="Revoke certificate?" description="Public verification will immediately show this certificate as revoked." footer={<><Button variant="outline" onClick={() => setSelected(null)}>Cancel</Button><Button variant="danger" isLoading={pending} onClick={() => selected && startTransition(async () => { const result = await revokeCertificateAction(selected.id, reason); setNotice({ ok: result.ok, text: result.message ?? result.error ?? "Unable to revoke." }); if (result.ok) { setSelected(null); router.refresh(); } })}>Confirm revoke</Button></>}><label className="text-sm font-medium text-slate-700">Reason<textarea value={reason} onChange={(e) => setReason(e.target.value)} className="mt-2 min-h-24 w-full rounded-lg border border-slate-300 p-3 text-sm" maxLength={500} /></label></Modal>
-  </div>;
+interface CertificateManagerProps {
+  result: OfficeCertificateListResult;
+  filters: CertificateFilterValues;
+  courses: Array<{ id: string; label: string }>;
+  /** "active" hides revoked rows and pins the status filter. */
+  variant?: "all" | "revoked";
+}
+
+/**
+ * Admin Certificate Management surface.
+ *
+ * Owns the client-side state that the server cannot: which dialog is open and
+ * the inline success/error banner. All data comes from the server component
+ * above it (URL-driven filters → server query), so there is no client-side
+ * copy of the list to fall out of sync. After any mutation the router refreshes
+ * so the table reflects the new database state.
+ */
+export function CertificateManager({
+  result,
+  filters,
+  courses,
+  variant = "all",
+}: CertificateManagerProps) {
+  const router = useRouter();
+  const [dialog, setDialog] = useState<{
+    mode: CertificateDialogMode;
+    certificate: OfficeCertificateRow;
+  } | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  const basePath =
+    variant === "revoked" ? "/office/certificates/revoked" : "/office/certificates";
+
+  const handleSuccess = useCallback(
+    (message: string) => {
+      setDialog(null);
+      setNotice(message);
+      router.refresh();
+    },
+    [router]
+  );
+
+  const isEmpty = result.certificates.length === 0;
+
+  return (
+    <div className="space-y-5">
+      {notice ? (
+        <Alert
+          variant="success"
+          role="status"
+          onClose={() => setNotice(null)}
+        >
+          {notice}
+        </Alert>
+      ) : null}
+
+      <CertificateFilters
+        initialFilters={filters}
+        courses={courses}
+        basePath={basePath}
+        hideStatus={variant === "revoked"}
+      />
+
+      {isEmpty ? (
+        <Card className="rounded-2xl border-slate-200">
+          <CardContent className="py-6">
+            <EmptyState
+              icon={<Award className="h-12 w-12" aria-hidden="true" />}
+              title={
+                variant === "revoked"
+                  ? "No revoked certificates."
+                  : "No certificates found."
+              }
+              description={
+                variant === "revoked"
+                  ? "Certificates you revoke will be listed here so they can be reactivated later."
+                  : "Upload your first certificate to issue it to a student."
+              }
+              action={
+                variant === "revoked" ? (
+                  <Button asChild variant="outline">
+                    <LinkWrapper href="/office/certificates">
+                      Back to all certificates
+                    </LinkWrapper>
+                  </Button>
+                ) : (
+                  <Button asChild>
+                    <LinkWrapper href="/office/certificates/upload">
+                      <Upload className="h-4 w-4" aria-hidden="true" />
+                      Upload Certificate
+                    </LinkWrapper>
+                  </Button>
+                )
+              }
+            />
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <CertificateTable
+            certificates={result.certificates}
+            onAction={(mode, certificate) => {
+              setNotice(null);
+              setDialog({ mode, certificate });
+            }}
+          />
+
+          <Pagination
+            currentPage={result.page}
+            totalPages={result.totalPages}
+            totalItems={result.total}
+            itemsPerPage={result.limit}
+            basePath={basePath}
+          />
+        </>
+      )}
+
+      {dialog ? (
+        <CertificateDialogs
+          mode={dialog.mode}
+          certificate={dialog.certificate}
+          courses={courses}
+          onClose={() => setDialog(null)}
+          onSuccess={handleSuccess}
+        />
+      ) : null}
+    </div>
+  );
 }

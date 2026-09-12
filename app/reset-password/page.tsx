@@ -131,8 +131,8 @@ export default function ResetPasswordPage() {
         );
       case "success":
         return (
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <CheckCircle className="h-8 w-8 text-green-600" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
+            <CheckCircle className="h-8 w-8 text-amber-700" />
           </div>
         );
       case "invalid":

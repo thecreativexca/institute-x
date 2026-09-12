@@ -334,7 +334,7 @@ export function ResourceUploadPanel({ maxSizeMB, allowedExtensions }: ResourceUp
             </p>
           ) : null}
           {success ? (
-            <p role="status" className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">
+            <p role="status" className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900">
               {success}
             </p>
           ) : null}

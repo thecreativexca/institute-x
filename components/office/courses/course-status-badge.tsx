@@ -3,7 +3,7 @@ import type { OfficeCourseStatus } from "@/lib/office/courses/dto";
 
 const STATUS_STYLES: Record<OfficeCourseStatus, string> = {
   draft: "bg-amber-50 text-amber-800 border-amber-200",
-  published: "bg-green-50 text-green-800 border-green-200",
+  published: "bg-amber-50 text-amber-900 border-amber-200",
   archived: "bg-slate-100 text-slate-600 border-slate-200",
 };
 
@@ -40,7 +40,7 @@ export function ContentStatusBadge({ published }: { published: boolean }) {
       className={cn(
         "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium",
         published
-          ? "border-green-200 bg-green-50 text-green-800"
+          ? "border-amber-200 bg-amber-50 text-amber-900"
           : "border-amber-200 bg-amber-50 text-amber-800"
       )}
     >

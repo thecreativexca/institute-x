@@ -190,7 +190,7 @@ export function StudentCoursesClient({ courses, activeFilter, certificateCourseI
                     {course.status === "completed" && certificateCourseIds.includes(course.course._id) ? (
                       <Link
                         href="/student/certificates"
-                        className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800"
+                        className="inline-flex items-center gap-1 text-xs font-medium text-amber-800 hover:text-amber-900"
                       >
                         <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
                         Certificate Available

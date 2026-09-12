@@ -36,7 +36,7 @@ export function CouponsManager({ coupons, courses }: { coupons: CouponListItem[]
   return (
     <div className="space-y-4">
       <div className="flex justify-end"><Button onClick={() => { setErrors({}); setEditing("new"); }}><Plus className="h-4 w-4" /> New coupon</Button></div>
-      {notice ? <div role={notice.ok ? "status" : "alert"} className={`rounded-xl border px-4 py-3 text-sm font-medium ${notice.ok ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-red-200 bg-red-50 text-red-800"}`}>{notice.text}</div> : null}
+      {notice ? <div role={notice.ok ? "status" : "alert"} className={`rounded-xl border px-4 py-3 text-sm font-medium ${notice.ok ? "border-amber-200 bg-amber-50 text-amber-900" : "border-red-200 bg-red-50 text-red-800"}`}>{notice.text}</div> : null}
       {coupons.length === 0 ? (
         <EmptyState icon={<Tag className="h-10 w-10" />} title="No coupons yet" description="Create a coupon to offer a controlled checkout discount." action={<Button onClick={() => setEditing("new")}><Plus className="h-4 w-4" /> Create coupon</Button>} />
       ) : (

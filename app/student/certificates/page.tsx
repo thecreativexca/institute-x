@@ -1,16 +1,23 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+
 import { getValidatedStudent } from "@/lib/auth/helpers";
-import { listCertificateEligibleEnrollments } from "@/lib/certificates/issue";
 import { listStudentCertificates } from "@/lib/certificates/queries";
 import { StudentCertificatesClient } from "./StudentCertificatesClient";
 
 export const metadata: Metadata = {
-  title: "Certificates",
-  description: "View, download and verify your earned certificates.",
+  title: "My Certificates",
+  description: "View, download and verify certificates issued to you.",
   robots: { index: false, follow: false },
 };
 
+/**
+ * My Certificates (student).
+ *
+ * Read-only by design: certificates are issued by the institute, so there is no
+ * generate/upload/edit surface here. The list is loaded from the authenticated
+ * session id — the client never supplies a student id.
+ */
 export default async function StudentCertificatesPage() {
   const { user: student, error } = await getValidatedStudent();
 
@@ -18,15 +25,7 @@ export default async function StudentCertificatesPage() {
     redirect("/login?reauth=1");
   }
 
-  const [certificates, eligible] = await Promise.all([
-    listStudentCertificates(student.id),
-    listCertificateEligibleEnrollments(student.id),
-  ]);
+  const certificates = await listStudentCertificates(student.id);
 
-  return (
-    <StudentCertificatesClient
-      certificates={certificates}
-      eligible={eligible}
-    />
-  );
+  return <StudentCertificatesClient certificates={certificates} />;
 }

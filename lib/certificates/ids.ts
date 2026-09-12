@@ -2,6 +2,10 @@ import { randomInt } from "node:crypto";
 
 import { connectDB } from "@/lib/db/connect";
 import { siteConfig } from "@/lib/config/site";
+import {
+  CERTIFICATE_NUMBER_MAX_LENGTH,
+  CERTIFICATE_TYPES,
+} from "@/lib/constants";
 import { CertificateSequence } from "@/models/CertificateSequence";
 
 /**
@@ -66,4 +70,59 @@ export function buildCertificateNumber(
   const prefix = siteConfig.certificate.prefix ?? "INST";
   const typeCode = siteConfig.certificate.typeCode ?? "CN";
   return `${prefix}-${year}-${typeCode}-${padNumber(sequenceValue, 6)}`;
+}
+
+/**
+ * Official number for an admin-issued (uploaded) certificate.
+ * Shorter than the generated form because there is no type code to encode:
+ *   "CXT-2026-000123"
+ */
+export function buildManualCertificateNumber(
+  sequenceValue: number,
+  year: number
+): string {
+  const prefix = siteConfig.certificate.prefix ?? "INST";
+  return `${prefix}-${year}-${padNumber(sequenceValue, 6)}`;
+}
+
+/**
+ * Normalizes an admin-entered certificate number: trims, collapses internal
+ * whitespace and upper-cases it so lookups and the unique index behave
+ * consistently ("cxt-2026-000123" and " CXT 2026 000123 " both fold to
+ * "CXT-2026-000123"). Returns "" for empty input.
+ */
+export function normalizeCertificateNumber(raw: string): string {
+  return String(raw ?? "")
+    .trim()
+    .toUpperCase()
+    .replace(/[\s_]+/g, "-")
+    .replace(/-{2,}/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, CERTIFICATE_NUMBER_MAX_LENGTH);
+}
+
+/**
+ * Format check for an admin-entered number. Deliberately permissive about the
+ * prefix (institutes rename themselves) but strict about the character set so
+ * nothing unsafe reaches storage, URLs or the public verification lookup:
+ * letters, digits and single hyphens only.
+ */
+export function isValidCertificateNumberFormat(value: string): boolean {
+  return /^[A-Z0-9]+(?:-[A-Z0-9]+)*$/.test(value) && value.length >= 4;
+}
+
+/**
+ * Atomically reserves the next sequence value and formats an official number
+ * for an admin-uploaded certificate. Used by the "Generate certificate number"
+ * action. Uniqueness is still enforced by the unique index on
+ * `certificateNumber` + a pre-check in the service.
+ */
+export async function generateManualCertificateNumber(
+  year = new Date().getFullYear()
+): Promise<string> {
+  const step = await nextCertificateSequenceStep(
+    CERTIFICATE_TYPES.MANUAL_UPLOAD,
+    year
+  );
+  return buildManualCertificateNumber(step, year);
 }

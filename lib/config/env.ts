@@ -8,6 +8,8 @@
  * Never import this file from a client component.
  */
 
+import { DEFAULT_MAX_CERTIFICATE_FILE_SIZE_MB } from "@/lib/constants";
+
 function readEnv(key: string): string {
   const value = process.env[key];
   if (!value || value.trim() === "") {
@@ -88,6 +90,18 @@ export function getMaxResourceFileSizeMB(): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 25;
 }
 
+/**
+ * Optional override for the max admin certificate upload size (in MB).
+ * Default: 10 (see DEFAULT_MAX_CERTIFICATE_FILE_SIZE_MB).
+ */
+export function getMaxCertificateFileSizeMB(): number {
+  const raw = process.env.MAX_CERTIFICATE_FILE_SIZE_MB;
+  const parsed = raw ? Number.parseInt(raw, 10) : Number.NaN;
+  return Number.isFinite(parsed) && parsed > 0
+    ? parsed
+    : DEFAULT_MAX_CERTIFICATE_FILE_SIZE_MB;
+}
+
 export const env = {
   get mongoDbUri() {
     return getMongoDbUri();
@@ -127,6 +141,12 @@ export const env = {
   },
   get maxResourceFileSizeBytes() {
     return getMaxResourceFileSizeMB() * 1024 * 1024;
+  },
+  get maxCertificateFileSizeMB() {
+    return getMaxCertificateFileSizeMB();
+  },
+  get maxCertificateFileSizeBytes() {
+    return getMaxCertificateFileSizeMB() * 1024 * 1024;
   },
   get isProduction() {
     return process.env.NODE_ENV === "production";

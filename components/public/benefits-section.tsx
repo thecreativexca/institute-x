@@ -13,7 +13,7 @@ const benefits = [
 /** Learning benefits section — factual descriptions of how training works. */
 export function BenefitsSection() {
   return (
-    <section aria-labelledby="benefits-heading" className="bg-[#fffef8]">
+    <section aria-labelledby="benefits-heading" className="bg-[#ffffff]">
       <Container className="py-16 sm:py-20">
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2">
           <SectionHeading

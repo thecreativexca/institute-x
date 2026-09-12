@@ -159,7 +159,9 @@ interface RawCertificate {
   certificateNumber: string;
   issuedAt: Date;
   status: "issued" | "revoked";
-  course: Types.ObjectId | RawCourse;
+  courseNameSnapshot: string;
+  certificateTitle?: string | null;
+  course?: Types.ObjectId | null;
 }
 
 interface RawAnnouncement {
@@ -443,15 +445,24 @@ export async function getCertificates(studentId: string): Promise<CertificatePre
 
   const studentObjectId = toObjectId(studentId);
 
-  const certificates = await Certificate.find({ student: studentObjectId, status: "issued" })
-    .populate({ path: "course", select: "name" })
+  // Only valid certificates: the dashboard card reads "N certificates
+  // available", and a revoked certificate is not available. Revoked rows stay
+  // visible on /student/certificates, where the revocation notice belongs.
+  //
+  // No `course` populate either: admin-issued certificates may have no course
+  // at all, and the display label always comes from the snapshot written at
+  // issuance.
+  const certificates = await Certificate.find({
+    student: studentObjectId,
+    status: "issued",
+  })
     .sort({ issuedAt: -1 })
     .lean();
 
   return (certificates as unknown as RawCertificate[]).map((c) => ({
     id: c._id.toString(),
     certificateNumber: c.certificateNumber,
-    courseTitle: (c.course as RawCourse).name,
+    courseTitle: c.certificateTitle ?? c.courseNameSnapshot,
     issuedAt: c.issuedAt.toISOString(),
     status: c.status,
   }));

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   ArrowUpRight,
+  Award,
   BookOpen,
   CalendarClock,
   ClipboardList,
@@ -26,6 +27,7 @@ import { getValidatedSession } from "@/lib/auth/helpers";
 import { canAccessOffice, hasPermission } from "@/lib/auth/permissions";
 import { PERMISSIONS, ROLE_LABELS, type Permission, type UserRole } from "@/lib/constants";
 import { connectDB } from "@/lib/db/connect";
+import { getOfficeCertificateStats } from "@/lib/office/certificates/queries";
 import { InternshipApplication } from "@/models/InternshipApplication";
 import { InternshipEnrollment } from "@/models/InternshipEnrollment";
 import { ProjectSubmission } from "@/models/ProjectSubmission";
@@ -47,16 +49,17 @@ const modules: Array<{
 }> = [
   { href: "/office/students", label: "Students", description: "Review learner accounts, enrollments and academic progress.", icon: Users, iconClassName: "text-primary-800", iconSurfaceClassName: "bg-primary-100", permissions: [PERMISSIONS.STUDENTS_READ] },
   { href: "/office/courses", label: "Courses", description: "Create courses, build curriculum with YouTube, text and PDF lessons.", icon: BookOpen, iconClassName: "text-accent-800", iconSurfaceClassName: "bg-accent-100", permissions: [PERMISSIONS.COURSES_READ, PERMISSIONS.COURSES_CREATE] },
-  { href: "/office/payments", label: "Payments & Orders", description: "Track student payments, revenue and process refunds.", icon: Wallet, iconClassName: "text-emerald-800", iconSurfaceClassName: "bg-emerald-50", permissions: [PERMISSIONS.PAYMENTS_READ] },
+  { href: "/office/payments", label: "Payments & Orders", description: "Track student payments, revenue and process refunds.", icon: Wallet, iconClassName: "text-amber-900", iconSurfaceClassName: "bg-amber-50", permissions: [PERMISSIONS.PAYMENTS_READ] },
   { href: "/office/sessions", label: "Sessions", description: "Schedule offline / venue classes against courses.", icon: CalendarClock, iconClassName: "text-[#8a4b2d]", iconSurfaceClassName: "bg-[#fdf0e7]", permissions: [PERMISSIONS.SESSIONS_READ, PERMISSIONS.SESSIONS_MANAGE] },
-  { href: "/office/analytics", label: "Analytics", description: "Revenue, enrollment and content performance insights.", icon: TrendingUp, iconClassName: "text-[#5f7425]", iconSurfaceClassName: "bg-[#f1f6cf]", permissions: [PERMISSIONS.ANALYTICS_READ] },
+  { href: "/office/analytics", label: "Analytics", description: "Revenue, enrollment and content performance insights.", icon: TrendingUp, iconClassName: "text-[#145a80]", iconSurfaceClassName: "bg-[#eaf5fb]", permissions: [PERMISSIONS.ANALYTICS_READ] },
   { href: "/office/resources", label: "Resources", description: "Organize lesson documents and downloadable study material.", icon: FileStack, iconClassName: "text-accent-800", iconSurfaceClassName: "bg-accent-100", permissions: [PERMISSIONS.RESOURCES_MANAGE] },
   { href: "/office/assignments", label: "Assignments", description: "Create tasks, review submissions and manage grading.", icon: ClipboardList, iconClassName: "text-primary-700", iconSurfaceClassName: "bg-primary-50", permissions: [PERMISSIONS.ASSIGNMENTS_READ, PERMISSIONS.ASSIGNMENTS_MANAGE, PERMISSIONS.ASSIGNMENTS_GRADE] },
-  { href: "/office/internships", label: "Internships", description: "Manage applications, interns, tasks, progress and evaluations.", icon: BriefcaseBusiness, iconClassName: "text-emerald-800", iconSurfaceClassName: "bg-emerald-50", permissions: [PERMISSIONS.INTERNSHIPS_READ] },
+  { href: "/office/internships", label: "Internships", description: "Manage applications, interns, tasks, progress and evaluations.", icon: BriefcaseBusiness, iconClassName: "text-amber-900", iconSurfaceClassName: "bg-amber-50", permissions: [PERMISSIONS.INTERNSHIPS_READ] },
   { href: "/office/projects", label: "Projects", description: "Publish practical projects and review student submissions.", icon: FolderKanban, iconClassName: "text-accent-800", iconSurfaceClassName: "bg-accent-100", permissions: [PERMISSIONS.PROJECTS_READ] },
   { href: "/office/quizzes", label: "Quizzes", description: "Manage assessments, question banks and learner results.", icon: HelpCircle, iconClassName: "text-accent-700", iconSurfaceClassName: "bg-accent-50", permissions: [PERMISSIONS.QUIZZES_READ, PERMISSIONS.QUIZZES_MANAGE, PERMISSIONS.QUIZ_RESULTS_READ] },
-  { href: "/office/announcements", label: "Announcements", description: "Publish timely updates for students and course students audiences.", icon: Megaphone, iconClassName: "text-[#5f7425]", iconSurfaceClassName: "bg-[#f1f6cf]", permissions: [PERMISSIONS.ANNOUNCEMENTS_MANAGE] },
-  { href: "/office/support", label: "Support", description: "Respond to learner requests and resolve open tickets.", icon: LifeBuoy, iconClassName: "text-emerald-800", iconSurfaceClassName: "bg-emerald-50", permissions: [PERMISSIONS.SUPPORT_READ] },
+  { href: "/office/certificates", label: "Certificates", description: "Issue certificates to students, replace files and revoke invalid credentials.", icon: Award, iconClassName: "text-amber-900", iconSurfaceClassName: "bg-amber-50", permissions: [PERMISSIONS.CERTIFICATES_READ, PERMISSIONS.CERTIFICATES_MANAGE] },
+  { href: "/office/announcements", label: "Announcements", description: "Publish timely updates for students and course students audiences.", icon: Megaphone, iconClassName: "text-[#145a80]", iconSurfaceClassName: "bg-[#eaf5fb]", permissions: [PERMISSIONS.ANNOUNCEMENTS_MANAGE] },
+  { href: "/office/support", label: "Support", description: "Respond to learner requests and resolve open tickets.", icon: LifeBuoy, iconClassName: "text-amber-900", iconSurfaceClassName: "bg-amber-50", permissions: [PERMISSIONS.SUPPORT_READ] },
   { href: "/office/account", label: "My Account", description: "Review your admin profile and keep account security up to date.", icon: Settings, iconClassName: "text-primary-800", iconSurfaceClassName: "bg-primary-100", permissions: [PERMISSIONS.ADMIN_ACCESS] },
 ];
 
@@ -70,17 +73,21 @@ export default async function OfficeHomePage() {
   );
   const roleLabel = ROLE_LABELS[user.role as UserRole] ?? "Office Team";
   await connectDB();
-  const [openApplications, activeInterns, pendingProjectReviews, internshipCompletions] = await Promise.all([
+  const [openApplications, activeInterns, pendingProjectReviews, internshipCompletions, certificateStats] = await Promise.all([
     InternshipApplication.countDocuments({ status: "pending" }),
     InternshipEnrollment.countDocuments({ status: "active" }),
     ProjectSubmission.countDocuments({ status: { $in: ["submitted", "under_review"] } }),
     InternshipEnrollment.countDocuments({ status: "completed" }),
+    // Spec §14 — certificate counters, only for roles that may read them.
+    hasPermission(user.role, PERMISSIONS.CERTIFICATES_READ)
+      ? getOfficeCertificateStats()
+      : Promise.resolve(null),
   ]);
 
   return (
     <OfficeShell session={user}>
       <div className="space-y-8">
-        <header className="relative overflow-hidden rounded-[1.75rem] border border-primary-900 bg-[#10291e] px-6 py-7 text-white shadow-xl shadow-primary-950/15 sm:px-8 sm:py-9">
+        <header className="relative overflow-hidden rounded-[1.75rem] border border-primary-900 bg-[#103a50] px-6 py-7 text-white shadow-xl shadow-primary-950/15 sm:px-8 sm:py-9">
           <div aria-hidden="true" className="office-grid-pattern absolute inset-0 opacity-20" />
           <div aria-hidden="true" className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-accent-300/18 blur-3xl" />
           <div className="relative flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
@@ -111,6 +118,26 @@ export default async function OfficeHomePage() {
             <Link key={String(label)} href={String(href)}><Card className="h-full"><CardContent className="p-5"><p className="text-2xl font-bold text-slate-900">{value}</p><p className="mt-1 text-sm text-slate-500">{label}</p></CardContent></Card></Link>
           ))}
         </section>
+
+        {certificateStats ? (
+          <section aria-label="Certificate overview">
+            <div className="mb-4 flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary-600">Credentials</p>
+                <h2 className="mt-1.5 text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">Certificates</h2>
+              </div>
+              <Link href="/office/certificates" className={buttonVariants("outline", "sm")}>
+                Manage certificates <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <Link href="/office/certificates"><Card className="h-full"><CardContent className="p-5"><p className="text-2xl font-bold text-slate-900">{certificateStats.total}</p><p className="mt-1 text-sm text-slate-500">Total certificates</p></CardContent></Card></Link>
+              <Link href="/office/certificates?status=issued"><Card className="h-full"><CardContent className="p-5"><p className="text-2xl font-bold text-amber-800">{certificateStats.active}</p><p className="mt-1 text-sm text-slate-500">Active certificates</p></CardContent></Card></Link>
+              <Link href="/office/certificates/revoked"><Card className="h-full"><CardContent className="p-5"><p className="text-2xl font-bold text-red-700">{certificateStats.revoked}</p><p className="mt-1 text-sm text-slate-500">Revoked certificates</p></CardContent></Card></Link>
+              <Link href="/office/certificates"><Card className="h-full"><CardContent className="p-5"><p className="text-2xl font-bold text-slate-900">{certificateStats.issuedThisMonth}</p><p className="mt-1 text-sm text-slate-500">Issued this month</p></CardContent></Card></Link>
+            </div>
+          </section>
+        ) : null}
 
         {visibleModules.length > 0 ? (
           <section aria-labelledby="office-workspaces-heading">

@@ -9,7 +9,7 @@ import { siteConfig } from "@/lib/config/site";
  */
 export function IntroSection() {
   return (
-    <section aria-labelledby="intro-heading" className="bg-[#fffef8]">
+    <section aria-labelledby="intro-heading" className="bg-[#ffffff]">
       <Container className="py-16 sm:py-20">
         <SectionHeading
           align="center"

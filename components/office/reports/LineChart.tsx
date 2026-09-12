@@ -19,7 +19,7 @@ const H = 220;
 const PAD = { top: 16, right: 16, bottom: 28, left: 8 };
 
 /** Lightweight SVG line/area chart (no heavy dependency, spec §75). */
-export function LineChart({ title, data, formatValue, color = "#1c854d" }: LineChartProps) {
+export function LineChart({ title, data, formatValue, color = "#176f9f" }: LineChartProps) {
   const uid = useId();
   if (data.length === 0) {
     return (

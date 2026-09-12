@@ -113,8 +113,8 @@ export default function VerifyEmailPage() {
         return <Loader2 className="mx-auto h-10 w-10 animate-spin text-primary-600" />;
       case "success":
         return (
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <CheckCircle className="h-8 w-8 text-green-600" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
+            <CheckCircle className="h-8 w-8 text-amber-700" />
           </div>
         );
       case "error":

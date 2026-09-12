@@ -145,7 +145,7 @@ export function StudentQuizzesClient({
 
                     <div className="flex flex-wrap items-center gap-2 text-sm">
                       {quiz.bestPercentage !== null && (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-emerald-800">
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-amber-900">
                           <Award className="h-4 w-4" aria-hidden="true" />
                           Best score: {formatMarks(quiz.bestPercentage)}
                         </span>

@@ -45,7 +45,7 @@ const features = [
 /** "Why choose us" — describes the training approach without unverifiable claims. */
 export function WhyChooseUsSection() {
   return (
-    <section aria-labelledby="why-us-heading" className="border-y border-primary-100 bg-gradient-to-b from-primary-50/70 to-[#fffef8]">
+    <section aria-labelledby="why-us-heading" className="border-y border-primary-100 bg-gradient-to-b from-primary-50/70 to-[#ffffff]">
       <Container className="py-16 sm:py-20">
         <SectionHeading
           eyebrow="Why choose us"

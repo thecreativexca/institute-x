@@ -42,11 +42,14 @@ export async function verifyCertificate(
   await connectDB();
 
   // Read query only against the two indexed fields.
+  // The `select` is an explicit allow-list: personal data (email, phone,
+  // address), internal Mongo ids, admin notes and payment fields are never even
+  // loaded, so they cannot leak into a public response by accident.
   const cert = await Certificate.findOne({
     $or: [{ verificationCode: normalized }, { certificateNumber: normalized }],
   })
     .select(
-      "status certificateNumber verificationCode studentNameSnapshot courseNameSnapshot issuedAt completionDate revokedAt"
+      "status certificateNumber verificationCode certificateTitle studentNameSnapshot courseNameSnapshot issuedAt completionDate revokedAt"
     )
     .lean();
 
@@ -58,6 +61,7 @@ export async function verifyCertificate(
     return {
       status: "revoked",
       certificateNumber: cert.certificateNumber,
+      certificateTitle: cert.certificateTitle ?? null,
       revokedAt: cert.revokedAt?.toISOString() ?? null,
     };
   }
@@ -66,9 +70,11 @@ export async function verifyCertificate(
     status: "valid",
     studentName: cert.studentNameSnapshot,
     courseName: cert.courseNameSnapshot,
+    certificateTitle: cert.certificateTitle ?? null,
     certificateNumber: cert.certificateNumber,
     issueDate: cert.issuedAt.toISOString(),
-    completionDate: cert.completionDate.toISOString(),
+    // Optional for admin-uploaded certificates.
+    completionDate: cert.completionDate?.toISOString() ?? null,
     instituteName: siteConfig.name,
   };
 }

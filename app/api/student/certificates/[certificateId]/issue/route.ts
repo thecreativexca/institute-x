@@ -1,42 +1,28 @@
-import { NextRequest, NextResponse } from "next/server";
-
-import { getValidatedStudent } from "@/lib/auth/helpers";
-import { issueCertificateForEnrollment } from "@/lib/certificates/issue";
-import { toCertificateErrorResponse } from "@/lib/certificates/errors";
+import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
-
-type RouteContext = { params: Promise<{ certificateId: string }> };
+export const dynamic = "force-dynamic";
 
 /**
- * POST /api/student/certificates/[certificateId]/issue
+ * POST /api/student/certificates/[certificateId]/issue — REMOVED.
  *
- * Idempotent, secure Generate-Certificate action (spec §13, §45).
- * The server resolves the enrollment from the URL parameter (named certificateId
- * for consistency with the student certificate page dynamic segment), verifies
- * the authenticated student owns it, re-evaluates completion eligibility through Phase 11, and
- * only then issues a PDF-backed certificate. Nothing is trusted from the body.
- * The client passes the enrollmentId as the certificateId segment value for this endpoint.
+ * Students may only VIEW, DOWNLOAD and VERIFY their certificates. Certificates
+ * are issued exclusively by the institute through the admin Certificate
+ * Management module (`/api/office/certificates`), where an admin selects the
+ * student and uploads the certificate file.
+ *
+ * The route is kept as an explicit, always-refusing endpoint (rather than
+ * deleted silently) so any stale client, bookmark or cached bundle that still
+ * calls it receives a clear 403 instead of a confusing 404 — and, critically,
+ * so that no call path can ever mint a certificate on a student's own behalf.
  */
-export async function POST(_request: NextRequest, ctx: RouteContext) {
-  const { user, error } = await getValidatedStudent();
-  if (!user || error) {
-    return NextResponse.json(
-      { success: false, error: "Authentication required." },
-      { status: 401 }
-    );
-  }
-
-  const { certificateId } = await ctx.params;
-
-  try {
-    const certificate = await issueCertificateForEnrollment({
-      enrollmentId: certificateId,
-      actorId: user.id,
-      actorRole: user.role,
-    });
-    return NextResponse.json({ success: true, certificate }, { status: 200 });
-  } catch (err) {
-    return toCertificateErrorResponse(err);
-  }
+export async function POST() {
+  return NextResponse.json(
+    {
+      success: false,
+      error:
+        "Certificates are issued by the institute. You will be notified once your certificate is available.",
+    },
+    { status: 403 }
+  );
 }

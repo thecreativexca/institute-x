@@ -34,8 +34,8 @@ export function SuccessClient({ payment }: SuccessClientProps) {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Success Icon */}
         <div className="text-center mb-8">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100">
-            <svg className="h-10 w-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-amber-100">
+            <svg className="h-10 w-10 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
             </svg>
           </div>
@@ -83,14 +83,14 @@ export function SuccessClient({ payment }: SuccessClientProps) {
 
         {/* Enrollment Status */}
         {payment.enrollment && (
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 mb-6">
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 mb-6">
             <div className="flex items-center gap-3">
-              <svg className="h-5 w-5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <svg className="h-5 w-5 text-amber-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div>
-                <p className="font-medium text-emerald-900">Enrollment Active</p>
-                <p className="text-sm text-emerald-700">You now have full access to all course materials.</p>
+                <p className="font-medium text-amber-950">Enrollment Active</p>
+                <p className="text-sm text-amber-800">You now have full access to all course materials.</p>
               </div>
             </div>
           </div>
@@ -146,7 +146,7 @@ export function SuccessClient({ payment }: SuccessClientProps) {
             </div>
             <div>
               <dt className="text-slate-500">Status</dt>
-              <dd className="font-medium text-emerald-700">Paid</dd>
+              <dd className="font-medium text-amber-800">Paid</dd>
             </div>
           </dl>
           <div className="mt-6 pt-6 border-t border-slate-200 text-center">

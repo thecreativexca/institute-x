@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 
 import { siteConfig } from "@/lib/config/site";
 
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const outfit = Outfit({
+  variable: "--font-heading",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -31,8 +38,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">
+    <html lang="en" className={`${plusJakartaSans.variable} ${outfit.variable} h-full antialiased`}>
+      <body className="flex min-h-full flex-col font-sans">
         {/* Keyboard users can jump straight to content. */}
         <a
           href="#main-content"

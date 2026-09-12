@@ -1,123 +1,84 @@
+import Image from "next/image";
+import { Award, CheckCircle2, Sparkles, Users, Star } from "lucide-react";
+
 /**
- * Hero visual — professional education dashboard mockup.
- * Pure CSS/JSX visual showing a learning portal interface.
- * No external images required; degrades gracefully.
+ * Enhanced Hero visual — displays authentic institute campus reception,
+ * students in practical computer training, and floating achievement badges.
  */
 export function HeroVisual() {
   return (
-    <div className="relative mx-auto max-w-5xl rounded-[1.75rem] bg-accent-200/80 p-2 shadow-[0_28px_70px_-38px_rgb(22_71_47/0.55)] sm:p-3">
-      <div className="overflow-hidden rounded-[1.25rem] border border-primary-100 bg-white">
-      {/* Top bar */}
-      <div className="flex items-center gap-2.5 border-b border-primary-100 bg-primary-50/80 px-4 py-3">
-        <div className="flex h-3 w-3 rounded-full bg-red-400" />
-        <div className="flex h-3 w-3 rounded-full bg-yellow-400" />
-        <div className="flex h-3 w-3 rounded-full bg-green-400" />
-        <div className="ml-1 flex-1 rounded-full border border-primary-100 bg-white/80 px-3 py-1.5 text-center text-[10px] font-mono text-slate-500 sm:text-xs">
-          student learning dashboard
-        </div>
-      </div>
+    <div className="relative mx-auto max-w-xl lg:max-w-none">
+      {/* Decorative gradient aura */}
+      <div
+        aria-hidden="true"
+        className="absolute -inset-2 rounded-[2.5rem] bg-gradient-to-tr from-primary-400/20 via-accent-300/30 to-primary-600/20 blur-xl -z-10"
+      />
 
-      {/* Dashboard content */}
-      <div className="p-5 sm:p-7">
-        {/* Welcome header */}
-        <div className="mb-6">
-          <p className="text-sm font-medium text-primary-700">Welcome back, Priya</p>
-          <h2 className="mt-1 text-2xl font-semibold text-slate-900 sm:text-3xl">
-            Continue your learning journey
-          </h2>
-        </div>
+      {/* Main Image Frame */}
+      <div className="relative overflow-hidden rounded-[2rem] border-2 border-white/80 bg-white p-2 shadow-[0_20px_50px_rgba(113,63,18,0.14)]">
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[1.5rem]">
+          <Image
+            src="/images/campus-reception.jpg"
+            alt="Creative X Tycoon Institute Campus & Learning Center"
+            fill
+            priority
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary-950/80 via-transparent to-black/10" />
 
-        {/* Progress overview cards */}
-        <div className="mb-6 grid grid-cols-3 gap-2.5 sm:gap-4">
-          {[
-            { label: "Courses Enrolled", value: "4", icon: "book" },
-            { label: "Lessons Completed", value: "27", icon: "check" },
-            { label: "Overall Progress", value: "68%", icon: "chart" },
-          ].map((stat) => (
-            <div
-              key={stat.label}
-              className="rounded-xl border border-primary-100 bg-primary-50/65 p-3 transition-shadow hover:shadow-card sm:p-4"
-            >
-              <p className="text-[9px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs">
-                {stat.label}
-              </p>
-              <p className="mt-1 text-2xl font-bold text-primary-900 sm:text-3xl">
-                {stat.value}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        {/* Continue learning section */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">
-            Continue Learning
-          </h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {[
-              {
-                course: "MERN Stack Development",
-                lesson: "Module 3: Building REST APIs with Express",
-                progress: 45,
-                color: "primary",
-              },
-              {
-                course: "Digital Marketing",
-                lesson: "Module 2: SEO Fundamentals",
-                progress: 78,
-                color: "accent",
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="rounded-xl border border-primary-100 bg-white p-4 shadow-card transition-shadow hover:shadow-card-hover"
-              >
-                <p className="text-xs font-medium text-slate-500">{item.course}</p>
-                <p className="mt-1 text-sm font-medium text-slate-900 line-clamp-1">
-                  {item.lesson}
-                </p>
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-primary-50">
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${item.progress}%`,
-                      backgroundColor:
-                        item.color === "primary"
-                          ? "var(--color-primary-600)"
-                          : "var(--color-accent-500)",
-                    }}
-                  />
-                </div>
-                <p className="mt-2 text-xs text-slate-500">
-                  {item.progress}% complete
-                </p>
-              </div>
-            ))}
+          {/* Top Live Badge */}
+          <div className="absolute top-3.5 left-3.5 flex items-center gap-2 rounded-full bg-primary-950/85 px-3.5 py-1.5 text-xs font-semibold text-white shadow-lg backdrop-blur-md">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+            <span>Admissions Open • Daily Practical Batches</span>
           </div>
-        </div>
 
-        {/* Upcoming assessments */}
-        <div>
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">
-            Upcoming Assessments
-          </h3>
-          <div className="rounded-xl border border-accent-200 bg-accent-50/80 p-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex-1">
-                <p className="font-medium text-slate-900">
-                  Quiz: JavaScript Fundamentals
-                </p>
-                <p className="text-sm text-slate-600">
-                  Web Development • Due in 3 days
-                </p>
-              </div>
-              <span className="shrink-0 rounded-full bg-accent-200 px-3 py-1 text-xs font-medium text-accent-900">
-                Pending
-              </span>
-            </div>
+          {/* Bottom Overlay Label */}
+          <div className="absolute bottom-3.5 inset-x-3.5 text-white">
+            <p className="text-xs font-semibold uppercase tracking-wider text-accent-300">
+              Central Campus & Practical Lab
+            </p>
+            <p className="text-sm sm:text-base font-bold drop-shadow">
+              State-of-the-Art Computer & Skill Development Center
+            </p>
           </div>
         </div>
       </div>
+
+      {/* Floating Badge 1: 10k+ Alumni & 4.9 Rating (Bottom Left / Overlap) */}
+      <div className="absolute -bottom-6 -left-4 sm:-left-6 rounded-2xl border border-primary-200 bg-white/95 p-3.5 shadow-[0_12px_32px_rgba(113,63,18,0.11)] backdrop-blur-md">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent-100 text-primary-900">
+            <Users className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <div>
+            <div className="flex items-center gap-1 text-xs font-bold text-amber-500">
+              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
+              <span>4.9 / 5.0</span>
+              <span className="text-slate-400 font-normal">(1,200+ Reviews)</span>
+            </div>
+            <p className="text-sm font-bold text-primary-950">10,000+ Students Trained</p>
+            <p className="text-[11px] text-slate-500">Industry-recognized diplomas</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating Badge 2: ISO & Practical Labs (Top Right / Overlap) */}
+      <div className="hidden sm:flex absolute -top-5 -right-4 rounded-2xl border border-primary-200 bg-white/95 p-3.5 shadow-[0_12px_32px_rgba(113,63,18,0.11)] backdrop-blur-md">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-800">
+            <Award className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <div>
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+              <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" /> Verified Institute
+            </span>
+            <p className="text-xs font-bold text-primary-950">100% Practical Training</p>
+          </div>
+        </div>
       </div>
     </div>
   );

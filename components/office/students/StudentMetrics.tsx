@@ -14,7 +14,7 @@ interface StudentMetricsProps {
 export function StudentMetrics({ total, active, suspended, newThisMonth }: StudentMetricsProps) {
   const metrics = [
     { title: "Total students", value: total, icon: Users, surface: "bg-primary-100", tone: "text-primary-800" },
-    { title: "Active", value: active, icon: UserCheck, surface: "bg-emerald-50", tone: "text-emerald-700" },
+    { title: "Active", value: active, icon: UserCheck, surface: "bg-amber-50", tone: "text-amber-800" },
     { title: "Suspended", value: suspended, icon: UserX, surface: "bg-rose-50", tone: "text-rose-700" },
     { title: "New this month", value: newThisMonth, icon: UserPlus, surface: "bg-accent-100", tone: "text-accent-800" },
   ];

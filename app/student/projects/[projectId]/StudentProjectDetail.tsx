@@ -141,7 +141,7 @@ export function StudentProjectDetail({ project: p }: { project: any }) {
         </Card>
       ) : (
         <Card className="rounded-2xl border-primary-100">
-          <CardContent className="flex items-center gap-3 p-5 text-emerald-700">
+          <CardContent className="flex items-center gap-3 p-5 text-amber-800">
             <ExternalLink className="h-5 w-5" />
             <strong>Project approved</strong>
           </CardContent>

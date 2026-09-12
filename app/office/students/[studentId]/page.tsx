@@ -178,7 +178,7 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
                     <p className="text-sm text-slate-500">Active Courses</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-green-600">{student.enrollmentCounts.completed}</p>
+                    <p className="text-2xl font-bold text-amber-700">{student.enrollmentCounts.completed}</p>
                     <p className="text-sm text-slate-500">Completed Courses</p>
                   </div>
                 </div>
@@ -276,8 +276,8 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
                     <p className="text-3xl font-bold text-primary-600">{student.enrollmentCounts.active}</p>
                     <p className="text-sm text-slate-500">In Progress</p>
                   </div>
-                  <div className="text-center p-4 rounded-lg bg-green-50">
-                    <p className="text-3xl font-bold text-green-600">{student.enrollmentCounts.completed}</p>
+                  <div className="text-center p-4 rounded-lg bg-amber-50">
+                    <p className="text-3xl font-bold text-amber-700">{student.enrollmentCounts.completed}</p>
                     <p className="text-sm text-slate-500">Completed</p>
                   </div>
                 </div>
@@ -462,8 +462,8 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
                   <p className="text-2xl font-bold text-slate-900">{assignments.length}</p>
                   <p className="text-sm text-slate-500">Total Submissions</p>
                 </div>
-                <div className="text-center p-4 rounded-lg bg-green-50">
-                  <p className="text-2xl font-bold text-green-600">{assignments.filter(a => a.status === "graded").length}</p>
+                <div className="text-center p-4 rounded-lg bg-amber-50">
+                  <p className="text-2xl font-bold text-amber-700">{assignments.filter(a => a.status === "graded").length}</p>
                   <p className="text-sm text-slate-500">Graded</p>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-amber-50">
@@ -535,8 +535,8 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
                   <p className="text-2xl font-bold text-slate-900">{quizAttempts.length}</p>
                   <p className="text-sm text-slate-500">Total Attempts</p>
                 </div>
-                <div className="text-center p-4 rounded-lg bg-green-50">
-                  <p className="text-2xl font-bold text-green-600">{quizAttempts.filter(q => q.passed).length}</p>
+                <div className="text-center p-4 rounded-lg bg-amber-50">
+                  <p className="text-2xl font-bold text-amber-700">{quizAttempts.filter(q => q.passed).length}</p>
                   <p className="text-sm text-slate-500">Passed</p>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-red-50">
@@ -599,8 +599,8 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
                   <p className="text-2xl font-bold text-slate-900">{payments.length}</p>
                   <p className="text-sm text-slate-500">Total Transactions</p>
                 </div>
-                <div className="text-center p-4 rounded-lg bg-green-50">
-                  <p className="text-2xl font-bold text-green-600">₹{payments.filter(p => p.status === "paid").reduce((sum, p) => sum + p.amount, 0).toLocaleString()}</p>
+                <div className="text-center p-4 rounded-lg bg-amber-50">
+                  <p className="text-2xl font-bold text-amber-700">₹{payments.filter(p => p.status === "paid").reduce((sum, p) => sum + p.amount, 0).toLocaleString()}</p>
                   <p className="text-sm text-slate-500">Successful Amount</p>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-red-50">
@@ -633,7 +633,7 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
                     )},
                     { key: "course", header: "Course", render: (c) => c.courseName },
                     { key: "issued", header: "Issued", render: (c) => format(new Date(c.issuedAt), "MMM d, yyyy") },
-                    { key: "completed", header: "Completed", render: (c) => format(new Date(c.completionDate), "MMM d, yyyy") },
+                    { key: "completed", header: "Completed", render: (c) => (c.completionDate ? format(new Date(c.completionDate), "MMM d, yyyy") : "—") },
                     { key: "status", header: "Status", render: (c) => (
                       <StatusBadge
                         status={c.status}

@@ -562,7 +562,7 @@ export function CourseForm({ mode, courseId, categories, initial, canSubmit }: C
         </p>
       ) : null}
       {state.ok && state.message ? (
-        <p role="status" className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">
+        <p role="status" className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900">
           {state.message}
         </p>
       ) : null}

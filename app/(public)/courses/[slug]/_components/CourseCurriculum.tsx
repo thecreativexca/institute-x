@@ -32,7 +32,7 @@ function LessonItem({ lesson }: { lesson: CatalogLesson }) {
         )}
       </div>
       {lesson.isPreview && (
-        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+        <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-800">
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
             <circle cx="12" cy="12" r="3" />
@@ -70,7 +70,7 @@ function ModuleItem({ module, index }: { module: CatalogModule; index: number })
               <div className="flex items-center gap-4 text-sm text-slate-500 flex-shrink-0">
                 <span>{totalLessons} lessons</span>
                 {previewLessons > 0 && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">
                     {previewLessons} preview
                   </span>
                 )}

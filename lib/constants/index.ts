@@ -130,10 +130,50 @@ export const CERTIFICATE_TYPES = {
   COURSE_COMPLETION: "course_completion",
   INTERNSHIP: "internship",
   TRAINING_COMPLETION: "training_completion",
+  /**
+   * Admin-issued certificate backed by an admin-uploaded file (PDF/JPG/PNG)
+   * instead of a server-generated PDF. Added for the admin Certificate
+   * Management module; additive so existing rows are unaffected.
+   */
+  MANUAL_UPLOAD: "manual_upload",
 } as const;
 
 export type CertificateType =
   (typeof CERTIFICATE_TYPES)[keyof typeof CERTIFICATE_TYPES];
+
+/** Certificate types whose file is uploaded by an admin rather than generated. */
+export const ADMIN_UPLOADED_CERTIFICATE_TYPES: readonly CertificateType[] = [
+  CERTIFICATE_TYPES.MANUAL_UPLOAD,
+] as const;
+
+/**
+ * Allowed upload types for admin-issued certificate files.
+ * Deliberately narrow: documents (PDF) and plain raster images only. No SVG
+ * (script-capable), no archives, no executables.
+ */
+export const ALLOWED_CERTIFICATE_MIME_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+] as const;
+
+/** Extensions that must agree with the MIME type above. */
+export const ALLOWED_CERTIFICATE_EXTENSIONS = [
+  "pdf",
+  "jpg",
+  "jpeg",
+  "png",
+] as const;
+
+/** Default cap for an admin certificate upload, overridable via env. */
+export const DEFAULT_MAX_CERTIFICATE_FILE_SIZE_MB = 10;
+
+/** Grade / score is free text (e.g. "A+", "92%", "Excellent"). */
+export const CERTIFICATE_GRADE_MAX_LENGTH = 60;
+export const CERTIFICATE_TITLE_MAX_LENGTH = 200;
+export const CERTIFICATE_NUMBER_MAX_LENGTH = 64;
+export const CERTIFICATE_NOTES_MAX_LENGTH = 1000;
+export const CERTIFICATE_REVOCATION_REASON_MAX_LENGTH = 500;
 
 /* --------------------------------- Tickets --------------------------------- */
 export const TICKET_STATUSES = {

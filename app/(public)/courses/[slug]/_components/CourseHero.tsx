@@ -92,7 +92,7 @@ export function CourseHero({ course, category }: CourseHeroProps) {
         </div>
 
         {/* Right Column - Thumbnail */}
-        <div className="relative aspect-video overflow-hidden rounded-[1.5rem] border-4 border-white bg-surface-inset shadow-[0_22px_50px_-28px_rgb(22_71_47/0.55)]">
+        <div className="relative aspect-video overflow-hidden rounded-[1.5rem] border-4 border-white bg-surface-inset shadow-[0_22px_50px_-28px_rgb(16_58_80/0.55)]">
           {course.thumbnailUrl ? (
             <Image
               src={course.thumbnailUrl}

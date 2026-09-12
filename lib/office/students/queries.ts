@@ -405,18 +405,20 @@ export async function getStudentPayments(studentId: string): Promise<StudentPaym
 export async function getStudentCertificates(studentId: string): Promise<StudentCertificate[]> {
   await connectDB();
 
+  // No `course` populate: admin-issued certificates may have no course, and the
+  // label always comes from the snapshot written at issuance. Filtering on a
+  // populated course would silently hide exactly those certificates.
   const certificates = await Certificate.find({ student: toObjectId(studentId) })
-    .populate({ path: "course", select: "name" })
     .sort({ issuedAt: -1 })
     .lean();
 
-  return certificates.filter((cert) => cert.course).map((cert) => ({
+  return certificates.map((cert) => ({
     id: cert._id.toString(),
     certificateNumber: cert.certificateNumber,
-    courseId: cert.course!._id.toString(),
-    courseName: (cert.course as unknown as { name: string }).name,
+    courseId: cert.course?.toString() ?? "",
+    courseName: cert.certificateTitle ?? cert.courseNameSnapshot,
     issuedAt: cert.issuedAt.toISOString(),
-    completionDate: cert.completionDate.toISOString(),
+    completionDate: cert.completionDate?.toISOString() ?? null,
     status: cert.status as CertificateStatus,
     verificationCode: cert.verificationCode,
     pdfUrl: cert.pdfUrl,

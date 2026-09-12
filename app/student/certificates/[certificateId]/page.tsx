@@ -3,7 +3,6 @@ import { notFound, redirect } from "next/navigation";
 
 import { getValidatedStudent } from "@/lib/auth/helpers";
 import { getStudentCertificate } from "@/lib/certificates/queries";
-import { buildCertificateInlineUrl } from "@/lib/certificates/cloudinary";
 import { CertificateDetailClient } from "./CertificateDetailClient";
 
 export const metadata: Metadata = {
@@ -23,14 +22,19 @@ export default async function CertificateDetailPage({ params }: RouteParams) {
   const { certificateId } = await params;
   const detail = await getStudentCertificate(student.id, certificateId);
   if (!detail) {
-    // Foreign/missing certificates look identical to the client (§47–§48).
+    // Foreign/missing certificates look identical to the client.
     notFound();
   }
 
+  /*
+   * The preview URL points at an ownership-checked API route, never at the
+   * storage URL — the file itself is streamed through the server.
+   */
   return (
     <CertificateDetailClient
       detail={detail}
-      previewUrl={buildCertificateInlineUrl(detail.pdfUrl)}
+      previewUrl={`/api/student/certificates/${detail.id}/view`}
+      downloadUrl={`/api/student/certificates/${detail.id}/download`}
     />
   );
 }

@@ -9,16 +9,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { EmptyState } from "@/components/ui/empty-state";
 import { StudentPageHeader } from "@/components/student/student-page-header";
 import { LinkWrapper } from "@/components/ui/link-button";
-import { Award, Download, Eye, CheckCircle2, GraduationCap, ChevronRight } from "lucide-react";
-import { GenerateCertificateButton } from "./GenerateCertificateButton";
-import type { CertificateListItem, EligibleEnrollment } from "@/types/certificate";
+import { Award, Download, Eye, CheckCircle2, Image as ImageIcon } from "lucide-react";
+import type { CertificateListItem } from "@/types/certificate";
 
 interface Props {
   certificates: CertificateListItem[];
-  eligible: EligibleEnrollment[];
 }
 
-/** Accessible certificate status badge — text + icon, never color-only (§53). */
+/** Accessible certificate status badge — text + icon, never color-only. */
 function StatusBadge({ status }: { status: CertificateListItem["status"] }) {
   if (status === "revoked") {
     return (
@@ -38,78 +36,97 @@ function formatDate(iso: string): string {
   return format(new Date(iso), "d MMM yyyy");
 }
 
-export function StudentCertificatesClient({ certificates, eligible }: Props) {
+/**
+ * Student-facing certificate list (spec §5).
+ *
+ * Deliberately VIEW / DOWNLOAD / VERIFY only — no edit or delete control exists
+ * anywhere on this screen, because a certificate is an institute-issued
+ * document. Downloads are disabled for revoked certificates.
+ */
+export function StudentCertificatesClient({ certificates }: Props) {
   const [certificateFilter, setCertificateFilter] = useState<"course" | "internship">("course");
-  const visibleCertificates = certificates.filter((certificate) => certificateFilter === "internship" ? certificate.certificateType === "internship" : certificate.certificateType !== "internship");
+  const visibleCertificates = certificates.filter((certificate) =>
+    certificateFilter === "internship"
+      ? certificate.certificateType === "internship"
+      : certificate.certificateType !== "internship"
+  );
   const hasCertificates = certificates.length > 0;
-  const hasEligible = eligible.length > 0;
 
   return (
-      <div className="space-y-6">
-        <StudentPageHeader
-          title="Certificates"
-          description="Download and verify your official course and internship achievements."
-          icon={<Award className="h-6 w-6" aria-hidden="true" />}
-          eyebrow="Your achievements"
-        />
+    <div className="space-y-6">
+      <StudentPageHeader
+        title="My Certificates"
+        description="Certificates issued to you by the institute. View, download or share the public verification link."
+        icon={<Award className="h-6 w-6" aria-hidden="true" />}
+        eyebrow="Your achievements"
+      />
 
-        {/* Certificate-ready enrollments not yet issued */}
-        {hasEligible ? (
-          <Card className="rounded-2xl border-accent-200 bg-accent-50/70">
-            <CardHeader>
-              <CardTitle className="text-base">Certificates Ready to Generate</CardTitle>
-              <CardDescription className="text-xs">
-                You completed these courses — generate your official certificate.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {eligible.map((item) => (
-                <div
-                  key={item.enrollmentId}
-                  className="flex flex-col gap-3 rounded-xl border border-accent-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <div className="min-w-0">
-                    <p className="font-medium text-slate-900">{item.courseName}</p>
-                    <p className="text-xs text-slate-500">
-                      Completed {formatDate(item.completionDate)}
-                    </p>
-                  </div>
-                  <GenerateCertificateButton enrollmentId={item.enrollmentId} />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        ) : null}
+      {hasCertificates ? (
         <div className="flex gap-2 border-b border-slate-200">
-          <button type="button" onClick={() => setCertificateFilter("course")} className={`border-b-2 px-3 py-2 text-sm ${certificateFilter === "course" ? "border-primary-600 font-semibold text-primary-800" : "border-transparent text-slate-500"}`}>Course Certificates</button>
-          <button type="button" onClick={() => setCertificateFilter("internship")} className={`border-b-2 px-3 py-2 text-sm ${certificateFilter === "internship" ? "border-primary-600 font-semibold text-primary-800" : "border-transparent text-slate-500"}`}>Internship Certificates</button>
+          <button
+            type="button"
+            onClick={() => setCertificateFilter("course")}
+            className={`border-b-2 px-3 py-2 text-sm ${certificateFilter === "course" ? "border-primary-600 font-semibold text-primary-800" : "border-transparent text-slate-500"}`}
+          >
+            Course Certificates
+          </button>
+          <button
+            type="button"
+            onClick={() => setCertificateFilter("internship")}
+            className={`border-b-2 px-3 py-2 text-sm ${certificateFilter === "internship" ? "border-primary-600 font-semibold text-primary-800" : "border-transparent text-slate-500"}`}
+          >
+            Internship Certificates
+          </button>
         </div>
-{/* Earned certificates */}
-        {hasCertificates ? (
-          <Card className="rounded-2xl border-primary-100">
-            <CardHeader>
-              <CardTitle>Earned Certificates</CardTitle>
-              <CardDescription>Official certificates issued for completed courses</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {visibleCertificates.length === 0 ? <p className="py-6 text-center text-sm text-slate-500">No {certificateFilter} certificates yet.</p> : null}
-              {visibleCertificates.map((cert) => (
+      ) : null}
+
+      {hasCertificates ? (
+        <Card className="rounded-2xl border-primary-100">
+          <CardHeader>
+            <CardTitle>Issued Certificates</CardTitle>
+            <CardDescription>
+              Official certificates issued to you by the institute
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {visibleCertificates.length === 0 ? (
+              <p className="py-6 text-center text-sm text-slate-500">
+                No {certificateFilter} certificates yet.
+              </p>
+            ) : null}
+
+            {visibleCertificates.map((cert) => {
+              const isRevoked = cert.status === "revoked";
+              const isImage = cert.fileType?.startsWith("image/") ?? false;
+
+              return (
                 <div
                   key={cert.id}
                   className="flex flex-col gap-3 rounded-xl border border-primary-100 bg-gradient-to-r from-white to-primary-50/40 p-4 transition-colors hover:border-primary-200 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex min-w-0 items-start gap-3">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-emerald-100">
-                      <Award className="h-6 w-6 text-emerald-700" aria-hidden="true" />
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-amber-100">
+                      {isImage ? (
+                        <ImageIcon className="h-6 w-6 text-amber-800" aria-hidden="true" />
+                      ) : (
+                        <Award className="h-6 w-6 text-amber-800" aria-hidden="true" />
+                      )}
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate font-semibold text-slate-900">{cert.courseName}</p>
+                      <p className="truncate font-semibold text-slate-900">
+                        {cert.certificateTitle ?? cert.courseName}
+                      </p>
                       <p className="text-sm text-slate-500">{cert.certificateNumber}</p>
                       <p className="mt-0.5 text-xs text-slate-400">
-                        Issued {formatDate(cert.issuedAt)} · Completed {formatDate(cert.completionDate)}
+                        Issued {formatDate(cert.issuedAt)}
+                        {cert.completionDate
+                          ? ` · Completed ${formatDate(cert.completionDate)}`
+                          : ""}
+                        {cert.grade ? ` · Grade ${cert.grade}` : ""}
                       </p>
                     </div>
                   </div>
+
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge status={cert.status} />
                     <Button asChild variant="outline" size="sm">
@@ -117,41 +134,44 @@ export function StudentCertificatesClient({ certificates, eligible }: Props) {
                         <Eye className="h-4 w-4" aria-hidden="true" /> View
                       </LinkWrapper>
                     </Button>
-                    <Button asChild variant="secondary" size="sm">
-                      <a href={`/api/student/certificates/${cert.id}/download`}>
+                    {isRevoked ? (
+                      <Button variant="secondary" size="sm" disabled title="Revoked certificates cannot be downloaded">
                         <Download className="h-4 w-4" aria-hidden="true" /> Download
-                      </a>
-                    </Button>
+                      </Button>
+                    ) : (
+                      <Button asChild variant="secondary" size="sm">
+                        <a href={`/api/student/certificates/${cert.id}/download`}>
+                          <Download className="h-4 w-4" aria-hidden="true" /> Download
+                        </a>
+                      </Button>
+                    )}
                     <Button asChild variant="ghost" size="sm">
-                      <LinkWrapper href={`/verify-certificate/${cert.verificationCode}`}>
+                      <LinkWrapper href={`/verify-certificate/${cert.certificateNumber}`}>
                         Verify
                       </LinkWrapper>
                     </Button>
                   </div>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
-        ) : !hasEligible ? (
-          <Card className="rounded-2xl border-primary-100">
-            <CardContent className="py-8">
-              <EmptyState
-                icon={<Award className="h-12 w-12" aria-hidden="true" />}
-                title="You haven't earned any certificates yet."
-                description="Complete your course requirements to earn certificates."
-                action={
-                  <Button asChild>
-                    <LinkWrapper href="/student/progress">
-                      <GraduationCap className="h-4 w-4" aria-hidden="true" />
-                      View My Progress
-                      <ChevronRight className="h-4 w-4" aria-hidden="true" />
-                    </LinkWrapper>
-                  </Button>
-                }
-              />
-            </CardContent>
-          </Card>
-        ) : null}
-      </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="rounded-2xl border-primary-100">
+          <CardContent className="py-8">
+            <EmptyState
+              icon={<Award className="h-12 w-12" aria-hidden="true" />}
+              title="No certificates issued yet."
+              description="Your certificates will appear here once they are issued by the institute."
+              action={
+                <Button asChild>
+                  <LinkWrapper href="/student/progress">View My Progress</LinkWrapper>
+                </Button>
+              }
+            />
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 }

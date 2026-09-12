@@ -14,6 +14,11 @@ import type { CertificateDetail, CertificateListItem } from "@/types/certificate
  * another student's certificate.
  */
 
+/** ObjectId or null; never throws on a malformed id. */
+function toObjectIdOrNull(id: string): Types.ObjectId | null {
+  return Types.ObjectId.isValid(id) ? new Types.ObjectId(id) : null;
+}
+
 /** All of the current student's certificates, newest first. */
 export async function listStudentCertificates(
   studentId: string
@@ -47,6 +52,43 @@ export async function getStudentCertificate(
 
   if (!cert) return null;
   return certificateToDetail(cert);
+}
+
+/**
+ * Storage reference for the student file routes (view / download).
+ *
+ * Filtered by the authenticated student id, exactly like `getStudentCertificate`
+ * — a student can never obtain the delivery URL of another student's file, and
+ * the URL is only ever used server-side to proxy the bytes back.
+ */
+export async function getStudentCertificateFileRef(
+  studentId: string,
+  certificateId: string
+): Promise<{
+  pdfUrl: string;
+  fileType: string | null;
+  certificateNumber: string;
+  status: string;
+} | null> {
+  const certificateObjectId = toObjectIdOrNull(certificateId);
+  const studentObjectId = toObjectIdOrNull(studentId);
+  if (!certificateObjectId || !studentObjectId) return null;
+
+  await connectDB();
+  const cert = await Certificate.findOne({
+    _id: certificateObjectId,
+    student: studentObjectId,
+  })
+    .select("pdfUrl fileType certificateNumber status")
+    .lean();
+
+  if (!cert) return null;
+  return {
+    pdfUrl: cert.pdfUrl,
+    fileType: cert.fileType ?? "application/pdf",
+    certificateNumber: cert.certificateNumber,
+    status: cert.status,
+  };
 }
 
 /** Certificate for a given enrollment (used by the course detail page). */

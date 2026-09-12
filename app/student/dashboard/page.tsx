@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getValidatedStudent } from "@/lib/auth/helpers";
 import { getDashboardStats, getEnrolledCourses, getRecentActivity, getPendingTasks, getAnnouncements, getCertificates, getStudentProfile, getCareerWidget } from "@/lib/student/dashboard";
-import { listCertificateEligibleEnrollments } from "@/lib/certificates/issue";
 import { StudentDashboardClient } from "./StudentDashboardClient";
 
 export const metadata: Metadata = {
@@ -29,8 +28,6 @@ export default async function StudentDashboardPage() {
     getCareerWidget(student.id),
   ]);
 
-  const certificatesReady = await listCertificateEligibleEnrollments(student.id);
-
   return (
     <StudentDashboardClient
       session={{
@@ -46,7 +43,6 @@ export default async function StudentDashboardPage() {
       announcements={announcements}
       certificates={certificates}
       profile={profile}
-      certificatesReadyCount={certificatesReady.length}
       career={career}
     />
   );

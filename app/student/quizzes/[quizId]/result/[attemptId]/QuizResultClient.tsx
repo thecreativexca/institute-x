@@ -73,13 +73,13 @@ export function QuizResultClient({ data }: { data: QuizResultViewData }) {
             <div
               className={cn(
                 "mx-auto flex max-w-2xl flex-col items-center gap-4 rounded-2xl border p-6 text-center",
-                passed ? "border-emerald-200 bg-emerald-50" : "border-red-200 bg-red-50"
+                passed ? "border-amber-200 bg-amber-50" : "border-red-200 bg-red-50"
               )}
             >
               <div
                 className={cn(
                   "flex h-16 w-16 items-center justify-center rounded-full",
-                  passed ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
+                  passed ? "bg-amber-700 text-white" : "bg-red-600 text-white"
                 )}
               >
                 {passed ? (
@@ -98,7 +98,7 @@ export function QuizResultClient({ data }: { data: QuizResultViewData }) {
                 <p
                   className={cn(
                     "mt-1 text-sm font-medium",
-                    passed ? "text-emerald-700" : "text-red-700"
+                    passed ? "text-amber-800" : "text-red-700"
                   )}
                 >
                   {passed ? "Congratulations, you passed!" : "You did not pass this time."}
@@ -114,13 +114,13 @@ export function QuizResultClient({ data }: { data: QuizResultViewData }) {
               </div>
               <Progress
                 value={data.percentage}
-                className={cn("h-3", passed ? "bg-emerald-100" : "bg-red-100")}
+                className={cn("h-3", passed ? "bg-amber-100" : "bg-red-100")}
               />
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
               <div className="rounded-xl bg-primary-50 p-4 text-center">
-                <CheckCircle2 className="mx-auto h-5 w-5 text-emerald-600" aria-hidden="true" />
+                <CheckCircle2 className="mx-auto h-5 w-5 text-amber-700" aria-hidden="true" />
                 <p className="mt-1 text-xl font-bold text-slate-900">{data.correctCount}</p>
                 <p className="text-xs text-slate-500">Correct</p>
               </div>
@@ -208,7 +208,7 @@ export function QuizResultClient({ data }: { data: QuizResultViewData }) {
                           className={cn(
                             "flex-1 font-medium",
                             q.isCorrect === true
-                              ? "text-emerald-700"
+                              ? "text-amber-800"
                               : q.isCorrect === false
                                 ? "text-red-700"
                                 : "text-slate-600"
@@ -219,7 +219,7 @@ export function QuizResultClient({ data }: { data: QuizResultViewData }) {
                       </p>
                       <p className="flex items-center gap-2">
                         <span className="w-24 shrink-0 text-slate-500">Correct:</span>
-                        <span className="flex-1 font-medium text-emerald-700">
+                        <span className="flex-1 font-medium text-amber-800">
                           {textOf(q.correctOptionId)}
                         </span>
                       </p>

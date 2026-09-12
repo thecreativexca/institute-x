@@ -65,8 +65,8 @@ export function SocialShare({ url, title, description, className }: SocialShareP
       >
         {copied ? (
           <>
-            <CheckIcon className="h-4 w-4 text-emerald-600" />
-            <span className="text-emerald-600">Copied</span>
+            <CheckIcon className="h-4 w-4 text-amber-700" />
+            <span className="text-amber-700">Copied</span>
           </>
         ) : (
           <>
@@ -95,7 +95,7 @@ export function SocialShare({ url, title, description, className }: SocialShareP
         className={buttonVariants("ghost", "sm", "gap-1.5")}
         aria-label="Share on WhatsApp"
       >
-        <WhatsAppIcon className="h-4 w-4 text-green-600" />
+        <WhatsAppIcon className="h-4 w-4 text-amber-700" />
         <span className="sr-only">WhatsApp</span>
       </a>
 

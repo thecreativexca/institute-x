@@ -15,7 +15,7 @@ export type BadgeVariant =
 const variantStyles: Record<BadgeVariant, string> = {
   neutral: "bg-slate-100 text-slate-700 border-slate-200",
   primary: "bg-primary-50 text-primary-800 border-primary-200",
-  success: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  success: "bg-amber-50 text-amber-900 border-amber-200",
   warning: "bg-accent-50 text-accent-800 border-accent-200",
   danger: "bg-red-50 text-red-800 border-red-200",
   default: "bg-slate-100 text-slate-700 border-slate-200",

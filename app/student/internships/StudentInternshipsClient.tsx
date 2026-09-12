@@ -100,8 +100,8 @@ export function StudentInternshipsClient({ rows }: { rows: any[] }) {
           label="Open programs"
           value={counts.available}
           icon={Sparkles}
-          surfaceClassName="bg-emerald-50"
-          toneClassName="text-emerald-700"
+          surfaceClassName="bg-amber-50"
+          toneClassName="text-amber-800"
         />
         <StatCard
           label="Applications"

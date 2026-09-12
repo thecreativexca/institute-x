@@ -230,7 +230,7 @@ export function AttemptClient({ data }: { data: AttemptViewData }) {
         </span>
         <span className="flex items-center gap-2 text-slate-600">
           <span className="inline-flex items-center gap-1">
-            <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+            <CheckCircle2 className="h-4 w-4 text-amber-700" aria-hidden="true" />
             {answeredCount} answered
           </span>
           <span className="inline-flex items-center gap-1">
@@ -328,7 +328,7 @@ export function AttemptClient({ data }: { data: AttemptViewData }) {
           </span>
         ) : saveState === "saved" ? (
           <span className="inline-flex items-center gap-1">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" /> Saved
+            <CheckCircle2 className="h-3.5 w-3.5 text-amber-700" aria-hidden="true" /> Saved
           </span>
         ) : saveState === "error" ? (
           <span className="inline-flex items-center gap-1 text-red-600">
@@ -359,7 +359,7 @@ export function AttemptClient({ data }: { data: AttemptViewData }) {
                     isCurrent
                       ? "border-primary-600 bg-primary-600 text-white"
                       : isAnswered
-                        ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                        ? "border-amber-300 bg-amber-50 text-amber-900"
                         : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                   )}
                   aria-label={`Go to question ${i + 1}`}

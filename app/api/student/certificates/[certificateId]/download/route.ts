@@ -1,55 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { requireStudentCertificateOrResponse, certificateDownloadFileName } from "@/lib/certificates/download";
+import {
+  certificateDownloadFileName,
+  requireStudentCertificateOrResponse,
+} from "@/lib/certificates/download";
+import { streamCertificateFile } from "@/lib/certificates/stream";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 type RouteContext = { params: Promise<{ certificateId: string }> };
 
 /**
  * GET /api/student/certificates/[certificateId]/download
  *
- * Private, ownership-checked download (spec §25, §47–§48). The PDF streams
- * through the server with `Content-Disposition: attachment` and a sanitized,
- * professional filename. Swapping the certificateId cannot expose another
- * student's PDF because the guard filters by the session student.
+ * Private, ownership-checked download (spec §25, §47–§48). The stored file
+ * streams through the server with `Content-Disposition: attachment` and a
+ * sanitized, professional filename. Swapping the certificateId cannot expose
+ * another student's file because the guard filters by the session student.
+ *
+ * Downloads are REFUSED for revoked certificates (spec §7): a revoked document
+ * must not be re-circulated as a valid copy. The student still sees the record
+ * and its revocation notice on the detail page.
  */
 export async function GET(_request: NextRequest, ctx: RouteContext) {
   const guard = await requireStudentCertificateOrResponse(ctx);
   if ("response" in guard) return guard.response;
 
-  const { detail } = guard;
-
-  try {
-    const upstream = await fetch(detail.pdfUrl, { cache: "no-store" });
-    if (!upstream.ok || !upstream.body) {
-      console.error("Certificate download upstream failed:", upstream.status);
-      return NextResponse.json(
-        { success: false, error: "Unable to open this certificate." },
-        { status: 502 }
-      );
-    }
-
-    const fileName = certificateDownloadFileName(detail);
-
-    return new Response(upstream.body, {
-      status: 200,
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Length": String(upstream.headers.get("content-length") ?? ""),
-        "Content-Disposition": `attachment; filename="${fileName.ascii}"; filename*=UTF-8''${fileName.encoded}`,
-        "Cache-Control": "private, no-store",
-        "X-Content-Type-Options": "nosniff",
-      },
-    });
-  } catch (error) {
-    console.error(
-      "Certificate download failed:",
-      error instanceof Error ? error.message : error
-    );
+  if (guard.status === "revoked") {
     return NextResponse.json(
-      { success: false, error: "Unable to open this certificate." },
-      { status: 500 }
+      {
+        success: false,
+        error: "This certificate has been revoked and can no longer be downloaded.",
+      },
+      { status: 403 }
     );
   }
+
+  const fileName = certificateDownloadFileName({
+    ...guard.detail,
+    fileType: guard.fileType,
+  });
+
+  return streamCertificateFile({
+    fileUrl: guard.fileUrl,
+    mimeType: guard.fileType,
+    // The friendly name already carries the extension from the MIME type.
+    fileName: fileName.ascii.replace(/\.[a-z0-9]+$/, ""),
+    extension: fileName.ascii.split(".").pop() ?? "pdf",
+    disposition: "attachment",
+  });
 }

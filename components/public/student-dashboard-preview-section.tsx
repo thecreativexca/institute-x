@@ -11,7 +11,7 @@ export function StudentDashboardPreviewSection() {
   return (
     <section
       aria-labelledby="dashboard-preview-heading"
-      className="border-y border-primary-100 bg-[#fffef8]"
+      className="border-y border-primary-100 bg-[#ffffff]"
     >
       <Container className="py-16 sm:py-24">
         <SectionHeading

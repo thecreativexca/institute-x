@@ -99,10 +99,13 @@ export interface StudentPayment {
 export interface StudentCertificate {
   id: string;
   certificateNumber: string;
+  /** Empty for admin-issued certificates that are not tied to a course. */
   courseId: string;
+  /** Certificate title when set, otherwise the course name snapshot. */
   courseName: string;
   issuedAt: string;
-  completionDate: string;
+  /** Null when the certificate records no completion date. */
+  completionDate: string | null;
   status: CertificateStatus;
   verificationCode: string;
   pdfUrl: string;

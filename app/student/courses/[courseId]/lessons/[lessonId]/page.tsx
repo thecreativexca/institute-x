@@ -221,7 +221,7 @@ export default async function StudentLessonPage({ params }: RouteParams) {
                   <ul className="mt-1.5 space-y-1">
                     {module.lessons.map((lesson) => {
                       const active = lesson.id === lessonId;
-                      return <li key={lesson.id}><Link href={`/student/courses/${courseId}/lessons/${lesson.id}`} aria-current={active ? "page" : undefined} className={`flex items-start gap-2 rounded-lg px-2 py-2 text-sm ${active ? "bg-primary-100 font-semibold text-primary-900" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}>{lesson.completed ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> : <Circle className="mt-0.5 h-4 w-4 shrink-0 text-slate-300" />}<span>{lesson.title}</span></Link></li>;
+                      return <li key={lesson.id}><Link href={`/student/courses/${courseId}/lessons/${lesson.id}`} aria-current={active ? "page" : undefined} className={`flex items-start gap-2 rounded-lg px-2 py-2 text-sm ${active ? "bg-primary-100 font-semibold text-primary-900" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}>{lesson.completed ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" /> : <Circle className="mt-0.5 h-4 w-4 shrink-0 text-slate-300" />}<span>{lesson.title}</span></Link></li>;
                     })}
                   </ul>
                 </section>

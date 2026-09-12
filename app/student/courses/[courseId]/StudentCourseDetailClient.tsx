@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { LinkWrapper } from "@/components/ui/link-button";
-import { GenerateCertificateButton } from "../../certificates/GenerateCertificateButton";
+
 import type { CertificateListItem } from "@/types/certificate";
 import {
   BookOpen,
@@ -84,7 +84,7 @@ export function StudentCourseDetailClient({ course, enrollment, modules = [], ce
         </Link>
 
         {/* Course Header */}
-        <section className="student-grid-pattern relative grid gap-6 overflow-hidden rounded-[1.75rem] border border-primary-900 bg-[#10291e] p-5 text-white shadow-2xl shadow-primary-950/15 sm:p-7 lg:grid-cols-3">
+        <section className="student-grid-pattern relative grid gap-6 overflow-hidden rounded-[1.75rem] border border-primary-900 bg-[#103a50] p-5 text-white shadow-2xl shadow-primary-950/15 sm:p-7 lg:grid-cols-3">
           <div aria-hidden="true" className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-accent-300/20 blur-3xl" />
           <div className="lg:col-span-1">
             {course.thumbnailUrl ? (
@@ -264,8 +264,8 @@ export function StudentCourseDetailClient({ course, enrollment, modules = [], ce
           <Card className="rounded-2xl border-primary-100">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-600" aria-hidden="true" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
+                  <CheckCircle2 className="h-5 w-5 text-amber-700" aria-hidden="true" />
                 </div>
                 <div>
                   <CardTitle className="text-base">Assignments</CardTitle>
@@ -318,8 +318,16 @@ export function StudentCourseDetailClient({ course, enrollment, modules = [], ce
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <p className="text-sm text-slate-500">Certificate Ready — generate your official certificate.</p>
-                  <GenerateCertificateButton enrollmentId={enrollment._id} />
+                  <p className="text-sm text-slate-500">
+                    Certificate pending — the institute will issue your official
+                    certificate once your completion is reviewed. It will appear
+                    under My Certificates.
+                  </p>
+                  <Button asChild variant="outline" size="sm">
+                    <LinkWrapper href="/student/certificates">
+                      <Award className="h-4 w-4" aria-hidden="true" /> Go to My Certificates
+                    </LinkWrapper>
+                  </Button>
                 </div>
               )}
             </CardContent>

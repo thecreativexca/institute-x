@@ -217,46 +217,47 @@
 
 /* =============================================================================
    INSTITUTE DESIGN SYSTEM (Tailwind v4 CSS-first configuration)
-   The base tokens remain neutral for the authenticated portals. Public marketing
-   pages override them inside .public-theme with a mint + warm-yellow palette.
+   Light Yellow & Imperial Gold luxury academy theme with Google Fonts
+   (Plus Jakarta Sans & Outfit)
    ========================================================================== */
 
 @theme {
   /* ------------------------------- Typography ------------------------------ */
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", Roboto, Arial, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, "Cascadia Mono", monospace;
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-heading: var(--font-heading), var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", monospace;
 
   /* ------------------------------- Color scales ---------------------------- */
-  /* Primary — institutional blue */
-  --color-primary-50: #eef4ff;
-  --color-primary-100: #dce7fe;
-  --color-primary-200: #c0d4fe;
-  --color-primary-300: #94b8fc;
-  --color-primary-400: #6191f8;
-  --color-primary-500: #3d69f1;
-  --color-primary-600: #274de3;
-  --color-primary-700: #1f3cd0;
-  --color-primary-800: #2033a9;
-  --color-primary-900: #1f3085;
-  --color-primary-950: #171f52;
+  /* Primary — Light Yellow to Prestige Imperial Gold & Deep Bronze */
+  --color-primary-50: #fefce8;
+  --color-primary-100: #fef9c3;
+  --color-primary-200: #fef08a;
+  --color-primary-300: #fde047;
+  --color-primary-400: #eab308;
+  --color-primary-500: #ca8a04;
+  --color-primary-600: #a16207;
+  --color-primary-700: #854d0e;
+  --color-primary-800: #713f12;
+  --color-primary-900: #422006;
+  --color-primary-950: #251202;
 
-  /* Accent — sparingly-used warm gold for highlights */
-  --color-accent-50: #fdf8ed;
-  --color-accent-100: #f9eccb;
-  --color-accent-200: #f2d795;
-  --color-accent-300: #ebbc59;
-  --color-accent-400: #e5a332;
-  --color-accent-500: #d98a1a;
-  --color-accent-600: #bd6c12;
-  --color-accent-700: #9c4f13;
-  --color-accent-800: #803e16;
-  --color-accent-900: #6a3315;
+  /* Accent — Radiant Champagne & Warm Gold */
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-accent-700: #b45309;
+  --color-accent-800: #92400e;
+  --color-accent-900: #78350f;
 
   /* Semantic surfaces */
   --color-surface: #ffffff;
-  --color-surface-muted: #f6f8fb;
-  --color-surface-inset: #eef2f7;
+  --color-surface-muted: #fffdf7;
+  --color-surface-inset: #fef9ee;
 
   /* --------------------------------- Radius -------------------------------- */
   --radius-sm: 0.25rem;
@@ -265,61 +266,61 @@
   --radius-xl: 1rem;
 
   /* --------------------------------- Shadows ------------------------------- */
-  /* Subtle, professional elevation — no glow effects. */
-  --shadow-card: 0 1px 2px 0 rgb(23 31 82 / 0.06),
-    0 1px 3px 0 rgb(23 31 82 / 0.08);
-  --shadow-card-hover: 0 4px 10px -2px rgb(23 31 82 / 0.1),
-    0 8px 24px -6px rgb(23 31 82 / 0.12);
+  /* Warm, subtle golden-bronze elevation */
+  --shadow-card: 0 1px 3px 0 rgb(113 63 18 / 0.06),
+    0 1px 2px -1px rgb(113 63 18 / 0.06);
+  --shadow-card-hover: 0 10px 25px -5px rgb(161 98 7 / 0.12),
+    0 8px 10px -6px rgb(161 98 7 / 0.08);
 }
 
 /* --------------------------- Public website theme --------------------------- */
 .public-theme {
-  --color-primary-50: #effbf3;
-  --color-primary-100: #d9f5e2;
-  --color-primary-200: #b7eac9;
-  --color-primary-300: #86d9a8;
-  --color-primary-400: #50c17e;
-  --color-primary-500: #2da663;
-  --color-primary-600: #1e8750;
-  --color-primary-700: #196d43;
-  --color-primary-800: #185737;
-  --color-primary-900: #16472f;
-  --color-primary-950: #0a281a;
+  --color-primary-50: #fefce8;
+  --color-primary-100: #fef9c3;
+  --color-primary-200: #fef08a;
+  --color-primary-300: #fde047;
+  --color-primary-400: #eab308;
+  --color-primary-500: #ca8a04;
+  --color-primary-600: #a16207;
+  --color-primary-700: #854d0e;
+  --color-primary-800: #713f12;
+  --color-primary-900: #422006;
+  --color-primary-950: #251202;
 
-  --color-accent-50: #fffdf0;
-  --color-accent-100: #fff8c9;
-  --color-accent-200: #ffef88;
-  --color-accent-300: #ffe15a;
-  --color-accent-400: #f7ca2e;
-  --color-accent-500: #dda916;
-  --color-accent-600: #b98110;
-  --color-accent-700: #916013;
-  --color-accent-800: #774c17;
-  --color-accent-900: #663f19;
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-accent-700: #b45309;
+  --color-accent-800: #92400e;
+  --color-accent-900: #78350f;
 
-  --color-surface: #fffef8;
-  --color-surface-muted: #f4fbf3;
-  --color-surface-inset: #e7f5e9;
-  --shadow-card: 0 1px 2px rgb(10 40 26 / 0.04),
-    0 8px 24px -18px rgb(25 109 67 / 0.3);
-  --shadow-card-hover: 0 12px 28px -16px rgb(25 109 67 / 0.3),
-    0 5px 12px -8px rgb(10 40 26 / 0.16);
+  --color-surface: #ffffff;
+  --color-surface-muted: #fffdf7;
+  --color-surface-inset: #fef9ee;
+  --shadow-card: 0 1px 3px 0 rgb(113 63 18 / 0.06),
+    0 8px 24px -18px rgb(161 98 7 / 0.24);
+  --shadow-card-hover: 0 12px 28px -16px rgb(161 98 7 / 0.28),
+    0 5px 12px -8px rgb(113 63 18 / 0.12);
 
   min-height: 100%;
-  background: #fffef8;
-  color: #23453a;
+  background: #ffffff;
+  color: #261e14;
 }
 
 .public-hero-pattern {
-  background-color: #f8fcf3;
+  background-color: #fffdf7;
   background-image:
-    radial-gradient(circle at 12% 20%, rgb(255 225 90 / 0.38), transparent 24rem),
-    radial-gradient(circle at 87% 14%, rgb(134 217 168 / 0.42), transparent 27rem),
-    linear-gradient(135deg, rgb(255 255 255 / 0.88), rgb(239 251 243 / 0.72));
+    radial-gradient(circle at 12% 20%, rgb(254 240 138 / 0.45), transparent 24rem),
+    radial-gradient(circle at 87% 14%, rgb(253 230 138 / 0.40), transparent 27rem),
+    linear-gradient(135deg, rgb(255 255 255 / 0.96), rgb(255 252 240 / 0.88));
 }
 
 .public-soft-grid {
-  background-image: radial-gradient(rgb(30 135 80 / 0.14) 0.75px, transparent 0.75px);
+  background-image: radial-gradient(rgb(180 83 9 / 0.13) 0.75px, transparent 0.75px);
   background-size: 18px 18px;
 }
 
@@ -327,85 +328,85 @@
 .auth-theme {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 8% 12%, rgb(134 217 168 / 0.34), transparent 26rem),
-    radial-gradient(circle at 94% 88%, rgb(255 225 90 / 0.34), transparent 25rem),
-    #f7fbf4;
+    radial-gradient(circle at 8% 12%, rgb(254 240 138 / 0.42), transparent 26rem),
+    radial-gradient(circle at 94% 88%, rgb(253 230 138 / 0.38), transparent 25rem),
+    #fffdf8;
 }
 
 .auth-card {
   position: relative;
   overflow: hidden;
-  border-color: #d9ebdd;
+  border-color: #fef08a;
   border-radius: 1.5rem;
-  box-shadow: 0 22px 55px -38px rgb(8 40 25 / 0.42);
+  box-shadow: 0 22px 55px -38px rgb(113 63 18 / 0.32);
 }
 
 .auth-card::before {
   content: "";
   position: absolute;
   inset: 0 0 auto;
-  height: 0.3rem;
-  background: linear-gradient(90deg, #2aa35f, #ffe15a, #2aa35f);
+  height: 0.35rem;
+  background: linear-gradient(90deg, #d97706, #fde047, #a16207);
 }
 
 .auth-card input {
-  border-color: #cfe4d4;
+  border-color: #fde68a;
   border-radius: 0.75rem;
 }
 
 .auth-card input:hover {
-  border-color: #82d6a0;
+  border-color: #eab308;
 }
 
 /* --------------------------- Office workspace theme ------------------------- */
 .office-theme {
-  --color-primary-50: #effaf2;
-  --color-primary-100: #d9f3e1;
-  --color-primary-200: #b6e8c5;
-  --color-primary-300: #82d6a0;
-  --color-primary-400: #4ebe78;
-  --color-primary-500: #2aa35f;
-  --color-primary-600: #1c854d;
-  --color-primary-700: #176b40;
-  --color-primary-800: #175536;
-  --color-primary-900: #15462e;
-  --color-primary-950: #082819;
+  --color-primary-50: #fefce8;
+  --color-primary-100: #fef9c3;
+  --color-primary-200: #fef08a;
+  --color-primary-300: #fde047;
+  --color-primary-400: #eab308;
+  --color-primary-500: #ca8a04;
+  --color-primary-600: #a16207;
+  --color-primary-700: #854d0e;
+  --color-primary-800: #713f12;
+  --color-primary-900: #422006;
+  --color-primary-950: #251202;
 
-  --color-accent-50: #fffdf0;
-  --color-accent-100: #fff8c9;
-  --color-accent-200: #ffef88;
-  --color-accent-300: #ffe15a;
-  --color-accent-400: #f7ca2e;
-  --color-accent-500: #dda916;
-  --color-accent-600: #b98110;
-  --color-accent-700: #916013;
-  --color-accent-800: #774c17;
-  --color-accent-900: #663f19;
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-accent-700: #b45309;
+  --color-accent-800: #92400e;
+  --color-accent-900: #78350f;
 
   --color-surface: #ffffff;
-  --color-surface-muted: #f6faf3;
-  --color-surface-inset: #eaf4e8;
-  --shadow-card: 0 1px 2px rgb(8 40 25 / 0.04),
-    0 8px 22px -16px rgb(23 107 64 / 0.22);
-  --shadow-card-hover: 0 18px 38px -24px rgb(8 40 25 / 0.3),
-    0 8px 18px -14px rgb(28 133 77 / 0.22);
+  --color-surface-muted: #fffdf7;
+  --color-surface-inset: #fef9ee;
+  --shadow-card: 0 1px 3px 0 rgb(113 63 18 / 0.05),
+    0 8px 22px -16px rgb(161 98 7 / 0.20);
+  --shadow-card-hover: 0 18px 38px -24px rgb(113 63 18 / 0.25),
+    0 8px 18px -14px rgb(161 98 7 / 0.20);
 
   min-height: 100vh;
-  background: #f6faf3;
-  color: #1d3a2f;
+  background: #fffdf7;
+  color: #261e14;
 }
 
 .office-grid-pattern {
-  background-image: radial-gradient(rgb(255 225 90 / 0.28) 0.7px, transparent 0.7px);
+  background-image: radial-gradient(rgb(180 83 9 / 0.12) 0.7px, transparent 0.7px);
   background-size: 16px 16px;
 }
 
 .office-page-header {
   position: relative;
   overflow: hidden;
-  border: 1px solid #d9ebdd;
+  border: 1px solid #fef08a;
   border-radius: 1.25rem;
-  background: linear-gradient(135deg, #ffffff 0%, #f3fbf2 68%, #fff9dc 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #fefce8 68%, #fffbeb 100%);
   padding: 1.25rem;
   box-shadow: var(--shadow-card);
 }
@@ -418,7 +419,7 @@
   width: 10rem;
   height: 10rem;
   border-radius: 9999px;
-  background: rgb(255 225 90 / 0.24);
+  background: rgb(253 230 138 / 0.35);
 }
 
 .office-page-header > * {
@@ -427,7 +428,7 @@
 }
 
 .office-theme table thead tr {
-  background: #f2f8f1;
+  background: #fefce8;
 }
 
 .office-theme table tbody tr {
@@ -435,18 +436,18 @@
 }
 
 .office-theme table tbody tr:hover {
-  background: #f5fbf3;
+  background: #fffdf0;
 }
 
 .office-theme [role="menu"] {
   border-radius: 0.875rem;
-  box-shadow: 0 16px 36px -20px rgb(15 23 42 / 0.35);
+  box-shadow: 0 16px 36px -20px rgb(113 63 18 / 0.25);
 }
 
-/* Slim, low-contrast scrollbar for the dark office sidebar nav list. */
+/* Slim, low-contrast scrollbar for the light office sidebar nav list. */
 .office-nav-scroll {
   scrollbar-width: thin;
-  scrollbar-color: rgb(255 255 255 / 0.2) transparent;
+  scrollbar-color: rgb(161 98 7 / 0.25) transparent;
 }
 
 .office-nav-scroll::-webkit-scrollbar {
@@ -458,18 +459,18 @@
 }
 
 .office-nav-scroll::-webkit-scrollbar-thumb {
-  background: rgb(255 255 255 / 0.18);
+  background: rgb(161 98 7 / 0.25);
   border-radius: 999px;
 }
 
 .office-nav-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgb(255 255 255 / 0.32);
+  background: rgb(161 98 7 / 0.4);
 }
 
 .office-auth-card {
   position: relative;
   overflow: hidden;
-  border-color: #d9ebdd;
+  border-color: #fef08a;
   border-radius: 1.5rem;
   box-shadow: var(--shadow-card-hover);
 }
@@ -479,16 +480,16 @@
   position: absolute;
   inset: 0 0 auto;
   height: 0.35rem;
-  background: linear-gradient(90deg, #2aa35f, #ffe15a, #2aa35f);
+  background: linear-gradient(90deg, #d97706, #fde047, #a16207);
 }
 
 .office-auth-card input {
-  border-color: #cfe4d4;
+  border-color: #fde68a;
   border-radius: 0.75rem;
 }
 
 .office-auth-card input:hover {
-  border-color: #82d6a0;
+  border-color: #eab308;
 }
 
 @media (min-width: 640px) {
@@ -499,53 +500,53 @@
 
 /* -------------------------- Student learning theme ------------------------- */
 .student-theme {
-  --color-primary-50: #effaf2;
-  --color-primary-100: #d9f3e1;
-  --color-primary-200: #b6e8c5;
-  --color-primary-300: #82d6a0;
-  --color-primary-400: #4ebe78;
-  --color-primary-500: #2aa35f;
-  --color-primary-600: #1c854d;
-  --color-primary-700: #176b40;
-  --color-primary-800: #175536;
-  --color-primary-900: #15462e;
-  --color-primary-950: #082819;
+  --color-primary-50: #fefce8;
+  --color-primary-100: #fef9c3;
+  --color-primary-200: #fef08a;
+  --color-primary-300: #fde047;
+  --color-primary-400: #eab308;
+  --color-primary-500: #ca8a04;
+  --color-primary-600: #a16207;
+  --color-primary-700: #854d0e;
+  --color-primary-800: #713f12;
+  --color-primary-900: #422006;
+  --color-primary-950: #251202;
 
-  --color-accent-50: #fffdf0;
-  --color-accent-100: #fff8c9;
-  --color-accent-200: #ffef88;
-  --color-accent-300: #ffe15a;
-  --color-accent-400: #f7ca2e;
-  --color-accent-500: #dda916;
-  --color-accent-600: #b98110;
-  --color-accent-700: #916013;
-  --color-accent-800: #774c17;
-  --color-accent-900: #663f19;
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-accent-700: #b45309;
+  --color-accent-800: #92400e;
+  --color-accent-900: #78350f;
 
   --color-surface: #ffffff;
-  --color-surface-muted: #f7fbf4;
-  --color-surface-inset: #eaf4e8;
-  --shadow-card: 0 1px 2px rgb(8 40 25 / 0.04),
-    0 9px 24px -17px rgb(23 107 64 / 0.24);
-  --shadow-card-hover: 0 20px 42px -25px rgb(8 40 25 / 0.32),
-    0 8px 18px -14px rgb(28 133 77 / 0.24);
+  --color-surface-muted: #fffdf7;
+  --color-surface-inset: #fef9ee;
+  --shadow-card: 0 1px 3px 0 rgb(113 63 18 / 0.05),
+    0 9px 24px -17px rgb(161 98 7 / 0.20);
+  --shadow-card-hover: 0 20px 42px -25px rgb(113 63 18 / 0.25),
+    0 8px 18px -14px rgb(161 98 7 / 0.20);
 
   min-height: 100vh;
-  background: #f7fbf4;
-  color: #1d3a2f;
+  background: #fffdf7;
+  color: #261e14;
 }
 
 .student-grid-pattern {
-  background-image: radial-gradient(rgb(255 225 90 / 0.32) 0.75px, transparent 0.75px);
+  background-image: radial-gradient(rgb(180 83 9 / 0.14) 0.75px, transparent 0.75px);
   background-size: 17px 17px;
 }
 
 .student-page-header {
   position: relative;
   overflow: hidden;
-  border: 1px solid #d9ebdd;
+  border: 1px solid #fef08a;
   border-radius: 1.25rem;
-  background: linear-gradient(135deg, #ffffff 0%, #f0faf0 66%, #fff8ce 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #fefce8 66%, #fffbeb 100%);
   padding: 1.25rem;
   box-shadow: var(--shadow-card);
 }
@@ -558,7 +559,7 @@
   width: 10rem;
   height: 10rem;
   border-radius: 9999px;
-  background: rgb(255 225 90 / 0.26);
+  background: rgb(253 230 138 / 0.35);
 }
 
 .student-page-header > * {
@@ -567,7 +568,7 @@
 }
 
 .student-theme table thead tr {
-  background: #f2f8f1;
+  background: #fefce8;
 }
 
 .student-theme table tbody tr {
@@ -575,27 +576,27 @@
 }
 
 .student-theme table tbody tr:hover {
-  background: #f5fbf3;
+  background: #fffdf0;
 }
 
 .student-theme [role="menu"] {
   border-radius: 0.875rem;
-  box-shadow: 0 16px 36px -20px rgb(15 23 42 / 0.35);
+  box-shadow: 0 16px 36px -20px rgb(113 63 18 / 0.25);
 }
 
 .student-theme main .shadow-card {
-  border-color: #d9ebdd;
+  border-color: #fef08a;
   border-radius: 1rem;
 }
 
 .student-theme main input,
 .student-theme main textarea {
-  border-color: #cfe4d4;
+  border-color: #fde68a;
 }
 
 .student-theme main input:focus,
 .student-theme main textarea:focus {
-  border-color: #4ebe78;
+  border-color: #eab308;
 }
 
 @media (min-width: 640px) {
@@ -612,9 +613,15 @@
 
   body {
     background-color: var(--color-surface);
-    color: var(--color-slate-800);
+    color: #261e14;
     font-family: var(--font-sans);
     text-rendering: optimizeLegibility;
+  }
+
+  /* Headings use Outfit for a premium, authoritative, modern look */
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: var(--font-heading);
+    letter-spacing: -0.025em;
   }
 
   /* Visible, consistent keyboard focus everywhere. */
@@ -625,7 +632,7 @@
   }
 
   ::selection {
-    background-color: var(--color-primary-100);
+    background-color: var(--color-primary-200);
     color: var(--color-primary-950);
   }
 }

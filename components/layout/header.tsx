@@ -31,7 +31,7 @@ export function Header({ session }: HeaderProps) {
   const isStudentLoggedIn = session?.role === "student" && session !== null;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-primary-100 bg-[#fffef8]/95 shadow-[0_1px_16px_rgb(25_109_67/0.05)] backdrop-blur-xl supports-[backdrop-filter]:bg-[#fffef8]/82">
+    <header className="sticky top-0 z-40 border-b border-primary-200/80 bg-[#ffffff]/95 shadow-[0_2px_16px_rgb(161_98_7/0.07)] backdrop-blur-xl supports-[backdrop-filter]:bg-[#ffffff]/85">
       <Container>
         <div className="flex h-[4.5rem] items-center justify-between gap-4">
           <Logo />
@@ -130,7 +130,7 @@ export function Header({ session }: HeaderProps) {
       </Container>
 
       {isMenuOpen ? (
-        <div id="mobile-menu" className="border-t border-primary-100 bg-[#fffef8] shadow-lg md:hidden">
+        <div id="mobile-menu" className="border-t border-primary-100 bg-[#ffffff] shadow-lg md:hidden">
           <Container className="py-3">
             <nav aria-label="Mobile navigation">
               <ul className="flex flex-col">

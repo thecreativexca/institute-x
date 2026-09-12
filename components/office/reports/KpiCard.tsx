@@ -51,7 +51,7 @@ export function KpiCard({
               deltaPercent === null
                 ? "text-slate-400"
                 : deltaPercent > 0
-                  ? "text-emerald-600"
+                  ? "text-amber-700"
                   : deltaPercent < 0
                     ? "text-red-600"
                     : "text-slate-500"

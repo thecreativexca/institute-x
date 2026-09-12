@@ -130,8 +130,8 @@ export function StudentProfileClient({ user }: { user: User | null }) {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
-                <CheckCircle2 className="h-6 w-6 text-emerald-600" aria-hidden="true" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100">
+                <CheckCircle2 className="h-6 w-6 text-amber-700" aria-hidden="true" />
               </div>
               <div>
                 <p className="font-medium text-slate-900">Active</p>

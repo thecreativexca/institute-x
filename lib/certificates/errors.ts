@@ -15,6 +15,23 @@ export const CERTIFICATE_ERROR = {
   INVALID_IDENTIFIER: "INVALID_IDENTIFIER",
   RATE_LIMITED: "RATE_LIMITED",
   INTERNAL: "INTERNAL",
+  /* ----- Admin Certificate Management module ----- */
+  /** Certificate number already exists (unique index / pre-check). */
+  DUPLICATE_NUMBER: "DUPLICATE_NUMBER",
+  /** No file supplied, or the file could not be read. */
+  INVALID_FILE: "INVALID_FILE",
+  /** MIME type / extension / magic bytes rejected. */
+  INVALID_FILE_TYPE: "INVALID_FILE_TYPE",
+  /** File exceeds the configured size cap. */
+  FILE_TOO_LARGE: "FILE_TOO_LARGE",
+  /** Student id does not resolve to a real student account. */
+  STUDENT_NOT_FOUND: "STUDENT_NOT_FOUND",
+  /** Course id does not resolve to a real course. */
+  COURSE_NOT_FOUND: "COURSE_NOT_FOUND",
+  /** The requested state transition is not allowed (e.g. revoke an already revoked row). */
+  INVALID_STATE: "INVALID_STATE",
+  /** Malformed request body / query. */
+  VALIDATION_FAILED: "VALIDATION_FAILED",
 } as const;
 
 export type CertificateErrorCode =
@@ -56,6 +73,22 @@ export function certificateUserMessage(error: unknown): string {
         return "This certificate has already been issued.";
       case CERTIFICATE_ERROR.INVALID_IDENTIFIER:
         return "Please enter a valid certificate number or verification code.";
+      case CERTIFICATE_ERROR.DUPLICATE_NUMBER:
+        return "That certificate number is already in use. Choose a different one.";
+      case CERTIFICATE_ERROR.INVALID_FILE:
+        return "Please choose a valid certificate file to upload.";
+      case CERTIFICATE_ERROR.INVALID_FILE_TYPE:
+        return "Only PDF, JPG, JPEG and PNG files are allowed.";
+      case CERTIFICATE_ERROR.FILE_TOO_LARGE:
+        return "The selected file is too large. Please upload a smaller file.";
+      case CERTIFICATE_ERROR.STUDENT_NOT_FOUND:
+        return "The selected student could not be found.";
+      case CERTIFICATE_ERROR.COURSE_NOT_FOUND:
+        return "The selected course could not be found.";
+      case CERTIFICATE_ERROR.INVALID_STATE:
+        return "That action is not allowed for the certificate's current status.";
+      case CERTIFICATE_ERROR.VALIDATION_FAILED:
+        return "Please review the form and try again.";
       default:
         return "Something went wrong. Please try again.";
     }

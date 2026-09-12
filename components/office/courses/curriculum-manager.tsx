@@ -173,7 +173,7 @@ export function CurriculumManager({
         </p>
       ) : null}
       {status ? (
-        <p role="status" className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">
+        <p role="status" className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900">
           {status}
         </p>
       ) : null}
@@ -863,7 +863,7 @@ function LessonRow({
               </p>
             ) : null}
             {resourceStatus ? (
-              <p role="status" className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-800">
+              <p role="status" className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
                 {resourceStatus}
               </p>
             ) : null}

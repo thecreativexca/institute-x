@@ -64,7 +64,7 @@ export function PopularCoursesSection() {
   const samples = buildSampleSummaries();
 
   return (
-    <section aria-labelledby="popular-courses-heading" className="bg-[#fffef8]">
+    <section aria-labelledby="popular-courses-heading" className="bg-[#ffffff]">
       <Container className="py-16 sm:py-20">
         <SectionHeading
           eyebrow="Courses"
