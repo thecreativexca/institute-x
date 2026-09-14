@@ -34,12 +34,13 @@ export async function POST(request: NextRequest) {
 
     const placement = resourcePlacementSchema.safeParse({
       courseId: formData.get("courseId"),
-      moduleId: formData.get("moduleId"),
-      lessonId: formData.get("lessonId"),
+      scope: formData.get("scope") || undefined,
+      moduleId: formData.get("moduleId") || undefined,
+      lessonId: formData.get("lessonId") || undefined,
     });
     if (!placement.success) {
       return NextResponse.json(
-        { success: false, error: "Select a course, module and lesson." },
+        { success: false, error: "Select a valid course and resource placement." },
         { status: 400 }
       );
     }
@@ -62,6 +63,7 @@ export async function POST(request: NextRequest) {
       staffId: auth.staff.id,
       file,
       courseId: placement.data.courseId,
+      scope: placement.data.scope,
       moduleId: placement.data.moduleId,
       lessonId: placement.data.lessonId,
       title: meta.data.title,

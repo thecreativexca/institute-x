@@ -68,13 +68,14 @@ export interface PreviousSubmission {
 
 export interface GradingHistoryEntry {
   id: string;
-  score: number;
+  score: number | null;
   feedback: string;
   internalNote?: string | null;
   gradedById: string;
   gradedByName: string;
   gradedAt: string;
   isRegrade: boolean;
+  isReturn: boolean;
   previousScore?: number | null;
 }
 

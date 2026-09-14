@@ -31,8 +31,16 @@ export const lessonIdParamSchema = z.object({ lessonId: objectIdSchema });
 /** Shared course/module/lesson triple submitted with an upload. */
 export const resourcePlacementSchema = z.object({
   courseId: objectIdSchema,
-  moduleId: objectIdSchema,
-  lessonId: objectIdSchema,
+  scope: z.enum(["lesson", "module", "course"]).default("lesson"),
+  moduleId: objectIdSchema.optional(),
+  lessonId: objectIdSchema.optional(),
+}).superRefine((placement, context) => {
+  if (placement.scope !== "course" && !placement.moduleId) {
+    context.addIssue({ code: "custom", path: ["moduleId"], message: "Select a module." });
+  }
+  if (placement.scope === "lesson" && !placement.lessonId) {
+    context.addIssue({ code: "custom", path: ["lessonId"], message: "Select a lesson." });
+  }
 });
 
 export const resourceUploadMetaSchema = z.object({
@@ -53,6 +61,7 @@ export const resourceUpdateSchema = z
     access: z.enum(RESOURCE_ACCESS_TUPLE).optional(),
     isPublished: z.boolean().optional(),
     order: z.number().int().min(0).max(999).optional(),
+    scope: z.enum(["lesson", "module", "course"]).optional(),
   })
   .refine(
     (data) => Object.values(data).some((value) => value !== undefined),

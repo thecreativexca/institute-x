@@ -108,7 +108,7 @@ export default async function StudentResourceViewPage({ params }: RouteParams) {
               className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
             >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-              Back to lesson
+              Back to {resource.scope === "course" || resource.scope === "module" ? "course" : "lesson"}
             </Link>
             {course ? (
               <p className="mt-1 truncate text-xs uppercase tracking-[0.14em] text-amber-800/70">{course.name}</p>

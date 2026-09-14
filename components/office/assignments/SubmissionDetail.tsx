@@ -46,11 +46,13 @@ export function SubmissionDetail({ submission, canGrade }: SubmissionDetailProps
 
   const validateGrade = () => {
     const newErrors: Record<string, string> = {};
-    const score = parseInt(gradeData.score, 10);
-    if (!gradeData.score || isNaN(score)) {
-      newErrors.score = "Score is required";
-    } else if (score < 0 || score > submission.maxScore) {
-      newErrors.score = `Score must be between 0 and ${submission.maxScore}`;
+    if (gradeData.status === "graded") {
+      const score = Number(gradeData.score);
+      if (!gradeData.score || !Number.isInteger(score)) {
+        newErrors.score = "Enter a whole-number score";
+      } else if (score < 0 || score > submission.maxScore) {
+        newErrors.score = `Score must be between 0 and ${submission.maxScore}`;
+      }
     }
     if (!gradeData.feedback.trim()) {
       newErrors.feedback = "Feedback is required";
@@ -66,7 +68,7 @@ export function SubmissionDetail({ submission, canGrade }: SubmissionDetailProps
     setIsGrading(true);
     try {
       const body = new FormData();
-      body.set("score", gradeData.score);
+      if (gradeData.status === "graded") body.set("score", gradeData.score);
       body.set("feedback", gradeData.feedback.trim());
       if (gradeData.internalNote) body.set("internalNote", gradeData.internalNote.trim());
       body.set("status", gradeData.status);
@@ -90,6 +92,7 @@ export function SubmissionDetail({ submission, canGrade }: SubmissionDetailProps
   };
 
   const isLate = submission.isLate;
+  const isReturned = submission.status === "submitted" && Boolean(submission.feedback);
   const statusCfg = statusConfig[submission.status];
 
   return (
@@ -106,7 +109,7 @@ export function SubmissionDetail({ submission, canGrade }: SubmissionDetailProps
           <div className="flex items-center gap-3">
             <Badge variant={statusCfg.variant} className="gap-1">
               <statusCfg.icon className="h-3 w-3" aria-hidden="true" />
-              {statusCfg.label}
+              {isReturned ? "Needs revision" : statusCfg.label}
             </Badge>
             {isLate && (
               <Badge variant="danger" className="gap-1">
@@ -179,12 +182,22 @@ export function SubmissionDetail({ submission, canGrade }: SubmissionDetailProps
       </Card>
 
       {/* Grading Form */}
-      {canGrade && submission.status === "submitted" && (
+      {isReturned && (
+        <Card>
+          <CardHeader><CardTitle>Awaiting resubmission</CardTitle></CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-sm text-slate-600">The student has been asked to revise this work.</p>
+            <p className="whitespace-pre-wrap rounded-lg bg-amber-50 p-4 text-sm text-amber-900">{submission.feedback}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {canGrade && !isReturned && (
         <Card>
           <CardHeader>
-            <CardTitle>Grade Submission</CardTitle>
+            <CardTitle>{submission.status === "graded" ? "Regrade Submission" : "Review Submission"}</CardTitle>
             <CardDescription>
-              Enter the score and feedback for this submission. The student will be notified.
+              Enter feedback and a score to grade, or return the work for revision. The student will be notified.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -198,7 +211,7 @@ export function SubmissionDetail({ submission, canGrade }: SubmissionDetailProps
                 </div>
               )}
 
-              <div>
+              {gradeData.status === "graded" && <div>
                 <Label htmlFor="score" className="required">
                   Score (out of {submission.maxScore})
                 </Label>
@@ -213,7 +226,7 @@ export function SubmissionDetail({ submission, canGrade }: SubmissionDetailProps
                   className={cn(errors.score && "border-red-500 focus:border-red-500 focus:ring-red-500")}
                 />
                 {errors.score && <p className="mt-1 text-sm text-red-600">{errors.score}</p>}
-              </div>
+              </div>}
 
               <div>
                 <Label htmlFor="feedback" className="required">
@@ -264,7 +277,7 @@ export function SubmissionDetail({ submission, canGrade }: SubmissionDetailProps
                       Grading...
                     </>
                   ) : (
-                    "Submit Grade"
+                    gradeData.status === "graded" ? "Submit Grade" : "Return for Resubmission"
                   )}
                 </Button>
               </div>
@@ -366,16 +379,14 @@ export function SubmissionDetail({ submission, canGrade }: SubmissionDetailProps
                 <div key={entry.id} className="p-4 border border-slate-200 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <Badge variant={entry.isRegrade ? "primary" : "success"} className="gap-1">
-                        {entry.isRegrade ? "Regrade" : "Grade"}
+                      <Badge variant={entry.isReturn ? "warning" : entry.isRegrade ? "primary" : "success"} className="gap-1">
+                        {entry.isReturn ? "Returned" : entry.isRegrade ? "Regrade" : "Grade"}
                       </Badge>
                       <span className="text-sm font-medium text-slate-900">
                         {entry.gradedByName} • {format(new Date(entry.gradedAt), "MMM d, yyyy HH:mm")}
                       </span>
                     </div>
-                    <span className="text-lg font-bold text-slate-900">
-                      {entry.score} / {submission.maxScore}
-                    </span>
+                    {entry.score !== null && <span className="text-lg font-bold text-slate-900">{entry.score} / {submission.maxScore}</span>}
                   </div>
                   {entry.previousScore !== undefined && (
                     <p className="text-sm text-slate-600">

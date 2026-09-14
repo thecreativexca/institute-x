@@ -305,7 +305,7 @@ export async function gradeSubmission(
 
   if (!submission) return { error: "Submission not found" };
 
-  if (input.score < 0 || input.score > assignment.maxScore) {
+  if (input.status === "graded" && input.score > assignment.maxScore) {
     return { error: `Score must be between 0 and ${assignment.maxScore}` };
   }
 
@@ -313,23 +313,25 @@ export async function gradeSubmission(
   const previousScore = submission.score;
   const previousFeedback = submission.feedback;
 
-  submission.score = input.score;
-  submission.totalMarks = assignment.maxScore;
+  const isReturned = input.status === "returned_for_resubmission";
+  submission.score = isReturned ? null : input.score;
+  submission.totalMarks = isReturned ? null : assignment.maxScore;
   submission.feedback = input.feedback.trim();
-  submission.gradedAt = new Date();
-  submission.status = input.status === "returned_for_resubmission" ? SUBMISSION_STATUSES.SUBMITTED : SUBMISSION_STATUSES.GRADED;
+  submission.gradedAt = isReturned ? null : new Date();
+  submission.status = isReturned ? SUBMISSION_STATUSES.SUBMITTED : SUBMISSION_STATUSES.GRADED;
   await submission.save();
 
   await AuditLog.create({
     actorUserId: toObjectId(actorId),
     actorRole,
-    action: isRegrade ? "submission.regrade" : "submission.grade",
+    action: isReturned ? "submission.return" : isRegrade ? "submission.regrade" : "submission.grade",
     entityType: "submission",
     entityId: submission._id,
     metadata: {
       assignmentId: assignment._id.toString(),
       studentId: submission.student.toString(),
-      score: input.score,
+      score: isReturned ? null : input.score,
+      status: input.status,
       maxScore: assignment.maxScore,
       feedback: input.feedback,
       internalNote: input.internalNote,
@@ -339,7 +341,7 @@ export async function gradeSubmission(
     },
   });
 
-  if (!isRegrade) {
+  if (!isRegrade && !isReturned) {
     try {
       const student = await User.findById(submission.student).select("name email").lean();
       if (student) {

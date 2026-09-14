@@ -21,12 +21,15 @@ export const updateAssignmentSchema = z.object({
   isPublished: z.boolean().optional(),
 });
 
-export const gradeSubmissionSchema = z.object({
-  score: z.number().int().min(0, "Score cannot be negative"),
-  feedback: z.string().min(1, "Feedback is required").max(5000, "Feedback too long"),
-  internalNote: z.string().max(2000, "Internal note too long").optional(),
-  status: z.enum(["graded", "returned_for_resubmission"]).optional().default("graded"),
-});
+const reviewFields = {
+  feedback: z.string().trim().min(1, "Feedback is required").max(5000, "Feedback too long"),
+  internalNote: z.string().trim().max(2000, "Internal note too long").optional(),
+};
+
+export const gradeSubmissionSchema = z.discriminatedUnion("status", [
+  z.object({ ...reviewFields, status: z.literal("graded"), score: z.number().int().min(0, "Score cannot be negative") }),
+  z.object({ ...reviewFields, status: z.literal("returned_for_resubmission"), score: z.number().int().min(0).optional() }),
+]);
 
 export const assignmentFiltersSchema = z.object({
   search: z.string().optional(),

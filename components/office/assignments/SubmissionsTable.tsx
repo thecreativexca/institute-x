@@ -10,6 +10,7 @@ import { MoreVertical, ExternalLink, Clock, AlertCircle, CheckCircle, FileText, 
 import { useState } from "react";
 
 interface SubmissionsTableProps {
+  assignmentId: string;
   submissions: OfficeSubmissionSummary[];
   canGrade: boolean;
   assignmentMaxScore: number;
@@ -21,6 +22,7 @@ const statusConfig = {
 } as const;
 
 export function SubmissionsTable({
+  assignmentId,
   submissions,
   canGrade,
   assignmentMaxScore,
@@ -101,7 +103,7 @@ export function SubmissionsTable({
                   <td className="px-4 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Link
-                        href={`/office/assignments/${submission.id}/submissions/${submission.id}`}
+                        href={`/office/assignments/${assignmentId}/submissions/${submission.id}`}
                         className="text-sm font-medium text-primary-600 hover:text-primary-700 hidden sm:inline-flex items-center gap-1"
                       >
                         <FileText className="h-4 w-4" aria-hidden="true" />
@@ -129,7 +131,7 @@ export function SubmissionsTable({
                             >
                               <Link
                                 role="menuitem"
-                                href={`/office/assignments/${submission.id}/submissions/${submission.id}`}
+                                href={`/office/assignments/${assignmentId}/submissions/${submission.id}`}
                                 onClick={() => setActionMenu(null)}
                                 className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2"
                               >

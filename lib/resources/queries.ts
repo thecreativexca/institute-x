@@ -127,8 +127,15 @@ export async function listStudentLessonResources(
 ): Promise<StudentResourceView[]> {
   await connectDB();
 
+  const lesson = await Lesson.findById(toObjectId(lessonId)).select("course module").lean();
+  if (!lesson) return [];
+
   const resources = await Resource.find({
-    lesson: toObjectId(lessonId),
+    $or: [
+      { lesson: lesson._id, scope: { $nin: ["module", "course"] } },
+      { module: lesson.module, scope: "module" },
+      { course: lesson.course, scope: "course" },
+    ],
     isPublished: true,
     access: { $ne: RESOURCE_ACCESS.PRIVATE },
   })
@@ -156,7 +163,10 @@ export async function listRecentResourcesForStaff(limit = 20): Promise<
     access: string;
     fileSize: number;
     isPublished: boolean;
+    scope: "lesson" | "module" | "course";
     lessonTitle: string | null;
+    moduleTitle: string | null;
+    courseName: string | null;
     createdAt: string;
   }>
 > {
@@ -165,8 +175,10 @@ export async function listRecentResourcesForStaff(limit = 20): Promise<
   const resources = await Resource.find()
     .sort({ createdAt: -1 })
     .limit(limit)
-    .select("title type access fileSize isPublished lesson createdAt")
+    .select("title type access fileSize isPublished scope course module lesson createdAt")
     .populate<{ lesson: { title: string } | null }>("lesson", "title")
+    .populate<{ module: { title: string } | null }>("module", "title")
+    .populate<{ course: { name: string } | null }>("course", "name")
     .lean();
 
   return resources.map((resource) => ({
@@ -176,10 +188,13 @@ export async function listRecentResourcesForStaff(limit = 20): Promise<
     access: resource.access,
     fileSize: resource.fileSize,
     isPublished: resource.isPublished,
+    scope: resource.scope ?? "lesson",
     lessonTitle:
       resource.lesson && typeof resource.lesson === "object"
         ? resource.lesson.title
         : null,
+    moduleTitle: resource.module && typeof resource.module === "object" ? resource.module.title : null,
+    courseName: resource.course && typeof resource.course === "object" ? resource.course.name : null,
     createdAt: (resource.createdAt ?? new Date()).toISOString(),
   }));
 }

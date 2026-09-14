@@ -89,6 +89,25 @@ export async function assertResourceRelationship(resource: {
   }
 }
 
+/** Broad resources keep an anchor lesson for older records, but visibility is
+ * checked against their actual course or module placement. */
+export async function assertResourceVisibilityPlacement(resource: IResource): Promise<void> {
+  if (resource.scope === "course") {
+    const course = await Course.exists({ _id: resource.course });
+    if (course) return;
+  } else if (resource.scope === "module") {
+    const matchingModule = await Module.exists({ _id: resource.module, course: resource.course });
+    if (matchingModule) return;
+  } else {
+    return assertResourceRelationship(resource);
+  }
+
+  throw new ResourceError(
+    RESOURCE_ERROR.RELATIONSHIP_INVALID,
+    "This resource is not linked correctly and cannot be opened."
+  );
+}
+
 export interface StudentResourceContext {
   resource: IResource;
   courseId: string;
@@ -128,7 +147,7 @@ export async function getStudentResourceIfAllowed(params: {
   }
 
   // Relationship integrity first — a broken chain must never leak content.
-  await assertResourceRelationship(resource);
+  await assertResourceVisibilityPlacement(resource);
 
   // The enrollment check uses the resource's OWN course id, never a
   // client-supplied one.
@@ -155,7 +174,9 @@ export async function getStudentResourceIfAllowed(params: {
     resource,
     courseId,
     lessonId,
-    backHref: `/student/courses/${courseId}/lessons/${lessonId}`,
+    backHref: resource.scope === "course" || resource.scope === "module"
+      ? `/student/courses/${courseId}`
+      : `/student/courses/${courseId}/lessons/${lessonId}`,
   };
 }
 

@@ -22,8 +22,9 @@ export interface UploadResourceInput {
   staffId: string;
   file: File;
   courseId: string;
-  moduleId: string;
-  lessonId: string;
+  scope: "lesson" | "module" | "course";
+  moduleId?: string;
+  lessonId?: string;
   title: string;
   description?: string;
   access: ResourceAccess;
@@ -43,7 +44,7 @@ export interface UploadedResourceResult {
 
 /**
  * Full server-side upload flow:
- *   validate file → validate Course→Module→Lesson relationship →
+ *   validate file → validate placement against the course curriculum →
  *   reject exact duplicates (idempotency on retries) →
  *   upload to Cloudinary (server-side, secret never leaves the server) →
  *   save metadata in MongoDB → return a safe payload.
@@ -56,12 +57,17 @@ export async function uploadResource(
   await connectDB();
 
   // --- Relationship validation: never trust client-provided placement ------
-  const lesson = await Lesson.findById(toObjectId(input.lessonId))
+  const lesson = await Lesson.findOne({
+    course: toObjectId(input.courseId),
+    ...(input.scope !== "course" ? { module: toObjectId(input.moduleId!) } : {}),
+    ...(input.scope === "lesson" ? { _id: toObjectId(input.lessonId!) } : {}),
+  })
     .select("course module")
+    .sort({ sortOrder: 1, createdAt: 1 })
     .lean();
 
   if (!lesson) {
-    throw new ResourceError(RESOURCE_ERROR.NOT_FOUND, "Lesson not found.");
+    throw new ResourceError(RESOURCE_ERROR.NOT_FOUND, "Add a lesson to the selected placement before uploading a resource.");
   }
 
   await assertResourceRelationship({
@@ -75,7 +81,7 @@ export async function uploadResource(
   const courseId = lesson.course.toString();
   const moduleId = lesson.module.toString();
 
-  if (courseId !== input.courseId || moduleId !== input.moduleId) {
+  if (courseId !== input.courseId || (input.scope !== "course" && moduleId !== input.moduleId)) {
     throw new ResourceError(
       RESOURCE_ERROR.RELATIONSHIP_INVALID,
       "The selected course, module and lesson do not match."
@@ -89,7 +95,11 @@ export async function uploadResource(
 
   // --- Idempotency: an identical retry must not create a second record -----
   const duplicate = await Resource.findOne({
-    lesson: lesson._id,
+    ...(input.scope === "lesson"
+      ? { lesson: lesson._id, scope: { $nin: ["module", "course"] } }
+      : input.scope === "module"
+        ? { module: lesson.module, scope: "module" }
+        : { course: lesson.course, scope: "course" }),
     originalFileName: validated.originalFileName,
     fileSize: validated.buffer.byteLength,
   })
@@ -99,15 +109,15 @@ export async function uploadResource(
   if (duplicate) {
     throw new ResourceError(
       RESOURCE_ERROR.DUPLICATE,
-      "An identical file has already been uploaded to this lesson."
+      "An identical file has already been uploaded to this placement."
     );
   }
 
   // --- Cloudinary upload (server-side only) --------------------------------
   const folder = buildResourceFolder({
     courseSlug: course.slug,
-    moduleId,
-    lessonId: input.lessonId,
+    moduleId: input.scope === "course" ? "all-modules" : moduleId,
+    lessonId: input.scope === "lesson" ? input.lessonId! : "all-lessons",
   });
   const publicId = `${sanitizePublicIdBase(input.title)}-${randomBytes(6).toString("hex")}`;
 
@@ -132,6 +142,7 @@ export async function uploadResource(
       course: lesson.course,
       module: lesson.module,
       lesson: lesson._id,
+      scope: input.scope,
       title: input.title,
       description: input.description ?? undefined,
       type: validated.resourceType,

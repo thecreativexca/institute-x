@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
+import { connectDB } from "@/lib/db/connect";
+import { isValidObjectId } from "@/lib/utils/object-id";
+import { Submission } from "@/models/Submission";
 
 export const metadata: Metadata = {
   title: "Submission Details — Office Portal",
@@ -64,6 +67,25 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
         </Card>
       </OfficeShell>
     );
+  }
+
+  // Older Review links used the submission ID in both URL segments.
+  // Resolve those links to the assignment that owns the submission.
+  if (assignmentId === submissionId && isValidObjectId(submissionId)) {
+    await connectDB();
+    const linkedSubmission = await Submission.findById(submissionId).select("assignment").lean();
+    if (linkedSubmission) {
+      const actualAssignmentId = linkedSubmission.assignment.toString();
+      const accessibleSubmission = await getOfficeSubmissionDetail(
+        actualAssignmentId,
+        submissionId,
+        user.id,
+        user.role
+      );
+      if (accessibleSubmission && actualAssignmentId !== assignmentId) {
+        redirect(`/office/assignments/${actualAssignmentId}/submissions/${submissionId}`);
+      }
+    }
   }
 
   const submission = await getOfficeSubmissionDetail(assignmentId, submissionId, user.id, user.role);

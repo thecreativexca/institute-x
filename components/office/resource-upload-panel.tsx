@@ -11,6 +11,7 @@ import { FieldShell, controlClassName } from "@/components/ui/field";
 interface CatalogItem {
   id: string;
   name: string;
+  lessonCount?: number;
 }
 
 interface ResourceUploadPanelProps {
@@ -40,6 +41,7 @@ export function ResourceUploadPanel({ maxSizeMB, allowedExtensions }: ResourceUp
   const [courseId, setCourseId] = useState("");
   const [moduleId, setModuleId] = useState("");
   const [lessonId, setLessonId] = useState("");
+  const [scope, setScope] = useState<"course" | "module" | "lesson">("lesson");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [access, setAccess] = useState("view_and_download");
@@ -115,7 +117,9 @@ export function ResourceUploadPanel({ maxSizeMB, allowedExtensions }: ResourceUp
     if (!allowedExtensions.includes(extension)) {
       return `Only ${allowedExtensions.join(", ").toUpperCase()} files are allowed.`;
     }
-    if (!courseId || !moduleId || !lessonId) return "Select a course, module and lesson.";
+    if (!courseId || (scope !== "course" && !moduleId) || (scope === "lesson" && !lessonId)) {
+      return "Select a course and the required module or lesson.";
+    }
     if (!title.trim()) return "Enter a resource title.";
     return null;
   }
@@ -138,8 +142,9 @@ export function ResourceUploadPanel({ maxSizeMB, allowedExtensions }: ResourceUp
       const formData = new FormData();
       formData.set("file", file as File);
       formData.set("courseId", courseId);
-      formData.set("moduleId", moduleId);
-      formData.set("lessonId", lessonId);
+      formData.set("scope", scope);
+      if (scope !== "course") formData.set("moduleId", moduleId);
+      if (scope === "lesson") formData.set("lessonId", lessonId);
       formData.set("title", title.trim());
       if (description.trim()) formData.set("description", description.trim());
       formData.set("access", access);
@@ -155,7 +160,7 @@ export function ResourceUploadPanel({ maxSizeMB, allowedExtensions }: ResourceUp
         return;
       }
 
-      setSuccess("Resource uploaded successfully.");
+      setSuccess(scope === "course" ? "Resource is now available in every lesson of this course." : scope === "module" ? "Resource is now available in every lesson of this module." : "Resource uploaded successfully.");
       setFile(null);
       setTitle("");
       setDescription("");
@@ -182,7 +187,7 @@ export function ResourceUploadPanel({ maxSizeMB, allowedExtensions }: ResourceUp
         </CardTitle>
         <CardDescription>
           PDF, DOC, DOCX or TXT up to {maxSizeMB} MB. Files are stored securely and attached to a
-          course lesson.
+          course. Choose whether it appears in every module, one module, or one lesson.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -217,8 +222,8 @@ export function ResourceUploadPanel({ maxSizeMB, allowedExtensions }: ResourceUp
                 value={moduleId}
                 onChange={(event) => void handleModuleChange(event.target.value)}
                 className={selectControl(moduleId, false)}
-                disabled={!courseId}
-                required
+                disabled={!courseId || scope === "course"}
+                required={scope !== "course"}
               >
                 <option value="">Select module…</option>
                 {catalog.modules.map((module) => (
@@ -238,8 +243,8 @@ export function ResourceUploadPanel({ maxSizeMB, allowedExtensions }: ResourceUp
                 value={lessonId}
                 onChange={(event) => setLessonId(event.target.value)}
                 className={selectControl(lessonId, false)}
-                disabled={!moduleId}
-                required
+                disabled={!moduleId || scope !== "lesson"}
+                required={scope === "lesson"}
               >
                 <option value="">Select lesson…</option>
                 {catalog.lessons.map((lesson) => (
@@ -249,6 +254,33 @@ export function ResourceUploadPanel({ maxSizeMB, allowedExtensions }: ResourceUp
                 ))}
               </select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-slate-800">Show this resource in</p>
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Resource placement">
+              {([
+                ["course", "All modules and lessons"],
+                ["module", "All lessons in one module"],
+                ["lesson", "One lesson"],
+              ] as const).map(([value, label]) => (
+                <Button
+                  key={value}
+                  type="button"
+                  variant={scope === value ? "primary" : "outline"}
+                  aria-pressed={scope === value}
+                  onClick={() => setScope(value)}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
+            {courseId && catalog.modules.length > 0 ? (
+              <p className="text-xs text-slate-500">
+                This course has {catalog.modules.length} modules and {catalog.modules.reduce((total, item) => total + (item.lessonCount ?? 0), 0)} lessons.
+                {scope === "module" && moduleId ? ` Selected module has ${catalog.modules.find((item) => item.id === moduleId)?.lessonCount ?? 0} lessons.` : ""}
+              </p>
+            ) : null}
           </div>
 
           <FieldShell label="Title" id="upload-title">

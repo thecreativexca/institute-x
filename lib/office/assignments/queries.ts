@@ -299,6 +299,9 @@ export async function getOfficeSubmissions(
     if (assignment.dueAt) {
       query.submittedAt = { $gt: assignment.dueAt };
     }
+  } else if (filters.status === "returned") {
+    query.status = SUBMISSION_STATUSES.SUBMITTED;
+    query.feedback = { $exists: true, $nin: [null, ""] };
   }
 
   const sortField = sort.field;
@@ -391,7 +394,7 @@ export async function getOfficeSubmissionDetail(
   const auditLogs = await AuditLog.find({
     entityType: "submission",
     entityId: submission._id,
-    action: { $in: ["submission.grade", "submission.regrade"] },
+    action: { $in: ["submission.grade", "submission.regrade", "submission.return"] },
   })
     .sort({ createdAt: 1 })
     .lean();
@@ -399,20 +402,22 @@ export async function getOfficeSubmissionDetail(
   const gradingHistory: GradingHistoryEntry[] = auditLogs.map((log) => {
     const metadata = (log.metadata ?? {}) as {
       newScore?: number;
-      score?: number;
+      score?: number | null;
+      status?: string;
       feedback?: string;
       internalNote?: string;
       previousScore?: number;
     };
     return {
       id: log._id.toString(),
-      score: metadata.newScore ?? metadata.score ?? 0,
+      score: log.action === "submission.return" ? null : metadata.newScore ?? metadata.score ?? 0,
       feedback: metadata.feedback ?? "",
       internalNote: metadata.internalNote,
       gradedById: log.actorUserId.toString(),
       gradedByName: log.actorRole,
       gradedAt: log.createdAt.toISOString(),
       isRegrade: log.action === "submission.regrade",
+      isReturn: log.action === "submission.return",
       previousScore: metadata.previousScore,
     };
   });

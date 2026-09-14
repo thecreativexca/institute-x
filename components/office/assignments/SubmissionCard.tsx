@@ -9,6 +9,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 interface SubmissionCardProps {
+  assignmentId: string;
   submission: OfficeSubmissionSummary;
   canGrade: boolean;
   assignmentMaxScore: number;
@@ -19,7 +20,7 @@ const statusConfig = {
   graded: { label: "Graded", variant: "success" as const, icon: CheckCircle },
 } as const;
 
-export function SubmissionCard({ submission, canGrade, assignmentMaxScore }: SubmissionCardProps) {
+export function SubmissionCard({ assignmentId, submission, canGrade, assignmentMaxScore }: SubmissionCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const isLate = submission.isLate;
   const statusCfg = statusConfig[submission.status];
@@ -61,7 +62,7 @@ export function SubmissionCard({ submission, canGrade, assignmentMaxScore }: Sub
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <Link
-            href={`/office/assignments/${submission.id}/submissions/${submission.id}`}
+            href={`/office/assignments/${assignmentId}/submissions/${submission.id}`}
             className="text-sm font-medium text-primary-600 hover:text-primary-700 flex items-center gap-1"
           >
             <FileText className="h-4 w-4" aria-hidden="true" />
@@ -88,7 +89,7 @@ export function SubmissionCard({ submission, canGrade, assignmentMaxScore }: Sub
                 >
                   <Link
                     role="menuitem"
-                    href={`/office/assignments/${submission.id}/submissions/${submission.id}`}
+                    href={`/office/assignments/${assignmentId}/submissions/${submission.id}`}
                     onClick={() => setMenuOpen(false)}
                     className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2"
                   >

@@ -4,6 +4,7 @@ import { Resource } from "@/models/Resource";
 import type { IResource } from "@/models/Resource";
 import { RESOURCE_ERROR, ResourceError } from "./errors";
 import { deleteResourceAsset } from "./cloudinary";
+import { assertResourceRelationship } from "./access";
 import type { ResourceUpdateInput } from "./validation";
 
 /** Loads a resource document (staff context); throws NOT_FOUND when missing. */
@@ -34,6 +35,10 @@ export async function updateResource(
 ): Promise<void> {
   const resource = await getResourceById(resourceId);
 
+  if (changes.scope === "course" || changes.scope === "module") {
+    await assertResourceRelationship(resource);
+  }
+
   // Only include fields the caller actually provided.
   const $set: Record<string, unknown> = {};
   if (changes.title !== undefined) $set.title = changes.title;
@@ -41,6 +46,7 @@ export async function updateResource(
   if (changes.access !== undefined) $set.access = changes.access;
   if (changes.isPublished !== undefined) $set.isPublished = changes.isPublished;
   if (changes.order !== undefined) $set.sortOrder = changes.order;
+  if (changes.scope !== undefined) $set.scope = changes.scope;
 
   if (Object.keys($set).length > 0) {
     await Resource.updateOne({ _id: resource._id }, { $set });

@@ -61,11 +61,20 @@ export async function GET(request: NextRequest) {
         .sort({ sortOrder: 1, title: 1 })
         .select("title")
         .lean();
+      const lessons = await Lesson.find({ course: toObjectId(parsed.data.courseId) })
+        .select("module")
+        .lean();
+      const lessonCounts = new Map<string, number>();
+      for (const lesson of lessons) {
+        const id = lesson.module.toString();
+        lessonCounts.set(id, (lessonCounts.get(id) ?? 0) + 1);
+      }
       return NextResponse.json({
         success: true,
         items: modules.map((module) => ({
           id: module._id.toString(),
           name: module.title,
+          lessonCount: lessonCounts.get(module._id.toString()) ?? 0,
         })),
       });
     }

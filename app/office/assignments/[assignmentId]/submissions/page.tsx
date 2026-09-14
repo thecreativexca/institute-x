@@ -190,6 +190,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
             <Card className="hidden lg:block">
               <CardContent className="p-0">
                 <SubmissionsTable
+                  assignmentId={assignmentId}
                   submissions={result.submissions}
                   canGrade={canGrade}
                   assignmentMaxScore={assignment.maxScore}
@@ -199,7 +200,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
 
             <div className="lg:hidden space-y-3">
               {result.submissions.map((submission) => (
-                <SubmissionCard key={submission.id} submission={submission} canGrade={canGrade} assignmentMaxScore={assignment.maxScore} />
+                <SubmissionCard key={submission.id} assignmentId={assignmentId} submission={submission} canGrade={canGrade} assignmentMaxScore={assignment.maxScore} />
               ))}
             </div>
 

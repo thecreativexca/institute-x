@@ -14,6 +14,8 @@ export interface IResource {
   course: Types.ObjectId;
   module: Types.ObjectId;
   lesson: Types.ObjectId;
+  /** Missing on older resources means a single lesson. */
+  scope?: "lesson" | "module" | "course";
   title: string;
   description?: string;
   type: ResourceType;
@@ -47,6 +49,7 @@ const ResourceSchema = new Schema<IResource>(
       required: true,
       index: true,
     },
+    scope: { type: String, enum: ["lesson", "module", "course"], default: "lesson" },
     title: { type: String, required: true, trim: true, maxlength: 200 },
     description: { type: String, trim: true, maxlength: 1000 },
     type: {
@@ -72,6 +75,7 @@ const ResourceSchema = new Schema<IResource>(
 
 ResourceSchema.index({ lesson: 1, sortOrder: 1 });
 ResourceSchema.index({ lesson: 1, isPublished: 1, sortOrder: 1 });
+ResourceSchema.index({ module: 1, scope: 1, isPublished: 1, sortOrder: 1 });
 ResourceSchema.index({ course: 1, isPublished: 1 });
 
 export const Resource = defineModel("Resource", ResourceSchema);

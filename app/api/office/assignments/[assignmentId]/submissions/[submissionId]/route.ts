@@ -61,16 +61,20 @@ export async function PATCH(
     }
 
     const formData = await request.formData();
+    const rawScore = formData.get("score");
     const data = {
-      score: parseInt(formData.get("score") as string, 10),
-      feedback: formData.get("feedback") as string,
-      internalNote: formData.get("internalNote") as string | undefined,
-      status: formData.get("status") as "graded" | "returned_for_resubmission" | undefined,
+      score: rawScore === null || rawScore === "" ? undefined : Number(rawScore),
+      feedback: formData.get("feedback"),
+      internalNote: formData.get("internalNote") || undefined,
+      status: formData.get("status") || "graded",
     };
 
-    const validated = gradeSubmissionSchema.parse(data);
+    const validated = gradeSubmissionSchema.safeParse(data);
+    if (!validated.success) {
+      return NextResponse.json({ error: validated.error.issues[0]?.message ?? "Invalid review details." }, { status: 400 });
+    }
 
-    const result = await gradeSubmission(assignmentId, submissionId, validated, user.id, user.role);
+    const result = await gradeSubmission(assignmentId, submissionId, validated.data, user.id, user.role);
 
     if ("error" in result) {
       return NextResponse.json({ error: result.error }, { status: 400 });

@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { ResourceUploadPanel } from "@/components/office/resource-upload-panel";
 import { DeleteResourceButton } from "@/components/office/delete-resource-button";
+import { ResourceScopeButton } from "@/components/office/resource-scope-button";
 import { OfficeShell } from "@/components/office/OfficeShell";
 
 export const metadata: Metadata = {
@@ -23,6 +24,12 @@ export const metadata: Metadata = {
 
 /** Dynamically refresh when a resource is uploaded/deleted. */
 export const dynamic = "force-dynamic";
+
+function placementLabel(resource: Awaited<ReturnType<typeof listRecentResourcesForStaff>>[number]) {
+  if (resource.scope === "course") return `All modules and lessons in ${resource.courseName ?? "this course"}`;
+  if (resource.scope === "module") return `All lessons in ${resource.moduleTitle ?? "this module"}`;
+  return resource.lessonTitle;
+}
 
 export default async function OfficeResourcesPage() {
   const { user } = await getValidatedSession();
@@ -104,10 +111,10 @@ export default async function OfficeResourcesPage() {
                     <span>{resource.type}</span>
                     <span aria-hidden="true">·</span>
                     <span>{formatFileSize(resource.fileSize)}</span>
-                    {resource.lessonTitle ? (
+                    {placementLabel(resource) ? (
                       <>
                         <span aria-hidden="true">·</span>
-                        <span className="truncate">{resource.lessonTitle}</span>
+                        <span className="truncate">{placementLabel(resource)}</span>
                       </>
                     ) : null}
                   </p>
@@ -117,6 +124,7 @@ export default async function OfficeResourcesPage() {
                     {resource.isPublished ? "Published" : "Draft"}
                   </Badge>
                   <span className="text-xs text-slate-400">{resource.access}</span>
+                  <ResourceScopeButton resourceId={resource.id} scope={resource.scope} isPublished={resource.isPublished} access={resource.access} />
                   <DeleteResourceButton resourceId={resource.id} title={resource.title} />
                 </div>
               </li>

@@ -59,6 +59,7 @@ export type AuditAction =
   | "assignment.delete"
   | "submission.grade"
   | "submission.regrade"
+  | "submission.return"
   | "quiz.create"
   | "quiz.update"
   | "quiz.publish"
