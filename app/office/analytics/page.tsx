@@ -355,7 +355,7 @@ function KpiTile({
 }) {
   return (
     <Card className="rounded-2xl border-slate-200/80">
-      <CardContent className="flex flex-col gap-1 p-4">
+      <CardContent className="flex flex-col gap-1 p-4 sm:pt-4">
         <p className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
           <Icon className="h-4 w-4 text-primary-600" aria-hidden="true" />
           {label}

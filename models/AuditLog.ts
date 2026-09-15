@@ -67,6 +67,7 @@ export type AuditAction =
   | "quiz.delete"
   | "quiz.duplicate"
   | "quiz.question.create"
+  | "quiz.questions.import"
   | "quiz.question.update"
   | "quiz.question.delete"
   | "quiz.question.reorder"

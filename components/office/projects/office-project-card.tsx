@@ -47,9 +47,26 @@ function formatStatus(status: string) {
 }
 
 interface OfficeProjectCardProps {
-  project: any;
-  submissions: any[];
-  onReview: (submission: any, totalMarks: number) => void;
+  project: {
+    title: string;
+    status: string;
+    difficulty: string;
+    totalMarks: number;
+    dueDate?: string | null;
+    course?: { name: string } | null;
+    internship?: { title: string } | null;
+  };
+  submissions: {
+    _id: string;
+    status: string;
+    student?: { name: string } | null;
+    score?: number | null;
+    text?: string | null;
+    githubUrl?: string | null;
+    liveUrl?: string | null;
+    otherUrl?: string | null;
+  }[];
+  onReview: (submission: OfficeProjectCardProps["submissions"][number], totalMarks: number) => void;
 }
 
 export function OfficeProjectCard({
@@ -67,7 +84,7 @@ export function OfficeProjectCard({
   return (
     <Card className="overflow-hidden rounded-2xl border-primary-100 shadow-card">
       <div className="h-1.5 bg-gradient-to-r from-primary-500 via-accent-400 to-primary-500" />
-      <CardContent className="p-5">
+      <CardContent className="p-5 sm:pt-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex min-w-0 flex-1 gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-700">

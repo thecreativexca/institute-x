@@ -61,21 +61,23 @@ export async function PATCH(
     }
 
     const formData = await request.formData();
+    const text = (field: string) => formData.has(field) ? String(formData.get(field) ?? "") : undefined;
+    const nullable = (field: string) => formData.has(field) ? (String(formData.get(field) ?? "") || null) : undefined;
     const data = {
-      title: formData.get("title") as string | undefined,
-      description: formData.get("description") as string | undefined,
-      instructions: formData.get("instructions") as string | undefined,
-      type: formData.get("type") as string | undefined,
+      title: text("title"),
+      description: text("description"),
+      instructions: text("instructions"),
+      type: text("type"),
       durationMinutes: formData.get("durationMinutes") ? parseInt(formData.get("durationMinutes") as string, 10) : undefined,
       passingPercentage: formData.get("passingPercentage") ? parseInt(formData.get("passingPercentage") as string, 10) : undefined,
       maxAttempts: formData.get("maxAttempts") ? parseInt(formData.get("maxAttempts") as string, 10) : undefined,
       shuffleQuestions: formData.get("shuffleQuestions") === "true" ? true : formData.get("shuffleQuestions") === "false" ? false : undefined,
       shuffleOptions: formData.get("shuffleOptions") === "true" ? true : formData.get("shuffleOptions") === "false" ? false : undefined,
       showCorrectAnswers: formData.get("showCorrectAnswers") === "true" ? true : formData.get("showCorrectAnswers") === "false" ? false : undefined,
-      availableFrom: formData.get("availableFrom") as string | null | undefined,
-      availableUntil: formData.get("availableUntil") as string | null | undefined,
-      moduleId: formData.get("moduleId") as string | null | undefined,
-      lessonId: formData.get("lessonId") as string | null | undefined,
+      availableFrom: nullable("availableFrom"),
+      availableUntil: nullable("availableUntil"),
+      moduleId: nullable("moduleId"),
+      lessonId: nullable("lessonId"),
       isPublished: formData.get("isPublished") === "true" ? true : formData.get("isPublished") === "false" ? false : undefined,
     };
 

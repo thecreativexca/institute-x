@@ -54,7 +54,7 @@ export default async function CategoriesPage({
         </section>
 
         <Card>
-          <CardContent className="p-4 sm:p-5">
+          <CardContent className="p-4 sm:p-5 sm:pt-5">
             <form method="GET" className="grid gap-3 md:grid-cols-[minmax(0,1fr)_11rem_13rem_auto_auto] md:items-end">
               <label className="text-sm font-medium text-slate-700">
                 Search
@@ -105,7 +105,7 @@ export default async function CategoriesPage({
 function Summary({ icon: Icon, label, value }: { icon: typeof FolderTree; label: string; value: number }) {
   return (
     <Card>
-      <CardContent className="flex items-center gap-3 p-4">
+      <CardContent className="flex items-center gap-3 p-4 sm:pt-4">
         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
           <Icon className="h-5 w-5" aria-hidden="true" />
         </span>

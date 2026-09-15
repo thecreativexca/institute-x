@@ -95,7 +95,7 @@ export function CategoriesManager({ categories }: { categories: CategoryListItem
       ) : (
         categories.map((category) => (
           <Card key={category.id} className="overflow-hidden border-slate-200/80">
-            <CardContent className="flex flex-col gap-4 p-4 sm:p-5 lg:flex-row lg:items-center">
+            <CardContent className="flex flex-col gap-4 p-4 sm:p-5 sm:pt-5 lg:flex-row lg:items-center">
               <div className="flex min-w-0 flex-1 items-start gap-4">
                 <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-primary-50 text-primary-700">
                   {category.thumbnailUrl ? (

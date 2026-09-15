@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/field";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, Calendar, AlertCircle, Clock } from "lucide-react";
+import { Loader2, Calendar, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { QUIZ_TYPES } from "@/lib/constants";
 
@@ -41,11 +41,12 @@ export function CreateQuizForm({ courseOptions }: CreateQuizFormProps) {
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedModule, setSelectedModule] = useState("");
   const [selectedLesson, setSelectedLesson] = useState("");
+  const [excelFile, setExcelFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     instructions: "",
-    type: "module",
+    type: "final",
     durationMinutes: "",
     passingPercentage: "70",
     maxAttempts: "",
@@ -54,7 +55,6 @@ export function CreateQuizForm({ courseOptions }: CreateQuizFormProps) {
     showCorrectAnswers: true,
     availableFrom: "",
     availableUntil: "",
-    isPublished: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -68,6 +68,7 @@ export function CreateQuizForm({ courseOptions }: CreateQuizFormProps) {
       try {
         const res = await fetch(`/api/office/quizzes?action=modules&courseId=${courseId}`);
         const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Modules could not be loaded");
         if (data.modules) setModules(data.modules);
       } catch (e) {
         console.error("Failed to load modules:", e);
@@ -83,6 +84,7 @@ export function CreateQuizForm({ courseOptions }: CreateQuizFormProps) {
       try {
         const res = await fetch(`/api/office/quizzes?action=lessons&moduleId=${moduleId}`);
         const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Lessons could not be loaded");
         if (data.lessons) setLessons(data.lessons);
       } catch (e) {
         console.error("Failed to load lessons:", e);
@@ -104,6 +106,7 @@ export function CreateQuizForm({ courseOptions }: CreateQuizFormProps) {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!selectedCourse) newErrors.courseId = "Course is required";
+    if (formData.type === "module" && !selectedModule) newErrors.moduleId = "Module quiz ke liye module select karein";
     if (!formData.title.trim()) newErrors.title = "Title is required";
     if (!formData.passingPercentage || parseInt(formData.passingPercentage, 10) < 0 || parseInt(formData.passingPercentage, 10) > 100) {
       newErrors.passingPercentage = "Passing percentage must be between 0 and 100";
@@ -146,9 +149,10 @@ export function CreateQuizForm({ courseOptions }: CreateQuizFormProps) {
       body.set("showCorrectAnswers", formData.showCorrectAnswers.toString());
       if (formData.availableFrom) body.set("availableFrom", formData.availableFrom);
       if (formData.availableUntil) body.set("availableUntil", formData.availableUntil);
-      body.set("isPublished", formData.isPublished.toString());
+      body.set("isPublished", "false");
+      if (excelFile) body.set("file", excelFile);
 
-      const res = await fetch("/api/office/quizzes", {
+      const res = await fetch(excelFile ? "/api/office/quizzes/import" : "/api/office/quizzes", {
         method: "POST",
         body,
       });
@@ -160,7 +164,7 @@ export function CreateQuizForm({ courseOptions }: CreateQuizFormProps) {
       } else {
         setErrors({ form: data.error || "Failed to create quiz" });
       }
-    } catch (error) {
+    } catch {
       setErrors({ form: "An unexpected error occurred" });
     } finally {
       setIsSubmitting(false);
@@ -213,7 +217,6 @@ export function CreateQuizForm({ courseOptions }: CreateQuizFormProps) {
               <SelectValue placeholder="Select a module" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">No module</SelectItem>
               {modules.map((module) => (
                 <SelectItem key={module.id} value={module.id}>
                   {module.title}
@@ -223,6 +226,7 @@ export function CreateQuizForm({ courseOptions }: CreateQuizFormProps) {
           </Select>
         </div>
       )}
+      {errors.moduleId && <p className="text-sm text-red-600">{errors.moduleId}</p>}
 
       {lessons.length > 0 && (
         <div>
@@ -236,7 +240,6 @@ export function CreateQuizForm({ courseOptions }: CreateQuizFormProps) {
               <SelectValue placeholder="Select a lesson" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">No lesson</SelectItem>
               {lessons.map((lesson) => (
                 <SelectItem key={lesson.id} value={lesson.id}>
                   {lesson.title}
@@ -431,15 +434,13 @@ export function CreateQuizForm({ courseOptions }: CreateQuizFormProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        <Checkbox
-          id="isPublished"
-          checked={formData.isPublished}
-          onCheckedChange={(checked) => handleInputChange("isPublished", checked)}
-        />
-        <Label htmlFor="isPublished" className="cursor-pointer text-sm text-slate-700">
-          Publish immediately (students will see this quiz)
-        </Label>
+      <div className="rounded-xl border border-primary-200 bg-primary-50 p-4 space-y-3">
+        <div>
+          <Label htmlFor="quizExcel">Import questions from Excel (optional)</Label>
+          <p className="mt-1 text-sm text-slate-600">.xlsx file ki har row se ek MCQ banega. Quiz draft mein save hoga; answers review karke publish karein.</p>
+        </div>
+        <Input id="quizExcel" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={(event) => setExcelFile(event.target.files?.[0] ?? null)} />
+        <Link href="/api/office/quizzes/import/template" className="inline-block text-sm font-medium text-primary-700 underline">Excel template download karein</Link>
       </div>
 
       <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
@@ -454,7 +455,7 @@ export function CreateQuizForm({ courseOptions }: CreateQuizFormProps) {
             </>
           ) : (
             <>
-              Create Quiz
+              {excelFile ? "Import & Create Quiz" : "Create Draft Quiz"}
             </>
           )}
         </Button>

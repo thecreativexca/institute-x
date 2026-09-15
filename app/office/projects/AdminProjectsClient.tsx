@@ -184,21 +184,23 @@ export function AdminProjectsClient({ data }: { data: any }) {
       </div>
 
       <Card className="rounded-2xl border-primary-100 shadow-card">
-        <CardContent className="grid gap-3 p-4 sm:grid-cols-[1fr_13rem] sm:p-5">
+        <CardContent className="grid gap-3 p-4 sm:grid-cols-[1fr_13rem] sm:p-5 sm:pt-5">
           <div className="relative">
             <Search
-              className="absolute left-3 top-3 h-4 w-4 text-slate-400"
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
               aria-hidden="true"
             />
-            <Input
+            <input
+              type="search"
+              aria-label="Search projects"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search projects by title"
-              className="pl-9"
+              className={controlClassName(false, "h-10 pl-9 text-sm")}
             />
           </div>
           <select
-            className={controlClassName(false)}
+            className={controlClassName(false, "h-10 text-sm")}
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >

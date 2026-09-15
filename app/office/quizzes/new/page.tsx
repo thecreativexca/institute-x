@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getValidatedSession } from "@/lib/auth/helpers";
 import { canAccessOffice, hasPermission, PERMISSIONS } from "@/lib/auth/permissions";
 import { Course } from "@/models/Course";
-import { Module } from "@/models/Module";
+import { connectDB } from "@/lib/db/connect";
 import { OfficeShell } from "@/components/office/OfficeShell";
 import { CreateQuizForm } from "@/components/office/quizzes/CreateQuizForm";
 import { Button } from "@/components/ui/button";
@@ -62,6 +62,7 @@ export default async function CreateQuizPage() {
     );
   }
 
+  await connectDB();
   const courses = await Course.find({ status: "published" }).select("name").sort({ name: 1 }).lean();
   const courseOptions = courses.map((c) => ({ id: c._id.toString(), name: c.name }));
 

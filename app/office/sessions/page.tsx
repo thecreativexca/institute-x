@@ -74,7 +74,7 @@ export default async function SessionsPage({ searchParams }: SessionsPageProps) 
         </header>
 
         <Card className="border-slate-200/80">
-          <CardContent className="pt-5">
+          <CardContent className="pt-5 sm:pt-5">
             <form method="get" action="/office/sessions" className="flex flex-wrap items-end gap-3">
               <label className="flex min-w-40 flex-col gap-1 text-xs font-medium text-slate-600">
                 Course

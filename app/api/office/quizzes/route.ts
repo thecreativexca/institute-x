@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getValidatedSession } from "@/lib/auth/helpers";
 import { canAccessAdmin, hasPermission, PERMISSIONS } from "@/lib/auth/permissions";
-import { getOfficeQuizzes, getOfficeQuizById } from "@/lib/office/quizzes/queries";
+import { getOfficeQuizzes } from "@/lib/office/quizzes/queries";
 import { createQuiz, duplicateQuiz, getQuizPublishReadiness } from "@/lib/office/quizzes/mutations";
 import { getQuizModules, getModuleLessons } from "@/lib/office/quizzes/mutations";
 import { createQuizSchema, quizFiltersSchema } from "@/lib/office/quizzes/validation";
@@ -22,6 +22,25 @@ export async function GET(request: NextRequest) {
 
     if (!hasPermission(user.role, PERMISSIONS.QUIZZES_READ)) {
       return NextResponse.json({ success: false, error: "Insufficient permissions" }, { status: 403 });
+    }
+
+    const action = request.nextUrl.searchParams.get("action");
+    if (action === "modules") {
+      const courseId = request.nextUrl.searchParams.get("courseId");
+      if (!courseId || !/^[a-f\d]{24}$/i.test(courseId)) return NextResponse.json({ error: "Valid course ID required" }, { status: 400 });
+      const modules = await getQuizModules(courseId);
+      return NextResponse.json({ modules: modules.map((m) => ({ id: m._id.toString(), title: m.title })) });
+    }
+    if (action === "lessons") {
+      const moduleId = request.nextUrl.searchParams.get("moduleId");
+      if (!moduleId || !/^[a-f\d]{24}$/i.test(moduleId)) return NextResponse.json({ error: "Valid module ID required" }, { status: 400 });
+      const lessons = await getModuleLessons(moduleId);
+      return NextResponse.json({ lessons: lessons.map((l) => ({ id: l._id.toString(), title: l.title })) });
+    }
+    if (action === "publish-readiness") {
+      const quizId = request.nextUrl.searchParams.get("quizId");
+      if (!quizId || !/^[a-f\d]{24}$/i.test(quizId)) return NextResponse.json({ error: "Valid quiz ID required" }, { status: 400 });
+      return NextResponse.json(await getQuizPublishReadiness(quizId, user.id, user.role));
     }
 
     const searchParams = request.nextUrl.searchParams;
@@ -81,6 +100,13 @@ export async function POST(request: NextRequest) {
     const action = formData.get("action") as string;
 
     if (action === "create") {
+      const isoDate = (field: string) => {
+        const value = formData.get(field);
+        if (!value) return null;
+        const date = new Date(String(value));
+        if (Number.isNaN(date.getTime())) return String(value);
+        return date.toISOString();
+      };
       const data = {
         courseId: formData.get("courseId") as string,
         moduleId: formData.get("moduleId") as string | null,
@@ -95,12 +121,16 @@ export async function POST(request: NextRequest) {
         shuffleQuestions: formData.get("shuffleQuestions") === "true",
         shuffleOptions: formData.get("shuffleOptions") === "true",
         showCorrectAnswers: formData.get("showCorrectAnswers") === "true",
-        availableFrom: formData.get("availableFrom") as string | null,
-        availableUntil: formData.get("availableUntil") as string | null,
-        isPublished: formData.get("isPublished") === "true",
+        availableFrom: isoDate("availableFrom"),
+        availableUntil: isoDate("availableUntil"),
+        isPublished: false,
       };
 
-      const validated = createQuizSchema.parse(data);
+      const parsed = createQuizSchema.safeParse(data);
+      if (!parsed.success) {
+        return NextResponse.json({ success: false, error: parsed.error.issues[0].message }, { status: 400 });
+      }
+      const validated = parsed.data;
 
       const result = await createQuiz(validated, user.id, user.role);
 

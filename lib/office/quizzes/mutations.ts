@@ -110,6 +110,41 @@ export async function createQuiz(
   return { quizId: quiz._id.toString() };
 }
 
+/** Create an imported quiz as a draft so answers can be reviewed before publishing. */
+export async function createQuizWithQuestions(
+  input: CreateQuizInput,
+  questions: CreateQuestionInput[],
+  actorId: string,
+  actorRole: string
+): Promise<{ quizId: string } | { error: string }> {
+  const result = await createQuiz({ ...input, isPublished: false }, actorId, actorRole);
+  if ("error" in result) return result;
+  const quizId = toObjectId(result.quizId);
+  try {
+    await Question.insertMany(questions.map((question, order) => ({
+      ...question,
+      quiz: quizId,
+      order,
+    })));
+    await Quiz.findByIdAndUpdate(quizId, {
+      totalMarks: questions.reduce((sum, question) => sum + question.marks, 0),
+    });
+    await AuditLog.create({
+      actorUserId: toObjectId(actorId),
+      actorRole,
+      action: "quiz.questions.import",
+      entityType: "quiz",
+      entityId: quizId,
+      metadata: { questionCount: questions.length },
+    });
+    return result;
+  } catch (error) {
+    await Question.deleteMany({ quiz: quizId });
+    await Quiz.findByIdAndDelete(quizId);
+    throw error;
+  }
+}
+
 export async function updateQuiz(
   quizId: string,
   input: UpdateQuizInput,
@@ -192,6 +227,10 @@ export async function updateQuiz(
 
   if (input.isPublished !== undefined) {
     const wasPublished = quiz.isPublished;
+    if (!wasPublished && input.isPublished) {
+      const readiness = await getQuizPublishReadiness(quizId, actorId, actorRole);
+      if (!readiness.ready) return { error: `Cannot publish: ${readiness.issues.join(", ")}` };
+    }
     quiz.isPublished = input.isPublished;
     if (!wasPublished && input.isPublished) {
       await AuditLog.create({

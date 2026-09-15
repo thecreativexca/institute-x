@@ -90,15 +90,15 @@ export function StudentFilters({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_10rem_10rem_14rem] xl:items-center">
+        <div className="relative min-w-0 md:col-span-2 xl:col-span-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" aria-hidden="true" />
           <input
             type="search"
             placeholder="Search by name, email, phone…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className={controlClassName(false, "pl-10")}
+            className={controlClassName(false, "h-10 pl-10 text-sm")}
             aria-label="Search students"
           />
         </div>
@@ -108,7 +108,7 @@ export function StudentFilters({
             id="filter-status"
             value={status}
             onChange={(e) => setStatus(e.target.value as typeof status)}
-            className={controlClassName(false, "w-full sm:w-[150px] h-10")}
+            className={controlClassName(false, "h-10 text-sm")}
           >
                         <option value="ALL">All Statuses</option>
             <option value="active">Active</option>
@@ -122,7 +122,7 @@ export function StudentFilters({
             id="filter-verified"
             value={emailVerified}
             onChange={(e) => setEmailVerified(e.target.value as typeof emailVerified)}
-            className={controlClassName(false, "w-full sm:w-[150px] h-10")}
+            className={controlClassName(false, "h-10 text-sm")}
           >
                         <option value="ALL">All Emails</option>
             <option value="verified">Verified</option>
@@ -135,7 +135,7 @@ export function StudentFilters({
             id="filter-course"
             value={courseId}
             onChange={(e) => setCourseId(e.target.value)}
-            className={controlClassName(false, "w-full sm:w-[200px] h-10")}
+            className={controlClassName(false, "h-10 text-sm")}
           >
             <option value="">All Courses</option>
             {courses.map((course) => (
@@ -147,7 +147,7 @@ export function StudentFilters({
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+      <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center">
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -183,7 +183,7 @@ export function StudentFilters({
           />
         </div>
 
-        <div className="flex items-center gap-2 ml-auto">
+        <div className="flex items-center gap-2 lg:ml-auto">
           <label htmlFor="sort-field" className="text-sm text-slate-600">Sort</label>
           <select
             id="sort-field"

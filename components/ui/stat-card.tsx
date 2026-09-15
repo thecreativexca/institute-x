@@ -27,7 +27,7 @@ export function StatCard({
         className,
       )}
     >
-      <CardContent className="p-4 sm:p-5">
+      <CardContent className="p-4 sm:p-5 sm:pt-5">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs font-medium text-slate-500">{label}</p>

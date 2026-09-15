@@ -79,10 +79,10 @@ export function CourseListToolbar({ categories }: { categories: CategoryOption[]
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search by title, slug or tag…"
-            className={controlClassName(false)}
+            className={controlClassName(false, "h-10 text-sm")}
           />
         </div>
-        <Button type="submit" variant="outline">
+        <Button type="submit" variant="outline" className="shrink-0">
           Search
         </Button>
       </form>
@@ -150,7 +150,7 @@ export function CourseListToolbar({ categories }: { categories: CategoryOption[]
         </FieldShell>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <span className="text-sm text-slate-500">Pricing:</span>
         {PRICING_OPTIONS.map((option) => {
           const current = searchParams.get("pricing") ?? "ALL";

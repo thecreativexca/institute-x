@@ -108,7 +108,7 @@ export default async function PaymentsPage({ searchParams }: PaymentsPageProps) 
           <CardHeader className="border-b border-slate-100 bg-slate-50/60">
             <CardTitle className="text-base">Orders</CardTitle>
           </CardHeader>
-          <CardContent className="pt-5">
+          <CardContent className="pt-5 sm:pt-5">
             <form method="get" action="/office/payments" className="flex flex-wrap items-end gap-3">
               <label className="flex min-w-48 flex-1 flex-col gap-1 text-xs font-medium text-slate-600">
                 <span className="flex items-center gap-1"><Search className="h-3.5 w-3.5" aria-hidden="true" /> Search order</span>
@@ -268,7 +268,7 @@ function KpiTile({
 }) {
   return (
     <Card className="rounded-2xl border-slate-200/80">
-      <CardContent className="flex flex-col gap-1 p-4">
+      <CardContent className="flex flex-col gap-1 p-4 sm:pt-4">
         <p className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
           <Icon className={`h-4 w-4 ${tone}`} aria-hidden="true" />
           {label}
