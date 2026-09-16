@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 
 import { env } from "@/lib/config/env";
 
+mongoose.set("updatePipeline", true);
+
 
 
 interface MongooseCache {

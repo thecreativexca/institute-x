@@ -4,10 +4,16 @@ import { redirect } from "next/navigation";
 import {
   ArrowUpRight,
   Award,
+  BadgeCheck,
+  Ban,
   BookOpen,
+  BriefcaseBusiness,
   CalendarClock,
+  CalendarPlus,
+  CheckCircle2,
   ClipboardList,
   FileStack,
+  FolderKanban,
   HelpCircle,
   LifeBuoy,
   Megaphone,
@@ -16,12 +22,11 @@ import {
   TrendingUp,
   Users,
   Wallet,
-  BriefcaseBusiness,
-  FolderKanban,
 } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { StatCard } from "@/components/ui/stat-card";
 import { OfficeShell } from "@/components/office/OfficeShell";
 import { getValidatedSession } from "@/lib/auth/helpers";
 import { canAccessOffice, hasPermission } from "@/lib/auth/permissions";
@@ -114,9 +119,18 @@ export default async function OfficeHomePage() {
         </header>
 
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Internship operations overview">
-          {[["Open applications", openApplications, "/office/internships"], ["Active interns", activeInterns, "/office/internships"], ["Pending project reviews", pendingProjectReviews, "/office/projects"], ["Internship completions", internshipCompletions, "/office/internships"]].map(([label, value, href]) => (
-            <Link key={String(label)} href={String(href)}><Card className="h-full"><CardContent className="p-5"><p className="text-2xl font-bold text-slate-900">{value}</p><p className="mt-1 text-sm text-slate-500">{label}</p></CardContent></Card></Link>
-          ))}
+          <Link href="/office/internships" className="block focus-visible:outline-none">
+            <StatCard label="Open applications" value={openApplications} icon={BriefcaseBusiness} />
+          </Link>
+          <Link href="/office/internships" className="block focus-visible:outline-none">
+            <StatCard label="Active interns" value={activeInterns} icon={Users} />
+          </Link>
+          <Link href="/office/projects" className="block focus-visible:outline-none">
+            <StatCard label="Pending project reviews" value={pendingProjectReviews} icon={ClipboardList} />
+          </Link>
+          <Link href="/office/internships" className="block focus-visible:outline-none">
+            <StatCard label="Internship completions" value={internshipCompletions} icon={CheckCircle2} />
+          </Link>
         </section>
 
         {certificateStats ? (
@@ -131,10 +145,24 @@ export default async function OfficeHomePage() {
               </Link>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              <Link href="/office/certificates"><Card className="h-full"><CardContent className="p-5"><p className="text-2xl font-bold text-slate-900">{certificateStats.total}</p><p className="mt-1 text-sm text-slate-500">Total certificates</p></CardContent></Card></Link>
-              <Link href="/office/certificates?status=issued"><Card className="h-full"><CardContent className="p-5"><p className="text-2xl font-bold text-amber-800">{certificateStats.active}</p><p className="mt-1 text-sm text-slate-500">Active certificates</p></CardContent></Card></Link>
-              <Link href="/office/certificates/revoked"><Card className="h-full"><CardContent className="p-5"><p className="text-2xl font-bold text-red-700">{certificateStats.revoked}</p><p className="mt-1 text-sm text-slate-500">Revoked certificates</p></CardContent></Card></Link>
-              <Link href="/office/certificates"><Card className="h-full"><CardContent className="p-5"><p className="text-2xl font-bold text-slate-900">{certificateStats.issuedThisMonth}</p><p className="mt-1 text-sm text-slate-500">Issued this month</p></CardContent></Card></Link>
+              <Link href="/office/certificates" className="block focus-visible:outline-none">
+                <StatCard label="Total certificates" value={certificateStats.total} icon={Award} />
+              </Link>
+              <Link href="/office/certificates?status=issued" className="block focus-visible:outline-none">
+                <StatCard label="Active certificates" value={certificateStats.active} icon={BadgeCheck} />
+              </Link>
+              <Link href="/office/certificates/revoked" className="block focus-visible:outline-none">
+                <StatCard
+                  label="Revoked certificates"
+                  value={certificateStats.revoked}
+                  icon={Ban}
+                  surfaceClassName="bg-red-50"
+                  toneClassName="text-red-700"
+                />
+              </Link>
+              <Link href="/office/certificates" className="block focus-visible:outline-none">
+                <StatCard label="Issued this month" value={certificateStats.issuedThisMonth} icon={CalendarPlus} />
+              </Link>
             </div>
           </section>
         ) : null}

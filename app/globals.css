@@ -420,6 +420,7 @@
   height: 10rem;
   border-radius: 9999px;
   background: rgb(253 230 138 / 0.35);
+  pointer-events: none;
 }
 
 .office-page-header > * {

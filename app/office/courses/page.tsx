@@ -211,7 +211,7 @@ function CourseRow({
             </div>
             <Link
               href={`/office/courses/${course.id}`}
-              className="mt-1.5 block truncate text-base font-semibold text-slate-900 hover:text-primary-700"
+              className="mt-1.5 block line-clamp-2 text-base font-semibold text-slate-900 hover:text-primary-700"
             >
               {course.name}
             </Link>

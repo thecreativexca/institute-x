@@ -36,6 +36,8 @@ export function AttemptClient({ data }: { data: AttemptViewData }) {
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>(data.answers);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [saveError, setSaveError] = useState("");
+  const [retryable, setRetryable] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [fatalError, setFatalError] = useState<string | null>(null);
@@ -44,6 +46,8 @@ export function AttemptClient({ data }: { data: AttemptViewData }) {
   );
 
   const dirtyRef = useRef<Set<string>>(new Set());
+  const answersRef = useRef<Record<string, string>>(data.answers);
+  const inFlightRef = useRef<Promise<boolean> | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const submittedRef = useRef(false);
 
@@ -55,45 +59,72 @@ export function AttemptClient({ data }: { data: AttemptViewData }) {
   const unansweredCount = totalQuestions - answeredCount;
 
   // ---------- Submit ----------
-  const flushSave = useCallback(async () => {
-    if (dirtyRef.current.size === 0) return;
-    const pending = Array.from(dirtyRef.current);
-    dirtyRef.current = new Set();
+  const flushSave = useCallback(async (): Promise<boolean> => {
+    if (inFlightRef.current) return inFlightRef.current;
+    if (dirtyRef.current.size === 0) return true;
+    setRetryable(false);
     setSaveState("saving");
-    try {
-      for (const questionId of pending) {
-        const selected = answers[questionId];
-        if (!selected) continue;
-        const res = await fetch(
-          `/api/student/quizzes/${data.quizId}/attempt/${data.attemptId}/answer`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              attemptId: data.attemptId,
-              questionId,
-              selectedOptionId: selected,
-            }),
+    const operation = (async (): Promise<boolean> => {
+      try {
+        while (dirtyRef.current.size > 0) {
+          const questionId = dirtyRef.current.values().next().value as string;
+          const selected = answersRef.current[questionId];
+          if (!selected) {
+            dirtyRef.current.delete(questionId);
+            continue;
           }
-        );
-        if (!res.ok) {
-          dirtyRef.current.add(questionId);
-          setSaveState("error");
-          return;
+          const res = await fetch(
+            `/api/student/quizzes/${data.quizId}/attempt/${data.attemptId}/answer`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                attemptId: data.attemptId,
+                questionId,
+                selectedOptionId: selected,
+              }),
+            }
+          );
+          if (!res.ok) {
+            const response = await res.json().catch(() => ({}));
+            setSaveError(response.error || "Could not save your answer.");
+            setSaveState("error");
+            setRetryable(res.status >= 500 || res.status === 429);
+            return false;
+          }
+          // The student may change this answer while its request is in flight.
+          // Keep that newer value dirty until it is saved too.
+          if (answersRef.current[questionId] === selected) dirtyRef.current.delete(questionId);
         }
+        setSaveError("");
+        setSaveState("saved");
+        return true;
+      } catch {
+        setSaveError("Network problem while saving your answer.");
+        setSaveState("error");
+        setRetryable(true);
+        return false;
       }
-      setSaveState("saved");
-    } catch {
-      for (const id of pending) dirtyRef.current.add(id);
-      setSaveState("error");
+    })();
+    inFlightRef.current = operation;
+    try {
+      return await operation;
+    } finally {
+      if (inFlightRef.current === operation) inFlightRef.current = null;
     }
-  }, [answers, data.quizId, data.attemptId]);
+  }, [data.quizId, data.attemptId]);
 
   useEffect(() => {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (saveState !== "error" || !retryable) return;
+    const timer = setTimeout(() => void flushSave(), 2500);
+    return () => clearTimeout(timer);
+  }, [saveState, retryable, flushSave]);
 
   // Flush on tab hide / before unload to avoid losing answers.
   useEffect(() => {
@@ -111,7 +142,8 @@ export function AttemptClient({ data }: { data: AttemptViewData }) {
   }, [flushSave]);
 
   const selectOption = (questionId: string, optionId: string) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: optionId }));
+    answersRef.current = { ...answersRef.current, [questionId]: optionId };
+    setAnswers(answersRef.current);
     dirtyRef.current.add(questionId);
     setSaveState("saving");
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
@@ -127,7 +159,12 @@ export function AttemptClient({ data }: { data: AttemptViewData }) {
       submittedRef.current = true;
 
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-      await flushSave();
+      const saved = await flushSave();
+      if (!saved && reason === "manual") {
+        setShowConfirm(false);
+        submittedRef.current = false;
+        return;
+      }
 
       setSubmitting(true);
       try {
@@ -331,8 +368,9 @@ export function AttemptClient({ data }: { data: AttemptViewData }) {
             <CheckCircle2 className="h-3.5 w-3.5 text-amber-700" aria-hidden="true" /> Saved
           </span>
         ) : saveState === "error" ? (
-          <span className="inline-flex items-center gap-1 text-red-600">
-            <XCircle className="h-3.5 w-3.5" aria-hidden="true" /> Save failed — will retry
+          <span className="inline-flex flex-wrap items-center gap-1 text-red-600" role="alert">
+            <XCircle className="h-3.5 w-3.5" aria-hidden="true" /> Save failed: {saveError}
+            <button type="button" className="ml-1 font-semibold underline" onClick={() => void flushSave()}>Retry now</button>
           </span>
         ) : (
           <span className="inline-flex items-center gap-1">

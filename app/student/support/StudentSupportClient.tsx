@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -43,6 +43,17 @@ const categoryLabels: Record<string, string> = {
   other: "Other",
 };
 
+const CATEGORY_OPTIONS = [
+  { value: "course_access", label: "Course Access" },
+  { value: "payment", label: "Billing & Payments" },
+  { value: "technical", label: "Technical Issue" },
+  { value: "assignment", label: "Assignment" },
+  { value: "quiz", label: "Quiz" },
+  { value: "certificate", label: "Certificate" },
+  { value: "account", label: "Account Access" },
+  { value: "other", label: "Other" },
+];
+
 export function StudentSupportClient() {
   const [activeTab, setActiveTab] = useState<"tickets" | "new" | "detail">("tickets");
   const [selectedTicket, setSelectedTicket] = useState<StudentTicketDetail | null>(null);
@@ -52,6 +63,10 @@ export function StudentSupportClient() {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [tickets, setTickets] = useState<StudentTicketSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  // Controlled state for Radix Select (they don\'t submit natively in forms)
+  const [category, setCategory] = useState("");
+  const [courseId, setCourseId] = useState("");
+  const hasFetched = useRef(false);
 
   const fetchTickets = async () => {
     setLoading(true);
@@ -59,7 +74,7 @@ export function StudentSupportClient() {
       const res = await fetch("/api/student/support");
       const data = await res.json();
       if (res.ok) {
-        setTickets(data.tickets);
+        setTickets(data.tickets ?? []);
       }
     } catch (error) {
       console.error("Failed to fetch tickets:", error);
@@ -67,6 +82,15 @@ export function StudentSupportClient() {
       setLoading(false);
     }
   };
+
+  // Auto-fetch on mount
+  useEffect(() => {
+    if (!hasFetched.current) {
+      hasFetched.current = true;
+      void fetchTickets();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchTicketDetail = async (ticketId: string) => {
     try {
@@ -83,27 +107,35 @@ export function StudentSupportClient() {
 
   const handleCreateTicket = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setFormErrors({});
 
+    if (!category) {
+      setFormErrors({ category: "Please select a category." });
+      return;
+    }
+
+    setIsSubmitting(true);
     const formData = new FormData(e.currentTarget);
-    const data = {
-      subject: formData.get("subject") as string,
-      category: formData.get("category") as string,
-      message: formData.get("message") as string,
-      courseId: formData.get("courseId") as string | null,
-    };
+    // Radix Select doesn\'t write to native form inputs — use controlled state
+    formData.set("category", category);
+    if (courseId && courseId !== "none") {
+      formData.set("courseId", courseId);
+    } else {
+      formData.delete("courseId");
+    }
 
     try {
       const res = await fetch("/api/student/support", {
         method: "POST",
-        body: new URLSearchParams(data as Record<string, string>),
+        body: formData,
       });
 
       const result = await res.json();
       if (res.ok && result.success) {
         setActiveTab("tickets");
         setFormErrors({});
+        setCategory("");
+        setCourseId("");
         (e.target as HTMLFormElement).reset();
         await fetchTickets();
       } else {
@@ -122,9 +154,11 @@ export function StudentSupportClient() {
 
     setIsReplying(true);
     try {
+      const fd = new FormData();
+      fd.set("message", replyMessage.trim());
       const res = await fetch(`/api/student/support/${selectedTicket?.id}`, {
         method: "PATCH",
-        body: new URLSearchParams({ message: replyMessage.trim() }),
+        body: fd,
       });
 
       if (res.ok) {
@@ -157,7 +191,7 @@ export function StudentSupportClient() {
                 variant={activeTab === "tickets" ? "primary" : "ghost"}
                 size="sm"
                 className="flex-1"
-                onClick={() => { setActiveTab("tickets"); fetchTickets(); }}
+                onClick={() => { setActiveTab("tickets"); void fetchTickets(); }}
               >
                 <HelpCircle className="h-4 w-4 mr-2" aria-hidden="true" />
                 My Tickets
@@ -226,37 +260,39 @@ export function StudentSupportClient() {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="category" className="required">
+                <div className="space-y-1.5">
+                  <Label htmlFor="category-trigger" className="required">
                     Category
                   </Label>
-                  <Select value="" onValueChange={() => {}} required disabled={isSubmitting}>
-                    <SelectTrigger id="category" name="category">
+                  <Select value={category} onValueChange={setCategory} disabled={isSubmitting}>
+                    <SelectTrigger id="category-trigger">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="course_access">Course Access</SelectItem>
-                      <SelectItem value="payment">Billing & Payments</SelectItem>
-                      <SelectItem value="technical">Technical Issue</SelectItem>
-                      <SelectItem value="assignment">Assignment</SelectItem>
-                      <SelectItem value="quiz">Quiz</SelectItem>
-                      <SelectItem value="certificate">Certificate</SelectItem>
-                      <SelectItem value="account">Account Access</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                      {CATEGORY_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
+                  <input type="hidden" name="category" value={category} />
+                  {formErrors.category && (
+                    <p className="text-sm text-red-600">{formErrors.category}</p>
+                  )}
                 </div>
 
-                <div>
-                  <Label htmlFor="courseId">Related Course (Optional)</Label>
-                  <Select value="" onValueChange={() => {}}>
-                    <SelectTrigger id="courseId" name="courseId">
+                <div className="space-y-1.5">
+                  <Label htmlFor="course-trigger">Related Course (Optional)</Label>
+                  <Select value={courseId} onValueChange={setCourseId} disabled={isSubmitting}>
+                    <SelectTrigger id="course-trigger">
                       <SelectValue placeholder="Select a course (optional)" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No specific course</SelectItem>
+                      <SelectItem value="none">No specific course</SelectItem>
                     </SelectContent>
                   </Select>
+                  <input type="hidden" name="courseId" value={courseId && courseId !== "none" ? courseId : ""} />
                 </div>
 
                 <div>

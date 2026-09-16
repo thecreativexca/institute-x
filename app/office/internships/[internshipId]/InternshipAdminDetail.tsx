@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { StatCard } from "@/components/ui/stat-card";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -91,7 +92,10 @@ export function InternshipAdminDetail({ data }: { data: any }) {
       </Link>
       <header className="office-page-header flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <div className="flex flex-wrap items-center gap-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary-600">
+            Internship program
+          </p>
+          <div className="mt-1 flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-bold text-slate-900">{internship.title}</h1>
             <Badge variant={internship.status === "open" ? "success" : internship.status === "archived" ? "neutral" : "primary"}>
               {internship.status}
@@ -143,20 +147,10 @@ export function InternshipAdminDetail({ data }: { data: any }) {
       {tab === "overview" ? (
         <>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {[
-              ["Applicants", data.applications.length, BriefcaseBusiness],
-              ["Selected students", data.enrollments.length, Users],
-              ["Pending reviews", pendingReviews, ClipboardList],
-              ["Projects", data.projects.length, FolderKanban],
-            ].map(([label, value, Icon]: any) => (
-              <Card key={label}>
-                <CardContent className="p-5">
-                  <Icon className="h-5 w-5 text-primary-600" />
-                  <p className="mt-3 text-2xl font-bold text-slate-900">{value}</p>
-                  <p className="text-sm text-slate-500">{label}</p>
-                </CardContent>
-              </Card>
-            ))}
+            <StatCard label="Applicants" value={data.applications.length} icon={BriefcaseBusiness} />
+            <StatCard label="Selected students" value={data.enrollments.length} icon={Users} />
+            <StatCard label="Pending reviews" value={pendingReviews} icon={ClipboardList} />
+            <StatCard label="Projects" value={data.projects.length} icon={FolderKanban} />
           </div>
           <Card>
             <CardContent className="p-5">

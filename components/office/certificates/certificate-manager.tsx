@@ -77,12 +77,16 @@ export function CertificateManager({
         </Alert>
       ) : null}
 
-      <CertificateFilters
-        initialFilters={filters}
-        courses={courses}
-        basePath={basePath}
-        hideStatus={variant === "revoked"}
-      />
+      <Card className="rounded-2xl border-slate-200/80 shadow-card">
+        <CardContent className="p-4 sm:p-5">
+          <CertificateFilters
+            initialFilters={filters}
+            courses={courses}
+            basePath={basePath}
+            hideStatus={variant === "revoked"}
+          />
+        </CardContent>
+      </Card>
 
       {isEmpty ? (
         <Card className="rounded-2xl border-slate-200">

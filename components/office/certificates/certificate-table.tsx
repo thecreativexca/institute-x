@@ -54,8 +54,8 @@ export function CertificateTable({ certificates, onAction }: CertificateTablePro
   return (
     <>
       {/* Desktop / tablet */}
-      <div className="hidden overflow-x-auto rounded-xl border border-slate-200 lg:block">
-        <table className="w-full min-w-[1100px] border-collapse text-sm">
+      <div className="office-nav-scroll hidden overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-card lg:block">
+        <table className="w-full min-w-[920px] border-collapse text-sm">
           <caption className="sr-only">
             Certificates issued by the institute, with the actions available for
             each record.

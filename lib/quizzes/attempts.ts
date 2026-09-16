@@ -336,10 +336,11 @@ export async function saveAttemptAnswer(args: {
           },
         },
       },
-    ]
+    ],
+    { updatePipeline: true }
   );
 
-  if (result.modifiedCount === 0) {
+  if (result.matchedCount === 0) {
     const rel = await QuizAttempt.findById(attemptObjectId).select("status").lean();
     if (rel && rel.status !== QUIZ_ATTEMPT_STATUSES.IN_PROGRESS) {
       throw new QuizError(

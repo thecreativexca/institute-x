@@ -6,7 +6,7 @@ import { Award, BadgeCheck, Ban, CalendarPlus, Upload } from "lucide-react";
 import { OfficeShell } from "@/components/office/OfficeShell";
 import { CertificateManager } from "@/components/office/certificates/certificate-manager";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { StatCard } from "@/components/ui/stat-card";
 import { requireAdmin } from "@/lib/auth/helpers";
 import {
   getOfficeCertificateStats,
@@ -59,9 +59,9 @@ export default async function OfficeCertificatesPage({ searchParams }: PageProps
     ? parsedFilters.data
     : certificateFiltersSchema.parse({});
 
-  const [result, stats, courses] = await Promise.all([
-    listOfficeCertificates(filters),
+  const [stats, result, courses] = await Promise.all([
     getOfficeCertificateStats(),
+    listOfficeCertificates(filters),
     listCourseOptions(),
   ]);
 
@@ -99,13 +99,19 @@ export default async function OfficeCertificatesPage({ searchParams }: PageProps
           className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
           aria-label="Certificate statistics"
         >
-          <Summary icon={Award} label="Total Certificates" value={stats.total} />
-          <Summary icon={BadgeCheck} label="Active" value={stats.active} />
-          <Summary icon={Ban} label="Revoked" value={stats.revoked} />
-          <Summary
-            icon={CalendarPlus}
+          <StatCard label="Total Certificates" value={stats.total} icon={Award} />
+          <StatCard label="Active" value={stats.active} icon={BadgeCheck} />
+          <StatCard
+            label="Revoked"
+            value={stats.revoked}
+            icon={Ban}
+            surfaceClassName="bg-red-50"
+            toneClassName="text-red-700"
+          />
+          <StatCard
             label="Issued This Month"
             value={stats.issuedThisMonth}
+            icon={CalendarPlus}
           />
         </section>
 
@@ -116,27 +122,5 @@ export default async function OfficeCertificatesPage({ searchParams }: PageProps
         />
       </div>
     </OfficeShell>
-  );
-}
-
-function Summary({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof Award;
-  label: string;
-  value: number;
-}) {
-  return (
-    <Card>
-      <CardContent className="flex items-center gap-3 p-4">
-        <Icon className="h-5 w-5 text-primary-700" aria-hidden="true" />
-        <div>
-          <p className="text-xl font-bold text-slate-900">{value}</p>
-          <p className="text-xs text-slate-500">{label}</p>
-        </div>
-      </CardContent>
-    </Card>
   );
 }

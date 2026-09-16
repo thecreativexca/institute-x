@@ -54,6 +54,7 @@ export const siteConfig = {
     { label: "Courses", href: "/courses" },
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
+    { label: "FAQ", href: "/faq" },
   ],
 } as const;
 

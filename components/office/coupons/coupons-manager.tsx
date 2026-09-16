@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Edit3, Plus, Power, PowerOff, Tag, Trash2 } from "lucide-react";
+import { BadgeIndianRupee, Calendar, Edit3, Plus, Power, PowerOff, Tag, TicketCheck, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FieldShell, controlClassName } from "@/components/ui/field";
 import { Modal } from "@/components/ui/modal";
+import { StatCard } from "@/components/ui/stat-card";
 import { deleteCouponAction, saveCouponAction, setCouponStatusAction } from "@/lib/office/coupons/actions";
 import type { CouponActionResult, CouponCourseOption, CouponFormInput, CouponListItem } from "@/lib/office/coupons/dto";
 
@@ -19,7 +20,17 @@ const emptyForm: CouponFormInput = {
   applicableCourses: [], isActive: true,
 };
 
-export function CouponsManager({ coupons, courses }: { coupons: CouponListItem[]; courses: CouponCourseOption[] }) {
+export function CouponsManager({
+  coupons,
+  courses,
+  activeCount = 0,
+  usesCount = 0,
+}: {
+  coupons: CouponListItem[];
+  courses: CouponCourseOption[];
+  activeCount?: number;
+  usesCount?: number;
+}) {
   const router = useRouter();
   const [editing, setEditing] = useState<CouponListItem | "new" | null>(null);
   const [deleting, setDeleting] = useState<CouponListItem | null>(null);
@@ -34,13 +45,31 @@ export function CouponsManager({ coupons, courses }: { coupons: CouponListItem[]
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end"><Button onClick={() => { setErrors({}); setEditing("new"); }}><Plus className="h-4 w-4" /> New coupon</Button></div>
+    <div className="space-y-6">
+      <header className="office-page-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary-600">Revenue tools</p>
+          <h1 className="mt-1.5 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Coupons</h1>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600">
+            Create course-specific or catalog-wide discounts with date and usage controls.
+          </p>
+        </div>
+        <Button onClick={() => { setErrors({}); setEditing("new"); }}>
+          <Plus className="h-4 w-4" /> New coupon
+        </Button>
+      </header>
+
+      <section className="grid gap-3 sm:grid-cols-3">
+        <StatCard label="Total coupons" value={coupons.length} icon={Tag} />
+        <StatCard label="Currently active" value={activeCount} icon={TicketCheck} />
+        <StatCard label="Completed uses" value={usesCount} icon={BadgeIndianRupee} />
+      </section>
+
       {notice ? <div role={notice.ok ? "status" : "alert"} className={`rounded-xl border px-4 py-3 text-sm font-medium ${notice.ok ? "border-amber-200 bg-amber-50 text-amber-900" : "border-red-200 bg-red-50 text-red-800"}`}>{notice.text}</div> : null}
       {coupons.length === 0 ? (
         <EmptyState icon={<Tag className="h-10 w-10" />} title="No coupons yet" description="Create a coupon to offer a controlled checkout discount." action={<Button onClick={() => setEditing("new")}><Plus className="h-4 w-4" /> Create coupon</Button>} />
       ) : (
-        <div className="grid gap-4 xl:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {coupons.map((coupon) => {
             const expired = Boolean(coupon.expiresAt && new Date(`${coupon.expiresAt}T23:59:59`) < new Date());
             return <Card key={coupon.id}><CardContent className="p-5">

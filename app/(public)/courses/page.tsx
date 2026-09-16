@@ -83,7 +83,7 @@ export default async function CoursesPage({
       />
 
       {/* Page Header — Institute Catalog Banner */}
-      <header className="public-hero-pattern relative mb-8 overflow-hidden rounded-[2rem] border border-primary-200 bg-gradient-to-r from-primary-950 via-primary-900 to-primary-950 p-7 text-white shadow-card-hover sm:p-10 lg:p-12">
+      <header className="relative mb-8 overflow-hidden rounded-[2rem] border border-primary-200 bg-gradient-to-r from-primary-950 via-primary-900 to-primary-950 p-7 text-white shadow-card-hover sm:p-10 lg:p-12">
         <div aria-hidden="true" className="public-soft-grid absolute inset-0 opacity-20" />
         <div className="relative">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
