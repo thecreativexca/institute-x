@@ -1,11 +1,11 @@
 import nodemailer from "nodemailer";
+import type { Transporter } from "nodemailer";
 import { getResendClient, getResendFromEmail, getResendFromName } from "./client";
 import { env } from "@/lib/config/env";
 import {
   createEmailLog,
   updateEmailLog,
   getEmailLogById,
-  generateIdempotencyKey,
   type EmailEventKey,
   EMAIL_EVENTS,
 } from "./logging";
@@ -47,9 +47,9 @@ const TEMPLATE_RENDERERS: Record<EmailEventKey, TemplateRenderer> = {
 /*  SMTP transport (lazily created, reused across requests)                   */
 /* -------------------------------------------------------------------------- */
 
-let smtpTransport: nodemailer.Transporter | null = null;
+let smtpTransport: Transporter | null = null;
 
-function getSmtpTransport(): nodemailer.Transporter {
+function getSmtpTransport(): Transporter {
   if (!smtpTransport) {
     smtpTransport = nodemailer.createTransport({
       host: env.smtpHost,
