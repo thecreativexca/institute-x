@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/db/connect";
 import { User } from "@/lib/mongodb/models";
-import { ACCOUNT_STATUSES } from "@/lib/constants";
-import { verifyToken, hashToken } from "@/lib/auth/tokens";
+import { ACCOUNT_STATUSES, USER_ROLES } from "@/lib/constants";
+import { hashToken } from "@/lib/auth/tokens";
 import { hashPassword } from "@/lib/auth/password";
 import { destroySession } from "@/lib/auth/session";
 
@@ -40,14 +40,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (typeof token !== "string" || !/^[a-f0-9]{64}$/i.test(token)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid or expired reset token." },
+        { status: 400 }
+      );
+    }
+
     const tokenHash = hashToken(token);
+    const passwordHash = await hashPassword(password);
 
     await connectDB();
 
-    const user = await User.findOne({
-      passwordResetToken: tokenHash,
-      passwordResetTokenExpiresAt: { $gt: new Date() },
-    });
+    const user = await User.findOneAndUpdate(
+      {
+        passwordResetToken: tokenHash,
+        passwordResetTokenExpiresAt: { $gt: new Date() },
+        role: USER_ROLES.ADMIN,
+        status: ACCOUNT_STATUSES.ACTIVE,
+      },
+      {
+        $set: { passwordHash },
+        $unset: {
+          passwordResetToken: "",
+          passwordResetTokenExpiresAt: "",
+          passwordResetOtpAttempts: "",
+        },
+        $inc: { sessionVersion: 1 },
+      },
+      { new: true }
+    );
 
     if (!user) {
       return NextResponse.json(
@@ -55,29 +77,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    // Check if user has an admin (office) role
-    const isOfficeUser = user.role === "admin";
-
-    if (!isOfficeUser) {
-      return NextResponse.json(
-        { success: false, error: "Invalid or expired reset token." },
-        { status: 400 }
-      );
-    }
-
-    if (user.status !== ACCOUNT_STATUSES.ACTIVE) {
-      return NextResponse.json(
-        { success: false, error: "This account is not active." },
-        { status: 403 }
-      );
-    }
-
-    user.passwordHash = await hashPassword(password);
-    user.passwordResetToken = undefined;
-    user.passwordResetTokenExpiresAt = undefined;
-    user.sessionVersion += 1; // Invalidate existing sessions
-    await user.save();
 
     await destroySession();
 

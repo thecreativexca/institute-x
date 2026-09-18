@@ -63,18 +63,19 @@ export interface PasswordResetEmailParams {
   studentId: string;
   studentName: string;
   studentEmail: string;
-  resetUrl: string;
+  otp: string;
   expiryMinutes: number;
+  requestId: string;
 }
 
-export async function sendPasswordResetEmail(params: PasswordResetEmailParams): Promise<void> {
+export async function sendPasswordResetEmail(params: PasswordResetEmailParams): Promise<SendEmailResult> {
   const { html, text } = (await import("./templates/passwordReset")).renderPasswordResetEmail({
     studentName: params.studentName,
-    resetUrl: params.resetUrl,
+    otp: params.otp,
     expiryMinutes: params.expiryMinutes,
   });
 
-  await sendTransactionalEmail({
+  const result = await sendTransactionalEmail({
     eventKey: EMAIL_EVENTS.PASSWORD_RESET,
     template: "password_reset",
     to: params.studentEmail,
@@ -82,13 +83,16 @@ export async function sendPasswordResetEmail(params: PasswordResetEmailParams): 
     html,
     text,
     recipientUserId: params.studentId,
-    idempotencyKey: generatePasswordResetKey(params.studentId),
+    idempotencyKey: generatePasswordResetKey(params.studentId, params.requestId),
     metadata: {
       studentName: params.studentName,
-      resetUrl: params.resetUrl,
+      otp: params.otp,
       expiryMinutes: params.expiryMinutes,
     },
   });
+
+
+  return result;
 }
 
 export interface WelcomeEmailParams {

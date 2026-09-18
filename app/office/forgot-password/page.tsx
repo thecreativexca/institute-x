@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle, Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, KeyRound, Mail } from "lucide-react";
 
 import { OfficeAuthShell } from "@/components/office/office-auth-shell";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -11,34 +12,66 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 
 export default function OfficeForgotPasswordPage() {
+  const router = useRouter();
+  const [step, setStep] = useState<"email" | "otp">("email");
   const [email, setEmail] = useState("");
+  const [sentEmail, setSentEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [devOtp, setDevOtp] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  const requestOtp = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
       setError("Enter a valid work email address.");
       return;
     }
-
     setIsLoading(true);
     setError(null);
     try {
       const response = await fetch("/api/auth/office-forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+        body: JSON.stringify({ email: normalizedEmail }),
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error || "Unable to send the reset link.");
+        setError(data.error || "Unable to send OTP. Please try again.");
         return;
       }
-      setIsComplete(true);
+      setSentEmail(normalizedEmail);
+      setDevOtp(typeof data.devOtp === "string" ? data.devOtp : null);
+      setOtp("");
+      setStep("otp");
     } catch {
-      setError("Unable to send the reset link right now. Please try again.");
+      setError("Unable to send OTP right now. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const verifyOtp = async () => {
+    if (!/^\d{6}$/.test(otp)) {
+      setError("Enter the 6-digit OTP sent to your email.");
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/auth/office-verify-reset-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: sentEmail, otp }),
+      });
+      const data = await response.json();
+      if (!response.ok || typeof data.token !== "string") {
+        setError(data.error || "OTP verification failed.");
+        return;
+      }
+      router.push(`/office/reset-password?token=${encodeURIComponent(data.token)}`);
+    } catch {
+      setError("Unable to verify OTP right now. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -48,55 +81,29 @@ export default function OfficeForgotPasswordPage() {
     <OfficeAuthShell>
       <Card className="office-auth-card rounded-3xl">
         <CardHeader className="items-center px-6 pb-4 pt-8 text-center sm:px-8">
-          <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${isComplete ? "bg-amber-100 text-amber-800" : "bg-accent-100 text-accent-800"}`}>
-            {isComplete ? <CheckCircle className="h-6 w-6" /> : <Mail className="h-6 w-6" />}
-          </span>
-          <CardTitle as="h1" className="mt-3">
-            {isComplete ? "Check Your Email" : "Reset Office Password"}
-          </CardTitle>
-          <CardDescription>
-            {isComplete
-              ? "If an active staff account exists for this email, a secure reset link has been sent."
-              : "Enter your work email and we will send you a secure password reset link."}
-          </CardDescription>
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-100 text-accent-800">{step === "email" ? <Mail className="h-6 w-6" /> : <KeyRound className="h-6 w-6" />}</span>
+          <CardTitle as="h1" className="mt-3">{step === "email" ? "Reset Office Password" : "Enter Email OTP"}</CardTitle>
+          <CardDescription>{step === "email" ? "Enter your work email and we will send a 6-digit OTP." : <>Enter the OTP sent to <strong>{sentEmail}</strong>. It expires in 10 minutes.</>}</CardDescription>
         </CardHeader>
         <CardContent className="px-6 pb-8 sm:px-8">
-          {isComplete ? (
-            <Button asChild size="lg" className="w-full">
-              <Link href="/office/login">Return to Office Login</Link>
-            </Button>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-              {error ? (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              ) : null}
-              <Input
-                label="Work Email"
-                name="email"
-                type="email"
-                value={email}
-                onChange={(event) => {
-                  setEmail(event.target.value);
-                  setError(null);
-                }}
-                placeholder="name@institute.edu.in"
-                autoComplete="email"
-                icon={<Mail className="h-4 w-4" />}
-                error={error ?? undefined}
-                disabled={isLoading}
-                required
-              />
-              <Button type="submit" size="lg" className="w-full rounded-xl shadow-lg shadow-primary-950/10" isLoading={isLoading}>
-                {isLoading ? "Sending..." : "Send Reset Link"}
-              </Button>
-              <Link href="/office/login" className="flex items-center justify-center gap-1 text-sm font-medium text-primary-700 hover:text-primary-800">
-                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                Back to Office Login
-              </Link>
-            </form>
-          )}
+          <form onSubmit={(event) => { event.preventDefault(); void (step === "email" ? requestOtp() : verifyOtp()); }} className="space-y-4" noValidate>
+            {error ? <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert> : null}
+            {devOtp ? <Alert><AlertDescription>Development OTP: <strong>{devOtp}</strong></AlertDescription></Alert> : null}
+            {step === "email" ? (
+              <Input label="Work Email" name="email" type="email" value={email} onChange={(event) => { setEmail(event.target.value); setError(null); }} placeholder="name@institute.edu.in" autoComplete="email" icon={<Mail className="h-4 w-4" />} disabled={isLoading} required />
+            ) : (
+              <Input label="6-digit OTP" name="otp" type="text" value={otp} onChange={(event) => { setOtp(event.target.value.replace(/\D/g, "").slice(0, 6)); setError(null); }} placeholder="000000" autoComplete="one-time-code" inputMode="numeric" maxLength={6} disabled={isLoading} required />
+            )}
+            <Button type="submit" size="lg" className="w-full rounded-xl" isLoading={isLoading}>{step === "email" ? "Send OTP" : "Verify OTP"}</Button>
+            {step === "otp" ? (
+              <div className="flex justify-between gap-3 text-sm">
+                <button type="button" className="font-medium text-primary-700 hover:text-primary-800" onClick={() => { setStep("email"); setDevOtp(null); setError(null); }}>Change email</button>
+                <button type="button" className="font-medium text-primary-700 hover:text-primary-800" disabled={isLoading} onClick={() => void requestOtp()}>Resend OTP</button>
+              </div>
+            ) : (
+              <Link href="/office/login" className="flex items-center justify-center gap-1 text-sm font-medium text-primary-700 hover:text-primary-800"><ArrowLeft className="h-4 w-4" /> Back to Office Login</Link>
+            )}
+          </form>
         </CardContent>
       </Card>
     </OfficeAuthShell>

@@ -1,3 +1,4 @@
+import nodemailer from "nodemailer";
 import { getResendClient, getResendFromEmail, getResendFromName } from "./client";
 import { env } from "@/lib/config/env";
 import {
@@ -41,6 +42,87 @@ const TEMPLATE_RENDERERS: Record<EmailEventKey, TemplateRenderer> = {
   [EMAIL_EVENTS.CERTIFICATE_ISSUED]: renderCertificateIssuedEmail as TemplateRenderer,
   [EMAIL_EVENTS.ANNOUNCEMENT]: renderAnnouncementEmail as TemplateRenderer,
 };
+
+/* -------------------------------------------------------------------------- */
+/*  SMTP transport (lazily created, reused across requests)                   */
+/* -------------------------------------------------------------------------- */
+
+let smtpTransport: nodemailer.Transporter | null = null;
+
+function getSmtpTransport(): nodemailer.Transporter {
+  if (!smtpTransport) {
+    smtpTransport = nodemailer.createTransport({
+      host: env.smtpHost,
+      port: env.smtpPort,
+      secure: env.smtpPort === 465, // true for 465 (SSL), STARTTLS for 587
+      auth: {
+        user: env.smtpUser,
+        pass: env.smtpPass,
+      },
+    });
+  }
+  return smtpTransport;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Unified dispatch — SMTP when configured, Resend otherwise                 */
+/* -------------------------------------------------------------------------- */
+
+async function dispatchEmail(opts: {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+}): Promise<{ providerId?: string; error?: string }> {
+  /* -- SMTP path (local dev / any-email testing) --------------------------- */
+  if (env.smtpConfigured) {
+    try {
+      const transport = getSmtpTransport();
+      const info = await transport.sendMail({
+        from: opts.from,
+        to: opts.to,
+        subject: opts.subject,
+        html: opts.html,
+        text: opts.text,
+      });
+      console.log(`[SMTP] Email sent to ${opts.to} — messageId: ${info.messageId}`);
+      return { providerId: info.messageId };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "SMTP error";
+      console.error("[SMTP] Send failed:", message);
+      return { error: message };
+    }
+  }
+
+  /* -- Resend path (production) ------------------------------------------- */
+  const resend = getResendClient();
+  const result = await resend.emails.send({
+    from: opts.from,
+    to: opts.to,
+    subject: opts.subject,
+    html: opts.html,
+    text: opts.text,
+  });
+
+  if (result.error) {
+    console.error(
+      "[Resend API Error]:",
+      JSON.stringify(
+        { status: result.error.statusCode ?? 500, error: result.error, path: "/emails" },
+        null,
+        2
+      )
+    );
+    return { error: result.error.message };
+  }
+
+  return { providerId: result.data?.id };
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Public API                                                                 */
+/* -------------------------------------------------------------------------- */
 
 export async function sendTransactionalEmail(
   options: SendEmailOptions
@@ -88,12 +170,15 @@ export async function sendTransactionalEmail(
 
     const { html, text } = renderer(options.metadata ?? {});
 
-    // Send via Resend
-    const resend = getResendClient();
-    const fromEmail = getResendFromEmail();
-    const fromName = getResendFromName();
+    // Pick sender identity based on transport
+    const fromEmail = env.smtpConfigured
+      ? (env.smtpUser ?? "")
+      : getResendFromEmail();
+    const fromName = env.smtpConfigured
+      ? (env.smtpUser ?? "")
+      : getResendFromName();
 
-    const result = await resend.emails.send({
+    const { providerId, error } = await dispatchEmail({
       from: `${fromName} <${fromEmail}>`,
       to: options.to,
       subject: options.subject,
@@ -101,30 +186,29 @@ export async function sendTransactionalEmail(
       text,
     });
 
-    if (result.error) {
+    if (error) {
       await updateEmailLog(logId, {
         status: "failed",
         errorCode: "PROVIDER_ERROR",
-        errorMessageSafe: result.error.message?.substring(0, 500),
+        errorMessageSafe: error.substring(0, 500),
       });
       return {
         success: false,
         logId,
         errorCode: "PROVIDER_ERROR",
-        errorMessage: result.error.message,
+        errorMessage: error,
       };
     }
 
-    // Update log as sent
     await updateEmailLog(logId, {
       status: "sent",
-      providerMessageId: result.data?.id,
+      providerMessageId: providerId,
     });
 
     return {
       success: true,
       logId,
-      providerMessageId: result.data?.id,
+      providerMessageId: providerId,
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";

@@ -1,4 +1,4 @@
-import { EMAIL_EVENTS, type EmailEventKey, type EmailStatus } from "./logging";
+import { type EmailEventKey } from "./logging";
 
 export { EMAIL_EVENTS, type EmailEventKey, EMAIL_STATUSES, type EmailStatus } from "./logging";
 
@@ -36,7 +36,7 @@ export interface VerificationEmailData extends EmailTemplateData {
 
 export interface PasswordResetEmailData extends EmailTemplateData {
   studentName: string;
-  resetUrl: string;
+  otp: string;
   expiryMinutes: number;
 }
 

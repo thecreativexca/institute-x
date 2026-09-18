@@ -2,150 +2,116 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, KeyRound, Mail } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Mail, CheckCircle, ArrowLeft } from "lucide-react";
 import { StudentAuthShell } from "@/components/auth/student-auth-shell";
-
-interface FormData {
-  email: string;
-}
-
-interface FormErrors {
-  email?: string;
-}
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 export default function ForgotPasswordPage() {
-  const [formData, setFormData] = useState<FormData>({ email: "" });
-  const [errors, setErrors] = useState<FormErrors>({});
+  const router = useRouter();
+  const [step, setStep] = useState<"email" | "otp">("email");
+  const [email, setEmail] = useState("");
+  const [sentEmail, setSentEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [devOtp, setDevOtp] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [generalError, setGeneralError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [sentEmail, setSentEmail] = useState<string>("");
 
-  const validateField = (name: string, value: string): string | undefined => {
-    if (name === "email") {
-      if (!value.trim()) return "Email is required";
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Enter a valid email address";
-    }
-    return undefined;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
-    if (generalError) setGeneralError(null);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setGeneralError(null);
-
-    const error = validateField("email", formData.email);
-    if (error) {
-      setErrors({ email: error });
+  const requestOtp = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      setError("Enter a valid email address.");
       return;
     }
-
     setIsLoading(true);
-
+    setError(null);
     try {
       const response = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: formData.email.trim().toLowerCase() }),
+        body: JSON.stringify({ email: normalizedEmail }),
       });
-
       const data = await response.json();
-
       if (!response.ok) {
-        setGeneralError(data.error || "Failed to send reset email. Please try again.");
+        setError(data.error || "Unable to send OTP. Please try again.");
         return;
       }
-
-      setSuccess(true);
-      setSentEmail(formData.email);
+      setSentEmail(normalizedEmail);
+      setDevOtp(typeof data.devOtp === "string" ? data.devOtp : null);
+      setOtp("");
+      setStep("otp");
     } catch {
-      setGeneralError("An unexpected error occurred. Please try again.");
+      setError("Unable to send OTP right now. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (success) {
-    return (
-      <StudentAuthShell>
-      <Card className="auth-card">
-        <CardHeader className="items-center px-6 pb-4 pt-8 text-center sm:px-8">
-          <div className="mx-auto mb-3 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-100">
-            <CheckCircle className="h-8 w-8 text-amber-700" />
-          </div>
-          <CardTitle as="h1">Check Your Email</CardTitle>
-          <CardDescription>
-            If an account exists with <strong>{sentEmail}</strong>, a password reset link has been sent.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3 px-6 pb-8 sm:px-8">
-          <Button asChild size="lg" className="w-full">
-            <Link href="/login">Return to Login</Link>
-          </Button>
-        </CardContent>
-      </Card>
-      </StudentAuthShell>
-    );
-  }
+  const verifyOtp = async () => {
+    if (!/^\d{6}$/.test(otp)) {
+      setError("Enter the 6-digit OTP sent to your email.");
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/auth/verify-reset-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: sentEmail, otp }),
+      });
+      const data = await response.json();
+      if (!response.ok || typeof data.token !== "string") {
+        setError(data.error || "OTP verification failed.");
+        return;
+      }
+      router.push(`/reset-password?token=${encodeURIComponent(data.token)}`);
+    } catch {
+      setError("Unable to verify OTP right now. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <StudentAuthShell>
-    <Card className="auth-card">
-      <CardHeader className="items-center px-6 pb-4 pt-8 text-center sm:px-8">
-        <div className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-100 text-accent-800">
-          <Mail className="h-6 w-6" aria-hidden="true" />
-        </div>
-        <CardTitle as="h1">Forgot Password</CardTitle>
-        <CardDescription>
-          Enter your email address and we&apos;ll send you a link to reset your password.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="px-6 pb-8 sm:px-8">
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-          {generalError && (
-            <Alert variant="destructive" className="mb-2">
-              <AlertDescription>{generalError}</AlertDescription>
-            </Alert>
-          )}
-
-          <Input
-            label="Email Address"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            error={errors.email}
-            placeholder="you@example.com"
-            autoComplete="email"
-            required
-            disabled={isLoading}
-            icon={<Mail className="h-4 w-4 text-slate-400" />}
-          />
-
-          <Button type="submit" className="w-full rounded-xl shadow-lg shadow-primary-950/10" size="lg" isLoading={isLoading}>
-            {isLoading ? "Sending..." : "Send Reset Link"}
-          </Button>
-
-          <p className="text-center text-sm text-slate-600">
-            <Link href="/login" className="font-medium text-primary-600 hover:text-primary-700 flex items-center justify-center gap-1">
-              <ArrowLeft className="h-4 w-4" />
-              Back to Login
-            </Link>
-          </p>
-        </form>
-      </CardContent>
-    </Card>
+      <Card className="auth-card">
+        <CardHeader className="items-center px-6 pb-4 pt-8 text-center sm:px-8">
+          <div className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-100 text-accent-800">
+            {step === "email" ? <Mail className="h-6 w-6" /> : <KeyRound className="h-6 w-6" />}
+          </div>
+          <CardTitle as="h1">{step === "email" ? "Forgot Password" : "Enter Email OTP"}</CardTitle>
+          <CardDescription>
+            {step === "email"
+              ? "Enter your email address and we will send a 6-digit OTP."
+              : <>Enter the OTP sent to <strong>{sentEmail}</strong>. It expires in 10 minutes.</>}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="px-6 pb-8 sm:px-8">
+          <form onSubmit={(event) => { event.preventDefault(); void (step === "email" ? requestOtp() : verifyOtp()); }} className="space-y-4" noValidate>
+            {error ? <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert> : null}
+            {devOtp ? <Alert><AlertDescription>Development OTP: <strong>{devOtp}</strong></AlertDescription></Alert> : null}
+            {step === "email" ? (
+              <Input label="Email Address" name="email" type="email" value={email} onChange={(event) => { setEmail(event.target.value); setError(null); }} placeholder="you@example.com" autoComplete="email" icon={<Mail className="h-4 w-4 text-slate-400" />} disabled={isLoading} required />
+            ) : (
+              <Input label="6-digit OTP" name="otp" type="text" value={otp} onChange={(event) => { setOtp(event.target.value.replace(/\D/g, "").slice(0, 6)); setError(null); }} placeholder="000000" autoComplete="one-time-code" inputMode="numeric" maxLength={6} disabled={isLoading} required />
+            )}
+            <Button type="submit" size="lg" className="w-full rounded-xl" isLoading={isLoading}>{step === "email" ? "Send OTP" : "Verify OTP"}</Button>
+            {step === "otp" ? (
+              <div className="flex justify-between gap-3 text-sm">
+                <button type="button" className="font-medium text-primary-700 hover:text-primary-800" onClick={() => { setStep("email"); setDevOtp(null); setError(null); }}>Change email</button>
+                <button type="button" className="font-medium text-primary-700 hover:text-primary-800" disabled={isLoading} onClick={() => void requestOtp()}>Resend OTP</button>
+              </div>
+            ) : (
+              <Link href="/login" className="flex items-center justify-center gap-1 text-sm font-medium text-primary-700 hover:text-primary-800"><ArrowLeft className="h-4 w-4" /> Back to Login</Link>
+            )}
+          </form>
+        </CardContent>
+      </Card>
     </StudentAuthShell>
   );
 }

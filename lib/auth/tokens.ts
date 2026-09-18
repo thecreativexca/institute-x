@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from "crypto";
+import { createHash, randomBytes, randomInt } from "crypto";
 
 export const TOKEN_BYTES = 32;
 export const TOKEN_HASH_ALGO = "sha256";
@@ -22,7 +22,17 @@ export function verifyToken(
 export const TOKEN_EXPIRY = {
   VERIFICATION: 24 * 60 * 60 * 1000,
   PASSWORD_RESET: 60 * 60 * 1000,
+  PASSWORD_RESET_OTP: 10 * 60 * 1000,
+  PASSWORD_RESET_SESSION: 15 * 60 * 1000,
 } as const;
+
+export function generatePasswordResetOtp(): string {
+  return randomInt(100000, 1000000).toString();
+}
+
+export function hashPasswordResetOtp(email: string, otp: string): string {
+  return hashToken(`${email.trim().toLowerCase()}:${otp}`);
+}
 
 export type TokenType = "verification" | "password_reset";
 

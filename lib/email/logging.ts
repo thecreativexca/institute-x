@@ -213,8 +213,11 @@ export function generateWelcomeKey(userId: string): string {
   return `welcome:${userId}`;
 }
 
-export function generatePasswordResetKey(userId: string): string {
-  return `password-reset:${userId}`;
+export function generatePasswordResetKey(userId: string, requestId: string): string {
+  // A password reset is not a one-time event. Including the reset-token hash
+  // keeps retries of the same request idempotent while allowing a later reset
+  // request to deliver its newly-generated token.
+  return `password-reset:${userId}:${requestId}`;
 }
 
 export function generateSupportCreatedKey(ticketNumber: string): string {

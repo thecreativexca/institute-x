@@ -49,6 +49,37 @@ export function getEmailEnabled(): boolean {
   return raw === "true";
 }
 
+/* --------------------------------- SMTP ----------------------------------- */
+/** Optional SMTP host — when set, SMTP is used instead of Resend. */
+export function getSmtpHost(): string | undefined {
+  const v = process.env.SMTP_HOST;
+  return v && v.trim() !== "" ? v.trim() : undefined;
+}
+
+/** SMTP port (default 587). */
+export function getSmtpPort(): number {
+  const raw = process.env.SMTP_PORT;
+  const parsed = raw ? Number.parseInt(raw, 10) : Number.NaN;
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 587;
+}
+
+/** SMTP username (Gmail address). */
+export function getSmtpUser(): string | undefined {
+  const v = process.env.SMTP_USER;
+  return v && v.trim() !== "" ? v.trim() : undefined;
+}
+
+/** SMTP password / app-password. */
+export function getSmtpPass(): string | undefined {
+  const v = process.env.SMTP_PASS;
+  return v && v.trim() !== "" ? v.trim() : undefined;
+}
+
+/** Whether SMTP is fully configured and should be used. */
+export function isSmtpConfigured(): boolean {
+  return Boolean(getSmtpHost() && getSmtpUser() && getSmtpPass());
+}
+
 /* ------------------------------- Cloudinary ------------------------------- */
 /**
  * Cloudinary credentials (server-only).
@@ -117,6 +148,21 @@ export const env = {
   },
   get emailEnabled() {
     return getEmailEnabled();
+  },
+  get smtpHost() {
+    return getSmtpHost();
+  },
+  get smtpPort() {
+    return getSmtpPort();
+  },
+  get smtpUser() {
+    return getSmtpUser();
+  },
+  get smtpPass() {
+    return getSmtpPass();
+  },
+  get smtpConfigured() {
+    return isSmtpConfigured();
   },
   get cloudinaryCloudName() {
     return getCloudinaryCloudName();

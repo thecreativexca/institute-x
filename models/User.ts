@@ -38,6 +38,7 @@ export interface IUser {
   emailVerificationTokenExpiresAt?: Date | null;
   passwordResetToken?: string;
   passwordResetTokenExpiresAt?: Date | null;
+  passwordResetOtpAttempts?: number;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -77,6 +78,7 @@ const UserSchema = new Schema<IUser>(
     emailVerificationTokenExpiresAt: { type: Date, default: null, select: false },
     passwordResetToken: { type: String, select: false },
     passwordResetTokenExpiresAt: { type: Date, default: null, select: false },
+    passwordResetOtpAttempts: { type: Number, default: 0, select: false },
   },
   { timestamps: true }
 );

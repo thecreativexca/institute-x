@@ -3,9 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/connect";
 import { User } from "@/lib/mongodb/models";
 import { ACCOUNT_STATUSES } from "@/lib/constants";
-import { generateSecureToken, hashToken, getTokenExpiry } from "@/lib/auth/tokens";
+import {
+  generatePasswordResetOtp,
+  hashPasswordResetOtp,
+  TOKEN_EXPIRY,
+} from "@/lib/auth/tokens";
 import { sendPasswordResetEmail } from "@/lib/email";
-import { siteConfig } from "@/lib/config/site";
 
 export async function POST(request: NextRequest) {
   try {
@@ -54,24 +57,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const rawToken = generateSecureToken();
-    const tokenHash = hashToken(rawToken);
-    const tokenExpiresAt = new Date(Date.now() + getTokenExpiry("password_reset"));
+    const otp = generatePasswordResetOtp();
+    const tokenHash = hashPasswordResetOtp(email.toLowerCase(), otp);
+    const tokenExpiresAt = new Date(Date.now() + TOKEN_EXPIRY.PASSWORD_RESET_OTP);
 
     user.passwordResetToken = tokenHash;
     user.passwordResetTokenExpiresAt = tokenExpiresAt;
+    user.passwordResetOtpAttempts = 0;
     await user.save();
 
-    const resetUrl = `${siteConfig.url}/office/reset-password?token=${rawToken}`;
-    const expiryMinutes = getTokenExpiry("password_reset") / (1000 * 60);
+    const expiryMinutes = TOKEN_EXPIRY.PASSWORD_RESET_OTP / (1000 * 60);
 
-    await sendPasswordResetEmail({
+    const emailResult = await sendPasswordResetEmail({
       studentId: user._id.toString(),
       studentName: user.name,
       studentEmail: email,
-      resetUrl,
+      otp,
       expiryMinutes,
+      requestId: tokenHash,
     });
+
+    if (!emailResult.success) {
+      user.passwordResetToken = undefined;
+      user.passwordResetTokenExpiresAt = undefined;
+      user.passwordResetOtpAttempts = 0;
+      await user.save();
+
+      return NextResponse.json(
+        { success: false, error: "We could not send the reset email right now. Please try again shortly." },
+        { status: 503 }
+      );
+    }
 
     return NextResponse.json(
       {

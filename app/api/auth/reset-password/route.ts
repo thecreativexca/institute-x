@@ -3,9 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/connect";
 import { User } from "@/lib/mongodb/models";
 import { passwordSchema } from "@/lib/validations/common";
-import { verifyToken, hashToken } from "@/lib/auth/tokens";
+import { hashToken } from "@/lib/auth/tokens";
 import { hashPassword } from "@/lib/auth/password";
 import { destroySession } from "@/lib/auth/session";
+import { ACCOUNT_STATUSES, USER_ROLES } from "@/lib/constants";
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,14 +35,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (typeof token !== "string" || !/^[a-f0-9]{64}$/i.test(token)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid or expired reset token." },
+        { status: 400 }
+      );
+    }
+
     const tokenHash = hashToken(token);
+    const passwordHash = await hashPassword(password);
 
     await connectDB();
 
-    const user = await User.findOne({
-      passwordResetToken: tokenHash,
-      passwordResetTokenExpiresAt: { $gt: new Date() },
-    });
+    const user = await User.findOneAndUpdate(
+      {
+        passwordResetToken: tokenHash,
+        passwordResetTokenExpiresAt: { $gt: new Date() },
+        role: USER_ROLES.STUDENT,
+        status: ACCOUNT_STATUSES.ACTIVE,
+      },
+      {
+        $set: { passwordHash },
+        $unset: {
+          passwordResetToken: "",
+          passwordResetTokenExpiresAt: "",
+          passwordResetOtpAttempts: "",
+        },
+        $inc: { sessionVersion: 1 },
+      },
+      { new: true }
+    );
 
     if (!user) {
       return NextResponse.json(
@@ -49,11 +72,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    user.passwordHash = await hashPassword(password);
-    user.passwordResetToken = undefined;
-    user.passwordResetTokenExpiresAt = undefined;
-    await user.save();
 
     await destroySession();
 
