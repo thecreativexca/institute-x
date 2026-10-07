@@ -68,7 +68,6 @@ export const ENROLLMENT_STATUSES = {
 export type EnrollmentStatus = (typeof ENROLLMENT_STATUSES)[keyof typeof ENROLLMENT_STATUSES];
 
 export const ENROLLMENT_SOURCES = {
-  RAZORPAY: "razorpay",
   ADMIN_MANUAL: "admin_manual",
   FREE_COURSE: "free_course",
 } as const;
@@ -84,21 +83,35 @@ export type EnrollmentAccessType =
   (typeof ENROLLMENT_ACCESS_TYPES)[keyof typeof ENROLLMENT_ACCESS_TYPES];
 
 export const PAYMENT_STATUSES = {
-  CREATED: "created",
   PENDING: "pending",
-  PAID: "paid",
-  FAILED: "failed",
+  VERIFIED: "verified",
+  CANCELLED: "cancelled",
   REFUNDED: "refunded",
 } as const;
 
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[keyof typeof PAYMENT_STATUSES];
 
-export const PAYMENT_PROVIDERS = {
-  RAZORPAY: "razorpay",
+export const PAYMENT_METHODS = {
+  CASH: "cash",
+  CHEQUE: "cheque",
+  UPI: "upi",
+  BANK_TRANSFER: "bank_transfer",
+  OTHER: "other",
   FREE: "free",
 } as const;
 
-export type PaymentProvider = (typeof PAYMENT_PROVIDERS)[keyof typeof PAYMENT_PROVIDERS];
+export type PaymentMethod = (typeof PAYMENT_METHODS)[keyof typeof PAYMENT_METHODS];
+
+export const FEE_STATUSES = {
+  UNPAID: "unpaid",
+  PARTIALLY_PAID: "partially_paid",
+  PAID: "paid",
+  PENDING_VERIFICATION: "pending_verification",
+  CANCELLED: "cancelled",
+  REFUNDED: "refunded",
+} as const;
+
+export type FeeStatus = (typeof FEE_STATUSES)[keyof typeof FEE_STATUSES];
 
 /* -------------------------------- Progress --------------------------------- */
 export const PROGRESS_STATUSES = {

@@ -27,7 +27,7 @@ export default function RefundPolicyPage() {
           </section>
           <section>
             <h2 className="text-xl font-semibold text-slate-900">Processing</h2>
-            <p className="mt-2">Approved refunds are returned through the original payment method where possible. Bank and payment-provider processing times may apply after the institute approves the request.</p>
+            <p className="mt-2">Approved refunds are returned through the original payment method where possible. Bank processing times may apply after the institute approves and records the refund.</p>
           </section>
           <section>
             <h2 className="text-xl font-semibold text-slate-900">How to request a refund</h2>

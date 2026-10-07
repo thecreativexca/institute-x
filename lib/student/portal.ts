@@ -2,7 +2,7 @@ import "server-only";
 
 import { Types } from "mongoose";
 
-import { AUDIENCES, ENROLLMENT_STATUSES } from "@/lib/constants";
+import { AUDIENCES, ENROLLMENT_STATUSES, PAYMENT_METHODS } from "@/lib/constants";
 import { connectDB } from "@/lib/db/connect";
 import { Announcement } from "@/models/Announcement";
 import { Course } from "@/models/Course";
@@ -64,8 +64,8 @@ export async function listStudentPayments(studentId: string) {
   const courseMap = new Map(courses.map((course) => [course._id.toString(), { name: course.name, slug: course.slug }]));
   return rows.map((row) => ({
     id: row._id.toString(), amount: row.amount, currency: row.currency, status: row.status,
-    provider: row.provider, receiptNumber: row.receiptNumber, createdAt: row.createdAt.toISOString(),
-    paidAt: row.paidAt?.toISOString() ?? null, razorpayPaymentId: row.razorpayPaymentId ?? null,
+    paymentMethod: row.paymentMethod ?? PAYMENT_METHODS.OTHER, receiptNumber: row.receiptNumber ?? null, createdAt: row.createdAt.toISOString(),
+    paymentDate: (row.paymentDate ?? row.createdAt).toISOString(),
     course: courseMap.get(row.course.toString()) ?? { name: "Course", slug: "" },
   }));
 }

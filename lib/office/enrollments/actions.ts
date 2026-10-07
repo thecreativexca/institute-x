@@ -10,7 +10,7 @@ import {
   ENROLLMENT_ACCESS_TYPES,
   ENROLLMENT_SOURCES,
   ENROLLMENT_STATUSES,
-  PAYMENT_STATUSES,
+  FEE_STATUSES,
 } from "@/lib/constants";
 import { connectDB } from "@/lib/db/connect";
 import { Course } from "@/models/Course";
@@ -60,7 +60,9 @@ export async function createManualEnrollmentAction(input: {
     }
     if (enrollment) {
       enrollment.status = ENROLLMENT_STATUSES.ACTIVE;
-      enrollment.paymentStatus = PAYMENT_STATUSES.PAID;
+      enrollment.paymentStatus = course.isFree || (course.price ?? 0) === 0
+        ? FEE_STATUSES.PAID
+        : FEE_STATUSES.UNPAID;
       enrollment.source = ENROLLMENT_SOURCES.ADMIN_MANUAL;
       enrollment.accessType = expiry ? ENROLLMENT_ACCESS_TYPES.TIME_LIMITED : ENROLLMENT_ACCESS_TYPES.LIFETIME;
       enrollment.expiresAt = expiry;
@@ -73,7 +75,9 @@ export async function createManualEnrollmentAction(input: {
         student: student._id,
         course: course._id,
         status: ENROLLMENT_STATUSES.ACTIVE,
-        paymentStatus: PAYMENT_STATUSES.PAID,
+        paymentStatus: course.isFree || (course.price ?? 0) === 0
+          ? FEE_STATUSES.PAID
+          : FEE_STATUSES.UNPAID,
         source: ENROLLMENT_SOURCES.ADMIN_MANUAL,
         accessType: expiry ? ENROLLMENT_ACCESS_TYPES.TIME_LIMITED : ENROLLMENT_ACCESS_TYPES.LIFETIME,
         expiresAt: expiry,

@@ -98,22 +98,6 @@ export function getCloudinaryApiSecret(): string {
   return readEnv("CLOUDINARY_API_SECRET");
 }
 
-/* -------------------------------- Razorpay -------------------------------- */
-/** Razorpay key ID (public, safe for client). */
-export function getRazorpayKeyId(): string {
-  return readEnv("RAZORPAY_KEY_ID");
-}
-
-/** Razorpay key secret (SERVER-ONLY — SECRET). Never import in client code. */
-export function getRazorpayKeySecret(): string {
-  return readEnv("RAZORPAY_KEY_SECRET");
-}
-
-/** Razorpay webhook secret (SERVER-ONLY — SECRET). */
-export function getRazorpayWebhookSecret(): string {
-  return readEnv("RAZORPAY_WEBHOOK_SECRET");
-}
-
 /** Optional override for the max resource upload size (in MB). Default: 25. */
 export function getMaxResourceFileSizeMB(): number {
   const raw = process.env.MAX_RESOURCE_FILE_SIZE_MB;
@@ -172,15 +156,6 @@ export const env = {
   },
   get cloudinaryApiSecret() {
     return getCloudinaryApiSecret();
-  },
-  get razorpayKeyId() {
-    return getRazorpayKeyId();
-  },
-  get razorpayKeySecret() {
-    return getRazorpayKeySecret();
-  },
-  get razorpayWebhookSecret() {
-    return getRazorpayWebhookSecret();
   },
   get maxResourceFileSizeMB() {
     return getMaxResourceFileSizeMB();

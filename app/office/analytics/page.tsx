@@ -117,7 +117,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
         </header>
 
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
-          <KpiTile icon={Wallet} label="Gross revenue" value={formatCurrencyFromPaise(revenue.grossPaise)} sub={`${revenue.paidCount} paid orders`} />
+          <KpiTile icon={Wallet} label="Verified collection" value={formatCurrencyFromPaise(revenue.grossPaise)} sub={`${revenue.paidCount} verified payments`} />
           <KpiTile icon={TrendingUp} label="Net revenue" value={formatCurrencyFromPaise(revenue.netPaise)} sub={`${formatNumber(revenue.refundedPaise / 100, 0)} refunded`} />
           <KpiTile icon={Activity} label="Avg order value" value={formatCurrencyFromPaise(revenue.averageOrderValuePaise)} sub={`${formatPercentage(revenue.successRate, 0)} success rate`} />
           <KpiTile icon={GraduationCap} label="New enrollments" value={formatNumber(enrollments.new)} sub={`${formatNumber(enrollments.total)} total`} />
@@ -138,7 +138,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
                   display: formatCurrencyFromPaise(point.amountPaise),
                   count: point.count,
                 }))}
-                emptyTitle="No paid payments in this window"
+                emptyTitle="No verified payments in this window"
               />
             </CardContent>
           </Card>
@@ -160,6 +160,13 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
           </Card>
         </div>
 
+        <Card className="rounded-2xl border-slate-200/80">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/60"><CardTitle className="text-base">Collections by payment method</CardTitle></CardHeader>
+          <CardContent className="grid gap-3 pt-5 sm:grid-cols-2 lg:grid-cols-5">
+            {revenue.byMethod.length === 0 ? <p className="text-sm text-slate-500">No verified collections in this window.</p> : revenue.byMethod.map((row) => <div key={row.method} className="rounded-xl border border-slate-200 p-3"><p className="text-xs font-medium text-slate-500">{row.method.replaceAll("_", " ").replace(/\b\w/g, (char) => char.toUpperCase())}</p><p className="mt-1 font-bold text-slate-900">{formatCurrencyFromPaise(row.amountPaise)}</p><p className="text-xs text-slate-400">{row.count} transaction{row.count === 1 ? "" : "s"}</p></div>)}
+          </CardContent>
+        </Card>
+
         <div className="grid gap-6 lg:grid-cols-2">
           <Card className="rounded-2xl border-slate-200/80">
             <CardHeader className="border-b border-slate-100 bg-slate-50/60">
@@ -167,7 +174,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
             </CardHeader>
             <CardContent className="space-y-3 pt-5">
               {revenue.byCourse.length === 0 ? (
-                <EmptyState icon={<Wallet className="h-10 w-10" />} title="No paid revenue yet" description="Payments captured in this window will appear here." />
+                <EmptyState icon={<Wallet className="h-10 w-10" />} title="No verified collection yet" description="Verified manual payments in this window will appear here." />
               ) : (
                 revenue.byCourse.map((course) => {
                   const pct = revenue.grossPaise > 0 ? Math.round((course.grossPaise / revenue.grossPaise) * 100) : 0;
@@ -180,7 +187,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
                       <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-slate-100">
                         <div className="h-full rounded-full bg-primary-500" style={{ width: `${pct}%` }} />
                       </div>
-                      <p className="mt-1 text-xs text-slate-400">{course.paidEnrollments} paid · {pct}% of revenue</p>
+                      <p className="mt-1 text-xs text-slate-400">{course.paidEnrollments} verified · {pct}% of collection</p>
                     </div>
                   );
                 })
@@ -223,7 +230,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
               <CardTitle className="flex items-center gap-2 text-base">
                 Enrollments by course
                 <Link href="/office/payments" className="ml-auto inline-flex items-center gap-1 text-xs font-medium text-primary-700 hover:underline">
-                  Orders <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  Payments <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </Link>
               </CardTitle>
             </CardHeader>
@@ -369,10 +376,10 @@ function KpiTile({
 
 function StatusBadge({ status }: { status: string }) {
   const variant =
-    status === "paid" ? "success"
+    status === "verified" ? "success"
       : status === "refunded" ? "neutral"
-        : status === "failed" ? "danger"
-          : status === "pending" || status === "created" ? "warning"
+        : status === "cancelled" ? "danger"
+          : status === "pending" ? "warning"
             : "secondary";
   return <Badge variant={variant}>{status.charAt(0).toUpperCase() + status.slice(1)}</Badge>;
 }

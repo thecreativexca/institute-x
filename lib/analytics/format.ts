@@ -3,11 +3,9 @@
  *
  * These are the ONLY formatting utilities the reports UI should use, so all
  * report sections produce consistently locale-friendly, deception-free output.
- * Migration note: the existing `formatCurrency` in lib/payments/razorpay.ts
- * expects a RUPEES amount (it does not divide by 100). Payment `amount` in the
- * DB is stored in PAISE (Phase 13), so reports always display via
+ * Payment `amount` in the DB is stored in PAISE, so reports always display via
  * `formatCurrencyFromPaise` which performs the unit conversion explicitly to
- * avoid mixing rupees and paise (spec §30).
+ * avoid mixing rupees and paise.
  */
 
 /** Locale-friendly integer/number formatting (en-IN grouping for the institute). */

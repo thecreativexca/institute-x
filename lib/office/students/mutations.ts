@@ -4,7 +4,7 @@ import { Enrollment } from "@/models/Enrollment";
 import { Course } from "@/models/Course";
 import { AuditLog } from "@/models/AuditLog";
 import { Types } from "mongoose";
-import { ACCOUNT_STATUSES, ENROLLMENT_STATUSES, PAYMENT_STATUSES, ENROLLMENT_SOURCES, ENROLLMENT_ACCESS_TYPES, type AccountStatus } from "@/lib/constants";
+import { ACCOUNT_STATUSES, ENROLLMENT_STATUSES, FEE_STATUSES, ENROLLMENT_SOURCES, ENROLLMENT_ACCESS_TYPES, type AccountStatus } from "@/lib/constants";
 import { OfficeStudentDetail, ManualEnrollmentInput, ProfileUpdateInput, StudentStatusAction } from "./dto";
 
 function toObjectId(id: string): Types.ObjectId {
@@ -171,7 +171,9 @@ export async function createManualEnrollment(
     student: student._id,
     course: course._id,
     status: ENROLLMENT_STATUSES.ACTIVE,
-    paymentStatus: PAYMENT_STATUSES.PAID,
+    paymentStatus: input.source === "FREE" || course.isFree || (course.price ?? 0) === 0
+      ? FEE_STATUSES.PAID
+      : FEE_STATUSES.UNPAID,
     source: input.source === "FREE" ? ENROLLMENT_SOURCES.FREE_COURSE : ENROLLMENT_SOURCES.ADMIN_MANUAL,
     accessType: ENROLLMENT_ACCESS_TYPES.LIFETIME,
     notes: input.reason,

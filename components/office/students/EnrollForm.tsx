@@ -98,7 +98,7 @@ export function EnrollForm({ studentId, courses }: EnrollFormProps) {
           maxLength={500}
         />
         <p className="text-xs text-slate-500">
-          Stored internally in the audit log. No fake Razorpay payment record is created.
+          Stored internally in the audit log. Course access does not create a payment record.
         </p>
       </div>
 

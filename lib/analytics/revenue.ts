@@ -5,8 +5,8 @@
  * All amounts are PAISE; aggregation happens in paise and conversion to display
  * currency is done by the UI (spec §30).
  *
- * Authoritative verified revenue = sum of Payment.amount where status === PAID,
- * bucketed by `paidAt` (spec §27, §31). CREATED/PENDING/FAILED are excluded.
+ * Authoritative revenue is the sum of administrator-verified manual payments,
+ * bucketed by the recorded payment date. Pending and cancelled records are excluded.
  */
 "use server";
 
@@ -40,9 +40,10 @@ export interface RevenueAnalytics {
   statusBreakdown: { status: string; count: number; amountPaise: number }[];
   trend: { label: string; amountPaise: number; count: number }[];
   byCourse: CourseRevenueStat[];
+  byMethod: { method: string; amountPaise: number; count: number }[];
 }
 
-const PERIOD_STATUSES = ["created", "pending", "paid", "failed", "refunded"];
+const PERIOD_STATUSES = ["pending", "verified", "cancelled", "refunded"];
 
 export async function getRevenueAnalytics(
   ctx: ReportContext
@@ -50,14 +51,14 @@ export async function getRevenueAnalytics(
   await connectDB();
   const courseSel = courseSelector(ctx);
 
-  // Paid-only matched by paidAt (authoritative revenue window).
+  // Verified-only matched by paymentDate (authoritative revenue window).
   const paidMatch: Record<string, unknown> = {
     ...courseSel,
-    status: "paid",
-    paidAt: { $gte: ctx.range.from, $lt: ctx.range.to },
+    status: "verified",
+    paymentDate: { $gte: ctx.range.from, $lt: ctx.range.to },
   };
 
-  const [grossRows, trendRaw, byCourseRaw, statusRows] = await Promise.all([
+  const [grossRows, trendRaw, byCourseRaw, statusRows, methodRows] = await Promise.all([
     Payment.aggregate<{ totalPaise: number; count: number }>([
       { $match: paidMatch },
       { $group: { _id: null, totalPaise: { $sum: "$amount" }, count: { $sum: 1 } } },
@@ -66,7 +67,7 @@ export async function getRevenueAnalytics(
       { $match: paidMatch },
       {
         $group: {
-          _id: dayBucketSpec("paidAt"),
+          _id: dayBucketSpec("paymentDate"),
           totalPaise: { $sum: "$amount" },
           count: { $sum: 1 },
         },
@@ -98,6 +99,11 @@ export async function getRevenueAnalytics(
       },
       { $group: { _id: "$status", count: { $sum: 1 }, amountPaise: { $sum: "$amount" } } },
     ]),
+    Payment.aggregate<{ _id: string; count: number; amountPaise: number }>([
+      { $match: paidMatch },
+      { $group: { _id: "$paymentMethod", count: { $sum: 1 }, amountPaise: { $sum: "$amount" } } },
+      { $sort: { amountPaise: -1 } },
+    ]),
   ]);
 
   const grossPaise = grossRows[0]?.totalPaise ?? 0;
@@ -109,8 +115,8 @@ export async function getRevenueAnalytics(
   for (const r of statusRows) {
     byStatus[r._id] = { count: r.count, amountPaise: r.amountPaise };
   }
-  const failedCount = byStatus["failed"]?.count ?? 0;
-  const pendingCount = (byStatus["created"]?.count ?? 0) + (byStatus["pending"]?.count ?? 0);
+  const failedCount = byStatus["cancelled"]?.count ?? 0;
+  const pendingCount = byStatus["pending"]?.count ?? 0;
   const refundedCount = byStatus["refunded"]?.count ?? 0;
   const refundedPaise = byStatus["refunded"]?.amountPaise ?? 0;
   const netPaise = Math.max(0, grossPaise - refundedPaise);
@@ -162,5 +168,6 @@ export async function getRevenueAnalytics(
     statusBreakdown,
     trend,
     byCourse,
+    byMethod: methodRows.map((row) => ({ method: row._id, amountPaise: row.amountPaise, count: row.count })),
   };
 }

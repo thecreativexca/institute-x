@@ -1,4 +1,4 @@
-import { AccountStatus, UserRole, EnrollmentStatus, PaymentStatus, CertificateStatus } from "@/lib/constants";
+import { AccountStatus, UserRole, EnrollmentStatus, FeeStatus, PaymentStatus, CertificateStatus } from "@/lib/constants";
 
 export interface OfficeStudentSummary {
   id: string;
@@ -27,7 +27,7 @@ export interface StudentEnrollment {
   courseName: string;
   courseSlug: string;
   status: EnrollmentStatus;
-  paymentStatus: PaymentStatus;
+  paymentStatus: FeeStatus;
   enrolledAt: string;
   completedAt: string | null;
   progressPercent: number;
@@ -89,10 +89,10 @@ export interface StudentPayment {
   courseName: string;
   amount: number;
   currency: string;
-  provider: string;
-  receiptNumber: string;
+  paymentMethod: string;
+  receiptNumber: string | null;
   status: PaymentStatus;
-  paidAt: string | null;
+  paymentDate: string;
   createdAt: string;
 }
 

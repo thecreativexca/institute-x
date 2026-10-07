@@ -31,7 +31,7 @@ const learningModeEnum = z.enum([
 const nonEmpty = (max: number) => z.string().trim().min(1).max(max);
 
 const stringListSchema = z
-  .array(z.string().trim().min(1).max(200))
+  .array(z.string().trim().min(1).max(2000))
   .max(20, "Please keep the list to 20 items or fewer")
   .default([]);
 

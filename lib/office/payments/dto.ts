@@ -1,43 +1,46 @@
-import type { PaymentProvider, PaymentStatus } from "@/lib/constants";
-
-/**
- * Safe DTOs for the office Payments & Orders area. Mongoose documents and
- * Cloudinary/Razorpay internals are never passed to client components raw.
- * All amounts are stored in PAISE (see lib/payments/razorpay.ts).
- */
+import type { FeeStatus, PaymentMethod, PaymentStatus } from "@/lib/constants";
 
 export interface OfficePaymentRow {
   id: string;
-  receiptNumber: string;
+  receiptNumber: string | null;
+  studentId: string;
   studentName: string;
   studentEmail: string;
+  studentPhone: string;
   courseId: string;
   courseName: string;
-  /** Amount in paise. */
+  enrollmentId: string;
+  totalFee: number;
+  totalPaid: number;
+  remainingAmount: number;
+  feeStatus: FeeStatus;
   amount: number;
   currency: string;
-  status: PaymentStatus;
-  provider: PaymentProvider;
-  razorpayOrderId?: string;
-  razorpayPaymentId?: string;
-  enrollmentStatus?: string;
-  paidAt: string | null;
-  createdAt: string;
-  failureDescription?: string;
+  status: PaymentStatus | string;
+  paymentMethod: PaymentMethod;
+  paymentDate: string;
+  reference: string | null;
+  lastPaymentDate: string | null;
+  recordedBy: string;
+  verifiedBy: string | null;
+  proofUrl: string | null;
+  isRefund: boolean;
+  originalPaymentId: string | null;
+  refundReason: string | null;
+  notes: string | null;
+  isLegacy: boolean;
 }
 
 export interface OfficePaymentsSummary {
-  totalCount: number;
-  paidCount: number;
-  /** Sum of paid amounts in paise. */
-  grossPaise: number;
-  refundedCount: number;
-  /** Sum of refunded amounts in paise. */
-  refundedPaise: number;
-  /** grossPaise minus refundedPaise. */
-  netPaise: number;
+  todayCollected: number;
+  monthCollected: number;
+  totalCollected: number;
   pendingCount: number;
-  failedCount: number;
+  outstandingAmount: number;
+  paidStudents: number;
+  partiallyPaidStudents: number;
+  unpaidStudents: number;
+  byMethod: Record<string, number>;
 }
 
 export interface OfficePaymentsResult {
@@ -51,14 +54,26 @@ export interface OfficePaymentsResult {
 
 export interface OfficePaymentFilters {
   status?: PaymentStatus | "ALL";
-  /** Free-text against receipt / Razorpay order id / payment id. */
+  paymentMethod?: PaymentMethod | "ALL";
   search?: string;
   courseId?: string;
   from?: string;
   to?: string;
 }
 
-export interface CourseSelectOption {
-  id: string;
-  name: string;
+export interface CourseSelectOption { id: string; name: string }
+
+export interface PaymentEnrollmentOption {
+  enrollmentId: string;
+  studentId: string;
+  studentName: string;
+  studentEmail: string;
+  courseId: string;
+  courseName: string;
+  totalFee: number;
+  totalPaid: number;
+  remainingAmount: number;
+  pendingAmount: number;
+  recordableAmount: number;
+  currency: string;
 }

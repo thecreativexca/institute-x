@@ -1,127 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, CreditCard, ReceiptText } from "lucide-react";
+import { CreditCard, Download, ReceiptText } from "lucide-react";
 
 import { StudentPageHeader } from "@/components/student/student-page-header";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { PAYMENT_STATUSES } from "@/lib/constants";
-import { formatCurrency } from "@/lib/payments/razorpay";
+import { formatCurrency } from "@/lib/payments/format";
 
-interface Payment {
-  _id: string;
-  amount: number;
-  currency: string;
-  status: string;
-  receiptNumber: string;
-  razorpayPaymentId?: string;
-  razorpayOrderId?: string;
-  paidAt?: Date | string | null;
-  createdAt: Date | string;
-  course?: {
-    _id: string;
-    name: string;
-    slug: string;
-    thumbnailUrl?: string;
-  };
-  enrollment?: {
-    status: string;
-  };
+interface Fee { enrollmentId: string; courseName: string; courseSlug: string; currency: string; totalFee: number; totalPaid: number; remainingAmount: number; status: string }
+interface Payment { id: string; amount: number; currency: string; status: string; receiptNumber: string | null; paymentMethod: string; paymentDate: string; courseName: string; isRefund: boolean }
+
+export function PaymentsClient({ fees, payments }: { fees: Fee[]; payments: Payment[] }) {
+  return <div className="mx-auto max-w-5xl space-y-6">
+    <StudentPageHeader title="Fees & Payments" description="Review course fees, verified payments and downloadable receipts." icon={<CreditCard className="h-6 w-6" />} eyebrow="Billing & receipts" />
+    <div className="grid gap-4 md:grid-cols-2">{fees.map((fee) => <Card key={fee.enrollmentId} className="p-5"><div className="flex items-start justify-between gap-3"><div><h2 className="font-semibold text-slate-900">{fee.courseName}</h2><Badge variant={fee.status === "paid" ? "success" : fee.status === "partially_paid" || fee.status === "pending_verification" ? "warning" : "neutral"}>{label(fee.status)}</Badge></div>{fee.courseSlug ? <Link href={`/student/courses/${fee.courseSlug}`} className="text-xs font-semibold text-primary-700">View course</Link> : null}</div><dl className="mt-4 grid grid-cols-3 gap-2 text-sm"><div><dt className="text-xs text-slate-500">Course fee</dt><dd className="font-semibold">{formatCurrency(fee.totalFee, fee.currency)}</dd></div><div><dt className="text-xs text-slate-500">Total paid</dt><dd className="font-semibold text-emerald-700">{formatCurrency(fee.totalPaid, fee.currency)}</dd></div><div><dt className="text-xs text-slate-500">Remaining</dt><dd className="font-semibold text-amber-800">{formatCurrency(fee.remainingAmount, fee.currency)}</dd></div></dl>{fee.remainingAmount > 0 ? <p className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">Please contact the institute/office to complete your payment.</p> : null}</Card>)}</div>
+    <section><h2 className="mb-3 text-lg font-semibold text-slate-900">Payment history</h2>{payments.length === 0 ? <Card className="py-8"><EmptyState icon={<ReceiptText className="h-10 w-10" />} title="No payments recorded" description="Payments recorded by the institute will appear here." /></Card> : <Card className="overflow-hidden"><div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left text-sm"><thead className="bg-slate-50 text-xs uppercase text-slate-500"><tr><th className="px-4 py-3">Date</th><th className="px-4 py-3">Course</th><th className="px-4 py-3">Amount</th><th className="px-4 py-3">Method</th><th className="px-4 py-3">Receipt</th><th className="px-4 py-3">Status</th></tr></thead><tbody className="divide-y divide-slate-100">{payments.map((payment) => <tr key={payment.id}><td className="px-4 py-3">{new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(new Date(payment.paymentDate))}</td><td className="px-4 py-3 font-medium">{payment.courseName}</td><td className="px-4 py-3 font-semibold">{payment.isRefund ? "−" : ""}{formatCurrency(payment.amount, payment.currency)}</td><td className="px-4 py-3">{label(payment.paymentMethod)}</td><td className="px-4 py-3">{payment.receiptNumber ? <a href={`/api/payments/${payment.id}/receipt`} className="inline-flex items-center gap-1 font-mono text-xs text-primary-700"><Download className="h-3.5 w-3.5" />{payment.receiptNumber}</a> : "—"}</td><td className="px-4 py-3"><Link href={`/student/payments/${payment.id}`}><Badge variant={payment.status === "verified" ? "success" : payment.status === "pending" ? "warning" : "neutral"}>{label(payment.status)}</Badge></Link></td></tr>)}</tbody></table></div></Card>}</section>
+  </div>;
 }
-
-const statusLabels: Record<string, string> = {
-  [PAYMENT_STATUSES.CREATED]: "Created",
-  [PAYMENT_STATUSES.PENDING]: "Pending",
-  [PAYMENT_STATUSES.PAID]: "Paid",
-  [PAYMENT_STATUSES.FAILED]: "Failed",
-  [PAYMENT_STATUSES.REFUNDED]: "Refunded",
-};
-
-const statusVariants: Record<string, "neutral" | "primary" | "success" | "warning" | "danger"> = {
-  [PAYMENT_STATUSES.CREATED]: "neutral",
-  [PAYMENT_STATUSES.PENDING]: "warning",
-  [PAYMENT_STATUSES.PAID]: "success",
-  [PAYMENT_STATUSES.FAILED]: "danger",
-  [PAYMENT_STATUSES.REFUNDED]: "primary",
-};
-
-export function PaymentsClient({ payments }: { payments: Payment[] }) {
-  return (
-    <div className="mx-auto max-w-5xl space-y-6">
-      <StudentPageHeader
-        title="Payment History"
-        description="Review course purchases, payment status and downloadable receipt details."
-        icon={<CreditCard className="h-6 w-6" aria-hidden="true" />}
-        eyebrow="Billing & receipts"
-        action={
-          <Button asChild variant="outline">
-            <Link href="/courses">Explore Courses <ArrowUpRight className="ml-2 h-4 w-4" /></Link>
-          </Button>
-        }
-      />
-
-      {payments.length === 0 ? (
-        <Card className="rounded-2xl border-primary-100 py-8">
-          <EmptyState
-            icon={<ReceiptText className="h-12 w-12" aria-hidden="true" />}
-            title="No payments yet"
-            description="Your course purchases and receipts will appear here."
-            action={
-              <Button asChild>
-                <Link href="/courses">Browse Courses</Link>
-              </Button>
-            }
-          />
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {payments.map((payment) => {
-            const course = payment.course;
-            return (
-              <Link key={payment._id} href={`/student/payments/${payment._id}`} className="group block">
-                <Card className="rounded-2xl border-primary-100 p-4 transition-all hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-card-hover sm:p-5">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                    {course?.thumbnailUrl ? (
-                      <img src={course.thumbnailUrl} alt="" className="h-16 w-24 shrink-0 rounded-xl object-cover" />
-                    ) : (
-                      <span className="flex h-16 w-24 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-100 to-accent-100">
-                        <ReceiptText className="h-7 w-7 text-primary-600" aria-hidden="true" />
-                      </span>
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <h2 className="truncate font-semibold text-slate-900">{course?.name || "Course payment"}</h2>
-                        <Badge variant={statusVariants[payment.status] || "default"}>
-                          {statusLabels[payment.status] || payment.status}
-                        </Badge>
-                      </div>
-                      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
-                        <span className="font-mono">{payment.receiptNumber}</span>
-                        <span>
-                          {new Date(payment.createdAt).toLocaleDateString("en-IN", {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between gap-4 border-t border-primary-50 pt-3 sm:block sm:border-0 sm:pt-0 sm:text-right">
-                      <p className="font-bold text-primary-900">{formatCurrency(payment.amount, payment.currency)}</p>
-                      <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-primary-700">
-                        View details <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                      </span>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
+function label(value: string) { return value.replaceAll("_", " ").replace(/\b\w/g, (character) => character.toUpperCase()); }

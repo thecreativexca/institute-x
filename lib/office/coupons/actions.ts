@@ -93,7 +93,7 @@ export async function deleteCouponAction(id: string): Promise<CouponActionResult
     await connectDB();
     const coupon = await Coupon.findById(id).lean();
     if (!coupon) return { ok: false, error: "Coupon not found." };
-    const uses = await Payment.countDocuments({ status: PAYMENT_STATUSES.PAID, "metadata.couponCode": coupon.code });
+    const uses = await Payment.countDocuments({ status: PAYMENT_STATUSES.VERIFIED, "metadata.couponCode": coupon.code });
     if (uses) return { ok: false, error: "Used coupons must be deactivated instead of deleted." };
     await Coupon.deleteOne({ _id: coupon._id });
     await recordAuditEvent({ actorUserId: user.id, actorRole: user.role, action: "coupon.delete", entityType: "coupon", entityId: id, metadata: { code: coupon.code } });

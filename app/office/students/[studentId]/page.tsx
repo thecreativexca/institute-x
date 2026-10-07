@@ -573,18 +573,18 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
                 <DataTable
                   columns={[
                     { key: "course", header: "Course", render: (p) => p.courseName },
-                    { key: "amount", header: "Amount", render: (p) => `${p.currency} ${p.amount.toLocaleString()}` },
-                    { key: "provider", header: "Provider", render: (p) => p.provider.toUpperCase() },
+                    { key: "amount", header: "Amount", render: (p) => `${p.currency} ${(p.amount / 100).toLocaleString()}` },
+                    { key: "method", header: "Method", render: (p) => p.paymentMethod.replaceAll("_", " ").toUpperCase() },
                     { key: "receipt", header: "Receipt", render: (p) => (
                       <code className="text-sm font-mono text-slate-600">{p.receiptNumber}</code>
                     )},
                     { key: "status", header: "Status", render: (p) => (
                       <StatusBadge
                         status={p.status}
-                        variants={{ paid: "success", pending: "warning", failed: "danger", refunded: "secondary", created: "default" }}
+                        variants={{ verified: "success", pending: "warning", cancelled: "danger", refunded: "secondary" }}
                       />
                     )},
-                    { key: "date", header: "Date", render: (p) => format(new Date(p.paidAt || p.createdAt), "MMM d, yyyy HH:mm") },
+                    { key: "date", header: "Date", render: (p) => format(new Date(p.paymentDate), "MMM d, yyyy HH:mm") },
                   ]}
                   data={payments}
                   keyExtractor={(p) => p.id}
@@ -600,12 +600,12 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
                   <p className="text-sm text-slate-500">Total Transactions</p>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-amber-50">
-                  <p className="text-2xl font-bold text-amber-700">₹{payments.filter(p => p.status === "paid").reduce((sum, p) => sum + p.amount, 0).toLocaleString()}</p>
-                  <p className="text-sm text-slate-500">Successful Amount</p>
+                  <p className="text-2xl font-bold text-amber-700">₹{(payments.filter(p => p.status === "verified").reduce((sum, p) => sum + p.amount, 0) / 100).toLocaleString()}</p>
+                  <p className="text-sm text-slate-500">Verified Amount</p>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-red-50">
-                  <p className="text-2xl font-bold text-red-600">{payments.filter(p => p.status === "failed").length}</p>
-                  <p className="text-sm text-slate-500">Failed</p>
+                  <p className="text-2xl font-bold text-red-600">{payments.filter(p => p.status === "cancelled").length}</p>
+                  <p className="text-sm text-slate-500">Cancelled</p>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-amber-50">
                   <p className="text-2xl font-bold text-amber-600">{payments.filter(p => p.status === "pending").length}</p>

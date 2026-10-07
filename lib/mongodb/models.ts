@@ -25,6 +25,7 @@ export { Announcement, type IAnnouncement } from "@/models/Announcement";
 export { SupportTicket, type ISupportTicket } from "@/models/SupportTicket";
 export { User, type IUser } from "@/models/User";
 export { Payment, type IPayment } from "@/models/Payment";
+export { PaymentSequence } from "@/models/PaymentSequence";
 export { EmailLog, type IEmailLog } from "@/models/EmailLog";
 export { AuditLog, type IAuditLog } from "@/models/AuditLog";
 export { Notification, type INotification } from "@/models/Notification";

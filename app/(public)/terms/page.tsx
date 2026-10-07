@@ -27,7 +27,7 @@ export default function TermsPage() {
           </section>
           <section>
             <h2 className="text-xl font-semibold text-slate-900">Payments</h2>
-            <p className="mt-2">Prices and the payable total are shown before payment. Enrollment is activated only after successful provider confirmation, except for courses explicitly marked free. Failed, cancelled, or reversed payments do not create paid access.</p>
+            <p className="mt-2">Course fees are collected outside the website and recorded by the institute office. A payment counts toward the fee balance only after an administrator verifies it. Free courses may be activated without a payment record.</p>
           </section>
           <section>
             <h2 className="text-xl font-semibold text-slate-900">Acceptable use</h2>
@@ -35,7 +35,7 @@ export default function TermsPage() {
           </section>
           <section>
             <h2 className="text-xl font-semibold text-slate-900">Support and disputes</h2>
-            <p className="mt-2">Contact the institute office promptly if access or payment details appear incorrect. We will review platform and provider records before making an enrollment, payment, or certificate decision.</p>
+            <p className="mt-2">Contact the institute office promptly if access or payment details appear incorrect. We will review the audit trail and supporting records before making an enrollment, payment, or certificate decision.</p>
           </section>
           <section>
             <h2 className="text-xl font-semibold text-slate-900">Contact</h2>

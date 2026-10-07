@@ -1,5 +1,5 @@
 import { siteConfig } from "@/lib/config/site";
-import { formatCurrency } from "@/lib/payments/razorpay";
+import { formatCurrency } from "@/lib/payments/format";
 import {
   sendTransactionalEmail,
   EMAIL_EVENTS,
@@ -155,7 +155,7 @@ export async function sendEnrollmentConfirmedEmail(params: EnrollmentConfirmedEm
     enrollmentDate,
     courseUrl,
     dashboardUrl,
-    amount: params.amount ? formatCurrency(params.amount / 100, params.currency || "INR") : undefined,
+    amount: params.amount ? formatCurrency(params.amount, params.currency || "INR") : undefined,
     currency: params.currency,
   });
 
@@ -209,7 +209,7 @@ export async function sendPaymentConfirmedEmail(params: PaymentConfirmedEmailPar
   const { html, text } = (await import("./templates/paymentConfirmed")).renderPaymentConfirmedEmail({
     studentName: params.studentName,
     courseName: params.courseName,
-    amount: formatCurrency(params.amount / 100, params.currency),
+    amount: formatCurrency(params.amount, params.currency),
     currency: params.currency,
     paymentDate,
     receiptNumber: params.receiptNumber,

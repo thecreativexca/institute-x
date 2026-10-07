@@ -28,6 +28,7 @@ import type {
   CurriculumLessonDTO,
 } from "@/lib/office/courses/dto";
 import { buildYouTubeEmbedUrl, parseYouTubeVideoId } from "@/lib/office/courses/youtube";
+import { CurriculumCsvImport } from "./curriculum-csv-import";
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -163,7 +164,18 @@ export function CurriculumManager({
           </span>
         </div>
         {canManageModules ? (
-          <Button onClick={() => setModuleModal({ mode: "create" })}>Add module</Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <CurriculumCsvImport
+              courseId={courseId}
+              onImported={(result) => {
+                setStatus(
+                  `Curriculum imported: ${result.modulesCreated} modules and ${result.lessonsCreated} lessons created; ${result.skipped} skipped.`
+                );
+                router.refresh();
+              }}
+            />
+            <Button onClick={() => setModuleModal({ mode: "create" })}>Add module</Button>
+          </div>
         ) : null}
       </div>
 

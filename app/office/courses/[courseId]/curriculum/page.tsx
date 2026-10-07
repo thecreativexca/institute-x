@@ -65,6 +65,9 @@ export default async function CourseCurriculumPage({ params }: CourseCurriculumP
         </header>
 
         <CurriculumManager
+          key={curriculum.modules
+            .flatMap((moduleDoc) => [moduleDoc.id, ...moduleDoc.lessons.map((lesson) => lesson.id)])
+            .join(",")}
           curriculum={curriculum}
           canManageModules={canUpdate}
           canManageLessons={canUpdate}

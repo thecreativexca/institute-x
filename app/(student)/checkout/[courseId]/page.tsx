@@ -14,8 +14,8 @@ interface CheckoutPageProps {
 }
 
 export const metadata: Metadata = {
-  title: "Checkout",
-  description: "Complete your course purchase",
+  title: "Admission Information",
+  description: "Contact the institute to complete course admission",
   robots: { index: false, follow: false },
 };
 
@@ -71,7 +71,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   const { Enrollment } = await import("@/lib/mongodb/models");
   const existingEnrollment = await Enrollment.findOne({
     student: new Types.ObjectId(student.id),
-    course: new Types.ObjectId(courseId),
+    course: course._id,
     status: { $in: [ENROLLMENT_STATUSES.ACTIVE, ENROLLMENT_STATUSES.COMPLETED] },
   }).lean();
 

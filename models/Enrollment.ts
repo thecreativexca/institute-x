@@ -3,11 +3,11 @@ import { Schema } from "mongoose";
 
 import {
   ENROLLMENT_STATUSES,
-  PAYMENT_STATUSES,
+  FEE_STATUSES,
   ENROLLMENT_SOURCES,
   ENROLLMENT_ACCESS_TYPES,
   type EnrollmentStatus,
-  type PaymentStatus,
+  type FeeStatus,
   type EnrollmentSource,
   type EnrollmentAccessType,
 } from "@/lib/constants";
@@ -18,8 +18,8 @@ import { User } from "./User";
 
 /**
  * Enrollment â€” links a student to a course.
- * Payment capture (Razorpay) activates enrollments in a later phase via
- * `paymentStatus`; the lifecycle already supports it.
+ * Course access and fee status are deliberately independent. Office staff can
+ * manage access without silently rewriting financial history.
  */
 export interface IEnrollment {
   _id: Types.ObjectId;
@@ -31,7 +31,7 @@ export interface IEnrollment {
   source: EnrollmentSource;
   accessType: EnrollmentAccessType;
   status: EnrollmentStatus;
-  paymentStatus: PaymentStatus;
+  paymentStatus: FeeStatus;
   enrolledAt: Date;
   completedAt?: Date | null;
   expiresAt?: Date | null;
@@ -72,8 +72,8 @@ const EnrollmentSchema = new Schema<IEnrollment>(
     },
     paymentStatus: {
       type: String,
-      enum: Object.values(PAYMENT_STATUSES),
-      default: PAYMENT_STATUSES.PENDING,
+      enum: Object.values(FEE_STATUSES),
+      default: FEE_STATUSES.UNPAID,
     },
     enrolledAt: { type: Date, default: () => new Date() },
     completedAt: { type: Date, default: null },

@@ -20,7 +20,7 @@ export async function getInstituteSettings() {
 
 export function getIntegrationStatus() {
   return {
-    payments: Boolean(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET && process.env.RAZORPAY_WEBHOOK_SECRET),
+    payments: true,
     email: Boolean(process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL),
     uploads: Boolean(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET),
   };

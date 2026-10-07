@@ -27,7 +27,6 @@
     "pdfjs-dist": "^6.3.289",
     "pdfkit": "^0.20.1",
     "qrcode": "^1.5.4",
-    "razorpay": "^2.9.8",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "resend": "^6.24.0",

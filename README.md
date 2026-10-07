@@ -82,7 +82,7 @@ models/
 ├── Course.ts           # 16 courses, isDisplayed/isBundleable flags for admin control
 ├── Module.ts           # Ordered module groups per course
 ├── Lesson.ts           # Video/text lessons, preview flag, YouTube-ready fields
-├── Enrollment.ts       # Student↔Course link, paymentStatus for Razorpay phase
+├── Enrollment.ts       # Student↔Course link with independent access and fee status
 ├── Progress.ts         # Per-lesson completion (not_started/in_progress/completed)
 ├── Assignment.ts       # Foundation schema (instructions, maxScore, dueAt)
 ├── Quiz.ts             # Foundation schema (questions, passingScore, duration)
@@ -112,9 +112,6 @@ cp .env.local.example .env.local
 |----------|-------|----------|-------------|
 | `MONGODB_URI` | Server | Yes | MongoDB connection string |
 | `NEXT_PUBLIC_APP_URL` | Public | Yes | Canonical site URL |
-| `RAZORPAY_KEY_ID` | Server | Phase 2+ | Razorpay key ID |
-| `RAZORPAY_KEY_SECRET` | Server | Phase 2+ | Razorpay key secret |
-| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Public | Phase 2+ | Exposed checkout key |
 | `RESEND_API_KEY` | Server | Phase 2+ | Resend API key |
 | `RESEND_FROM_EMAIL` | Server | Phase 2+ | Sender email address |
 | `CLOUDINARY_CLOUD_NAME` | Server | Phase 2+ | Cloudinary cloud name |
@@ -176,7 +173,7 @@ These belong to later phases:
 - Student dashboard (courses, progress, assignments, certificates)
 - Office/admin dashboard (CRUD, analytics, user management)
 - Course enrollment flow
-- Razorpay payment integration
+- Admin-managed manual payment records and receipts
 - Resend email integration
 - Cloudinary upload (images, PDFs, documents)
 - Assignment submission / grading
@@ -215,7 +212,7 @@ These belong to later phases:
 1. **Authentication** — register, login, JWT/session, password reset
 2. **Student Portal** — dashboard, my courses, progress tracking, assignments
 3. **Office Portal** — CRUD for courses/categories/modules/lessons, user management
-4. **Payments** — Razorpay integration, enrollment activation
+4. **Payments** — manual collections, verification, installments and receipts
 5. **Content Delivery** — video lessons, Cloudinary uploads, PDF resources
 6. **Assessment** — assignment submission, quiz engine, grading
 7. **Certificates** — PDF generation, verification page

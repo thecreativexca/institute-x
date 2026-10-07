@@ -16,7 +16,7 @@ export async function getCouponsAdminData(): Promise<{
     Coupon.find({}).sort({ createdAt: -1 }).lean(),
     Course.find({ status: "published" }).select("name").sort({ name: 1 }).lean(),
     Payment.aggregate<{ _id: string; count: number }>([
-      { $match: { status: PAYMENT_STATUSES.PAID, "metadata.couponCode": { $type: "string" } } },
+      { $match: { status: PAYMENT_STATUSES.VERIFIED, "metadata.couponCode": { $type: "string" } } },
       { $group: { _id: "$metadata.couponCode", count: { $sum: 1 } } },
     ]),
   ]);

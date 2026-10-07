@@ -26,8 +26,8 @@ export default function PrivacyPolicyPage() {
             <p className="mt-2">Information is used only to operate the institute platform, communicate important account or course updates, prevent misuse, meet record-keeping obligations, and improve learner support. We do not sell personal information.</p>
           </section>
           <section>
-            <h2 className="text-xl font-semibold text-slate-900">Payments and service providers</h2>
-            <p className="mt-2">Payments are processed by the payment provider shown at checkout. We store transaction references and status, but the institute platform does not store complete card or banking credentials. Trusted infrastructure, email, file-storage, and payment providers process limited data on our behalf.</p>
+            <h2 className="text-xl font-semibold text-slate-900">Payments and supporting records</h2>
+            <p className="mt-2">Payments are collected by the institute outside the website and recorded by authorised administrators. We store transaction references, optional proof files and verification status, but the platform does not store complete card or banking credentials. Trusted infrastructure, email and file-storage services process limited data on our behalf.</p>
           </section>
           <section>
             <h2 className="text-xl font-semibold text-slate-900">Security and retention</h2>

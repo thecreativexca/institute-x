@@ -29,7 +29,7 @@ export async function validateCouponForCheckout(params: {
   if (coupon.expiresAt && coupon.expiresAt < now) throw new Error("This coupon has expired.");
   if (params.amount < coupon.minimumOrderValue) throw new Error(`Minimum order value is ₹${coupon.minimumOrderValue}.`);
   if (coupon.applicableCourses.length && !coupon.applicableCourses.some((id) => id.equals(new Types.ObjectId(params.courseId)))) throw new Error("This coupon does not apply to the selected course.");
-  const paidQuery = { status: PAYMENT_STATUSES.PAID, "metadata.couponCode": code };
+  const paidQuery = { status: PAYMENT_STATUSES.VERIFIED, "metadata.couponCode": code };
   const [totalUses, studentUses] = await Promise.all([
     Payment.countDocuments(paidQuery),
     Payment.countDocuments({ ...paidQuery, student: new Types.ObjectId(params.studentId) }),
@@ -42,7 +42,7 @@ export async function validateCouponForCheckout(params: {
   discount = Math.round(discount * 100) / 100;
   const finalAmount = Math.max(0, params.amount - discount);
   if (finalAmount < 1) {
-    throw new Error("This coupon would reduce the payable amount below the payment gateway minimum.");
+    throw new Error("This coupon would reduce the payable amount below the minimum accepted amount.");
   }
   return { code, originalAmount: params.amount, discountAmount: discount, finalAmount };
 }

@@ -181,8 +181,8 @@ async function computeSourceBreakdown(
     ...courseSelector(ctx),
     status: { $in: ELIGIBLE_STATUSES },
   });
-  const paid = await countSource(ctx, "razorpay");
-  const free = await countSource(ctx, "free");
+  const paid = await countPaidEnrollments(ctx);
+  const free = await countSource(ctx, "free_course");
   const manualCount = Math.max(0, eligibleTotal - paid - free);
 
   return [
@@ -192,33 +192,19 @@ async function computeSourceBreakdown(
   ];
 }
 
-async function countSource(ctx: ReportContext, provider: string): Promise<number> {
+async function countPaidEnrollments(ctx: ReportContext): Promise<number> {
+  return Enrollment.countDocuments({
+    ...courseSelector(ctx),
+    status: { $in: ELIGIBLE_STATUSES },
+    paymentStatus: { $in: ["paid", "partially_paid"] },
+  });
+}
+
+async function countSource(ctx: ReportContext, source: "free_course" | "admin_manual"): Promise<number> {
   await connectDB();
-  const rows = await Enrollment.aggregate<{ count: number }>([
-    { $match: { ...courseSelector(ctx), status: { $in: ELIGIBLE_STATUSES } } },
-    {
-      $lookup: {
-        from: "payments",
-        let: { eid: "$_id" },
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $and: [
-                  { $eq: ["$enrollment", "$$eid"] },
-                  { $eq: ["$status", "paid"] },
-                  { $eq: ["$provider", provider] },
-                ],
-              },
-            },
-          },
-          { $limit: 1 },
-        ],
-        as: "p",
-      },
-    },
-    { $match: { p: { $ne: [] } } },
-    { $count: "count" },
-  ]);
-  return rows[0]?.count ?? 0;
+  return Enrollment.countDocuments({
+    ...courseSelector(ctx),
+    status: { $in: ELIGIBLE_STATUSES },
+    source,
+  });
 }

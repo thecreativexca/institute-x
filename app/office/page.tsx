@@ -33,6 +33,8 @@ import { canAccessOffice, hasPermission } from "@/lib/auth/permissions";
 import { PERMISSIONS, ROLE_LABELS, type Permission, type UserRole } from "@/lib/constants";
 import { connectDB } from "@/lib/db/connect";
 import { getOfficeCertificateStats } from "@/lib/office/certificates/queries";
+import { getOfficePaymentsSummary } from "@/lib/office/payments/queries";
+import { formatCurrency } from "@/lib/payments/format";
 import { InternshipApplication } from "@/models/InternshipApplication";
 import { InternshipEnrollment } from "@/models/InternshipEnrollment";
 import { ProjectSubmission } from "@/models/ProjectSubmission";
@@ -54,7 +56,7 @@ const modules: Array<{
 }> = [
   { href: "/office/students", label: "Students", description: "Review learner accounts, enrollments and academic progress.", icon: Users, iconClassName: "text-primary-800", iconSurfaceClassName: "bg-primary-100", permissions: [PERMISSIONS.STUDENTS_READ] },
   { href: "/office/courses", label: "Courses", description: "Create courses, build curriculum with YouTube, text and PDF lessons.", icon: BookOpen, iconClassName: "text-accent-800", iconSurfaceClassName: "bg-accent-100", permissions: [PERMISSIONS.COURSES_READ, PERMISSIONS.COURSES_CREATE] },
-  { href: "/office/payments", label: "Payments & Orders", description: "Track student payments, revenue and process refunds.", icon: Wallet, iconClassName: "text-amber-900", iconSurfaceClassName: "bg-amber-50", permissions: [PERMISSIONS.PAYMENTS_READ] },
+  { href: "/office/payments", label: "Manual Payments", description: "Record collections, verify installments and generate receipts.", icon: Wallet, iconClassName: "text-amber-900", iconSurfaceClassName: "bg-amber-50", permissions: [PERMISSIONS.PAYMENTS_READ] },
   { href: "/office/sessions", label: "Sessions", description: "Schedule offline / venue classes against courses.", icon: CalendarClock, iconClassName: "text-[#8a4b2d]", iconSurfaceClassName: "bg-[#fdf0e7]", permissions: [PERMISSIONS.SESSIONS_READ, PERMISSIONS.SESSIONS_MANAGE] },
   { href: "/office/analytics", label: "Analytics", description: "Revenue, enrollment and content performance insights.", icon: TrendingUp, iconClassName: "text-[#145a80]", iconSurfaceClassName: "bg-[#eaf5fb]", permissions: [PERMISSIONS.ANALYTICS_READ] },
   { href: "/office/resources", label: "Resources", description: "Organize lesson documents and downloadable study material.", icon: FileStack, iconClassName: "text-accent-800", iconSurfaceClassName: "bg-accent-100", permissions: [PERMISSIONS.RESOURCES_MANAGE] },
@@ -78,7 +80,7 @@ export default async function OfficeHomePage() {
   );
   const roleLabel = ROLE_LABELS[user.role as UserRole] ?? "Office Team";
   await connectDB();
-  const [openApplications, activeInterns, pendingProjectReviews, internshipCompletions, certificateStats] = await Promise.all([
+  const [openApplications, activeInterns, pendingProjectReviews, internshipCompletions, certificateStats, paymentStats] = await Promise.all([
     InternshipApplication.countDocuments({ status: "pending" }),
     InternshipEnrollment.countDocuments({ status: "active" }),
     ProjectSubmission.countDocuments({ status: { $in: ["submitted", "under_review"] } }),
@@ -86,6 +88,9 @@ export default async function OfficeHomePage() {
     // Spec §14 — certificate counters, only for roles that may read them.
     hasPermission(user.role, PERMISSIONS.CERTIFICATES_READ)
       ? getOfficeCertificateStats()
+      : Promise.resolve(null),
+    hasPermission(user.role, PERMISSIONS.PAYMENTS_READ)
+      ? getOfficePaymentsSummary()
       : Promise.resolve(null),
   ]);
 
@@ -132,6 +137,13 @@ export default async function OfficeHomePage() {
             <StatCard label="Internship completions" value={internshipCompletions} icon={CheckCircle2} />
           </Link>
         </section>
+
+        {paymentStats ? (
+          <section aria-label="Payment overview">
+            <div className="mb-4 flex items-end justify-between"><div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary-600">Collections</p><h2 className="mt-1.5 text-xl font-semibold text-slate-900 sm:text-2xl">Manual payments</h2></div><Link href="/office/payments" className={buttonVariants("outline", "sm")}>Manage payments <ArrowUpRight className="h-4 w-4" /></Link></div>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><StatCard label="Today's collections" value={formatCurrency(paymentStats.todayCollected)} icon={Wallet} /><StatCard label="This month" value={formatCurrency(paymentStats.monthCollected)} icon={TrendingUp} /><StatCard label="Pending verification" value={paymentStats.pendingCount} icon={CalendarClock} /><StatCard label="Outstanding amount" value={formatCurrency(paymentStats.outstandingAmount)} icon={Wallet} /></div>
+          </section>
+        ) : null}
 
         {certificateStats ? (
           <section aria-label="Certificate overview">

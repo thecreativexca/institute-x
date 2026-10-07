@@ -113,7 +113,7 @@ function CreateEnrollmentModal({ courses, pending, fieldErrors, onClose, onSubmi
   const [expiresAt, setExpiresAt] = useState("");
   const [notes, setNotes] = useState("");
   return (
-    <Modal open onClose={onClose} title="Manual enrollment" description="Grant a student access without creating a Razorpay payment." footer={<><Button variant="outline" onClick={onClose} disabled={pending}>Cancel</Button><Button isLoading={pending} onClick={() => onSubmit({ studentEmail, courseId, expiresAt, notes })}><UserRoundCheck className="h-4 w-4" /> Enroll student</Button></>}>
+    <Modal open onClose={onClose} title="Manual enrollment" description="Grant course access independently from the student's fee status." footer={<><Button variant="outline" onClick={onClose} disabled={pending}>Cancel</Button><Button isLoading={pending} onClick={() => onSubmit({ studentEmail, courseId, expiresAt, notes })}><UserRoundCheck className="h-4 w-4" /> Enroll student</Button></>}>
       <div className="space-y-4">
         <FieldShell id="student-email" label="Student email" required error={fieldErrors.studentEmail}><input id="student-email" type="email" value={studentEmail} onChange={(event) => setStudentEmail(event.target.value)} className={controlClassName(Boolean(fieldErrors.studentEmail), "h-10")} placeholder="student@example.com" /></FieldShell>
         <FieldShell id="enrollment-course" label="Course" required error={fieldErrors.courseId}><select id="enrollment-course" value={courseId} onChange={(event) => setCourseId(event.target.value)} className={controlClassName(Boolean(fieldErrors.courseId), "h-10")}><option value="">Select a published course</option>{courses.map((course) => <option key={course.id} value={course.id}>{course.name}</option>)}</select></FieldShell>
@@ -148,7 +148,7 @@ function StatusBadge({ status }: { status: EnrollmentListItem["status"] }) {
 }
 
 function sourceLabel(source: EnrollmentListItem["source"]) {
-  return source === "razorpay" ? "Razorpay" : source === "free_course" ? "Free course" : "Admin manual";
+  return source === "free_course" ? "Free course" : "Admin manual";
 }
 
 function formatDate(value: string) {

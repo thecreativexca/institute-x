@@ -27,7 +27,7 @@ import {
   PaginationParams,
   StudentListResult,
 } from "./dto";
-import { ENROLLMENT_STATUSES, type EnrollmentStatus, type AccountStatus, type PaymentStatus, type CertificateStatus } from "@/lib/constants";
+import { ENROLLMENT_STATUSES, PAYMENT_METHODS, PAYMENT_STATUSES, type EnrollmentStatus, type AccountStatus, type FeeStatus, type PaymentStatus, type CertificateStatus } from "@/lib/constants";
 
 function toObjectId(id: string): Types.ObjectId {
   return new Types.ObjectId(id);
@@ -231,7 +231,7 @@ export async function getStudentEnrollments(studentId: string): Promise<StudentE
       courseName: course.name,
       courseSlug: course.slug,
       status: enrollment.status as EnrollmentStatus,
-      paymentStatus: enrollment.paymentStatus as PaymentStatus,
+      paymentStatus: enrollment.paymentStatus as FeeStatus,
       enrolledAt: enrollment.enrolledAt.toISOString(),
       completedAt: enrollment.completedAt?.toISOString() ?? null,
       progressPercent,
@@ -394,10 +394,10 @@ export async function getStudentPayments(studentId: string): Promise<StudentPaym
     courseName: (payment.course as unknown as { name: string }).name,
     amount: payment.amount,
     currency: payment.currency,
-    provider: payment.provider,
-    receiptNumber: payment.receiptNumber,
+    paymentMethod: payment.paymentMethod ?? PAYMENT_METHODS.OTHER,
+    receiptNumber: payment.receiptNumber ?? null,
     status: payment.status as PaymentStatus,
-    paidAt: payment.paidAt?.toISOString() ?? null,
+    paymentDate: (payment.paymentDate ?? payment.createdAt).toISOString(),
     createdAt: payment.createdAt.toISOString(),
   }));
 }
@@ -522,9 +522,9 @@ export async function getStudentActivity(studentId: string, limit = 20): Promise
     }
   }
 
-  const payments = await Payment.find({ student: toObjectId(studentId), status: "paid" })
+  const payments = await Payment.find({ student: toObjectId(studentId), status: PAYMENT_STATUSES.VERIFIED })
     .populate({ path: "course", select: "name" })
-    .sort({ paidAt: -1 })
+    .sort({ paymentDate: -1 })
     .limit(5)
     .lean();
 
@@ -535,7 +535,7 @@ export async function getStudentActivity(studentId: string, limit = 20): Promise
         id: `payment_${payment._id}`,
         type: "payment_completed",
         description: `Payment of ₹${payment.amount} for ${course.name}`,
-        timestamp: (payment.paidAt ?? payment.createdAt).toISOString(),
+        timestamp: (payment.paymentDate ?? payment.createdAt).toISOString(),
         courseId: course._id.toString(),
         courseName: course.name,
       });
