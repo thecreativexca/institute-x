@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <Container className="py-14 sm:py-20">
-      <article className="mx-auto max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">Legal</p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Terms &amp; Conditions</h1>
+    <Container className="legal-page">
+      <article className="legal-article">
+        <p className="public-kicker">Legal</p>
+        <h1>Terms &amp; Conditions</h1>
         <p className="mt-4 text-sm text-slate-500">Last updated: August 30, 2026</p>
 
         <div className="mt-10 space-y-8 text-sm leading-7 text-slate-700 sm:text-base">

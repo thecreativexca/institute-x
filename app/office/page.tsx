@@ -17,6 +17,7 @@ import {
   HelpCircle,
   LifeBuoy,
   Megaphone,
+  MessageSquareText,
   ShieldCheck,
   Settings,
   TrendingUp,
@@ -56,6 +57,7 @@ const modules: Array<{
 }> = [
   { href: "/office/students", label: "Students", description: "Review learner accounts, enrollments and academic progress.", icon: Users, iconClassName: "text-primary-800", iconSurfaceClassName: "bg-primary-100", permissions: [PERMISSIONS.STUDENTS_READ] },
   { href: "/office/courses", label: "Courses", description: "Create courses, build curriculum with YouTube, text and PDF lessons.", icon: BookOpen, iconClassName: "text-accent-800", iconSurfaceClassName: "bg-accent-100", permissions: [PERMISSIONS.COURSES_READ, PERMISSIONS.COURSES_CREATE] },
+  { href: "/office/requests", label: "Admission Requests", description: "Review contact and course enrollment requests submitted from the website.", icon: MessageSquareText, iconClassName: "text-violet-700", iconSurfaceClassName: "bg-violet-50", permissions: [PERMISSIONS.ADMIN_ACCESS] },
   { href: "/office/payments", label: "Manual Payments", description: "Record collections, verify installments and generate receipts.", icon: Wallet, iconClassName: "text-amber-900", iconSurfaceClassName: "bg-amber-50", permissions: [PERMISSIONS.PAYMENTS_READ] },
   { href: "/office/sessions", label: "Sessions", description: "Schedule offline / venue classes against courses.", icon: CalendarClock, iconClassName: "text-[#8a4b2d]", iconSurfaceClassName: "bg-[#fdf0e7]", permissions: [PERMISSIONS.SESSIONS_READ, PERMISSIONS.SESSIONS_MANAGE] },
   { href: "/office/analytics", label: "Analytics", description: "Revenue, enrollment and content performance insights.", icon: TrendingUp, iconClassName: "text-[#145a80]", iconSurfaceClassName: "bg-[#eaf5fb]", permissions: [PERMISSIONS.ANALYTICS_READ] },

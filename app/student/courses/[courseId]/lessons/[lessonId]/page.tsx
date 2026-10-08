@@ -13,7 +13,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { LessonResources } from "@/components/student/resources/lesson-resources";
 import { StudentPageHeader } from "@/components/student/student-page-header";
 import { LessonProgressControls } from "@/components/student/lesson-progress-controls";
-import { ArrowLeft, BookOpen, CheckCircle2, Circle, Clapperboard, FileText, ExternalLink } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, ChevronDown, Circle, Clapperboard, FileText, ExternalLink } from "lucide-react";
 
 interface RouteParams {
   params: Promise<{ courseId: string; lessonId: string }>;
@@ -105,6 +105,41 @@ export default async function StudentLessonPage({ params }: RouteParams) {
   const completedCount = context.curriculum.reduce((sum, module) => sum + module.lessons.filter((lesson) => lesson.completed).length, 0);
   const courseProgress = lessonCount ? Math.round((completedCount / lessonCount) * 100) : 0;
 
+  const curriculumList = (
+    <div className="max-h-[65vh] overflow-y-auto p-3">
+      {context.curriculum.map((module) => (
+        <section key={module.id} className="mb-4 last:mb-0">
+          <h2 className="px-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">{module.title}</h2>
+          <ul className="mt-1.5 space-y-1">
+            {module.lessons.map((lesson) => {
+              const active = lesson.id === lessonId;
+              return (
+                <li key={lesson.id}>
+                  <Link
+                    href={`/student/courses/${courseId}/lessons/${lesson.id}`}
+                    aria-current={active ? "page" : undefined}
+                    className={`flex min-h-11 items-start gap-2 rounded-lg px-2.5 py-2.5 text-sm transition-colors ${
+                      active
+                        ? "bg-primary-100 font-semibold text-primary-950"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
+                  >
+                    {lesson.completed ? (
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent-700" aria-hidden="true" />
+                    ) : (
+                      <Circle className="mt-0.5 h-4 w-4 shrink-0 text-slate-300" aria-hidden="true" />
+                    )}
+                    <span>{lesson.title}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+
   return (
     <div className="mx-auto w-full max-w-7xl">
       <div className="space-y-6">
@@ -123,6 +158,20 @@ export default async function StudentLessonPage({ params }: RouteParams) {
             </Link>
           }
         />
+
+        <details className="group overflow-hidden rounded-xl border border-primary-200 bg-white shadow-card lg:hidden">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 marker:content-none">
+            <span>
+              <span className="block text-sm font-semibold text-slate-900">Course curriculum</span>
+              <span className="mt-0.5 block text-xs text-slate-500">{completedCount} of {lessonCount} lessons complete · {courseProgress}%</span>
+            </span>
+            <ChevronDown className="h-5 w-5 shrink-0 text-primary-700 transition-transform group-open:rotate-180" aria-hidden="true" />
+          </summary>
+          <div className="border-t border-primary-100">
+            <div className="h-1 bg-primary-100"><div className="h-full bg-accent-500" style={{ width: `${courseProgress}%` }} /></div>
+            {curriculumList}
+          </div>
+        </details>
 
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
           <div className="space-y-6">
@@ -208,25 +257,13 @@ export default async function StudentLessonPage({ params }: RouteParams) {
         />
           </div>
 
-          <aside className="overflow-hidden rounded-2xl border border-primary-100 bg-white shadow-card lg:sticky lg:top-24" aria-label="Course curriculum">
+          <aside className="hidden overflow-hidden rounded-xl border border-primary-100 bg-white shadow-card lg:sticky lg:top-24 lg:block" aria-label="Course curriculum">
             <div className="border-b border-primary-100 bg-primary-50/70 p-4">
               <div className="flex items-center justify-between gap-3 text-sm"><span className="font-semibold text-slate-900">Course progress</span><span className="font-bold text-primary-700">{courseProgress}%</span></div>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-primary-100"><div className="h-full rounded-full bg-primary-600" style={{ width: `${courseProgress}%` }} /></div>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-primary-100"><div className="h-full rounded-full bg-accent-500" style={{ width: `${courseProgress}%` }} /></div>
               <p className="mt-2 text-xs text-slate-500">{completedCount} of {lessonCount} lessons complete</p>
             </div>
-            <div className="max-h-[65vh] overflow-y-auto p-3">
-              {context.curriculum.map((module) => (
-                <section key={module.id} className="mb-4 last:mb-0">
-                  <h2 className="px-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{module.title}</h2>
-                  <ul className="mt-1.5 space-y-1">
-                    {module.lessons.map((lesson) => {
-                      const active = lesson.id === lessonId;
-                      return <li key={lesson.id}><Link href={`/student/courses/${courseId}/lessons/${lesson.id}`} aria-current={active ? "page" : undefined} className={`flex items-start gap-2 rounded-lg px-2 py-2 text-sm ${active ? "bg-primary-100 font-semibold text-primary-900" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}>{lesson.completed ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" /> : <Circle className="mt-0.5 h-4 w-4 shrink-0 text-slate-300" />}<span>{lesson.title}</span></Link></li>;
-                    })}
-                  </ul>
-                </section>
-              ))}
-            </div>
+            {curriculumList}
           </aside>
         </div>
       </div>

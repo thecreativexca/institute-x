@@ -1,77 +1,26 @@
+import { ClipboardCheck, Clock3, LibraryBig, MonitorPlay, Route, UserRoundCheck } from "lucide-react";
+
 import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
 
 const features = [
-  {
-    title: "Structured curriculum",
-    body: "Courses are broken into modules and lessons with a defined order, so you always know what comes next.",
-    icon: (
-      <path d="M4 6h16M4 12h16M4 18h10" strokeLinecap="round" />
-    ),
-  },
-  {
-    title: "Hands-on practice",
-    body: "Practical exercises and assignments help you apply concepts instead of just watching them.",
-    icon: (
-      <>
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <path d="m8 12 2.5 2.5L16 9" strokeLinecap="round" strokeLinejoin="round" />
-      </>
-    ),
-  },
-  {
-    title: "Progress tracking",
-    body: "Your completed lessons, assignments and quiz results stay organised in your student portal.",
-    icon: (
-      <>
-        <path d="M3 3v18h18" strokeLinecap="round" />
-        <path d="m7 14 4-4 3 3 5-6" strokeLinecap="round" strokeLinejoin="round" />
-      </>
-    ),
-  },
-  {
-    title: "Guidance when needed",
-    body: "Raise a support ticket from your portal and the office team will help you resolve issues.",
-    icon: (
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M9.5 9.5a2.5 2.5 0 1 1 3.7 2.2c-.8.4-1.2.9-1.2 1.8" strokeLinecap="round" />
-        <path d="M12 17h.01" strokeLinecap="round" />
-      </>
-    ),
-  },
+  { icon: Route, title: "Structured learning paths", body: "Move through modules and lessons in a clear sequence." },
+  { icon: MonitorPlay, title: "Video-based lessons", body: "Watch course lessons from your online student portal." },
+  { icon: ClipboardCheck, title: "Practice and assessment", body: "Use assignments and quizzes when they are included in a course." },
+  { icon: Clock3, title: "Flexible learning", body: "Return to your available course material around your schedule." },
+  { icon: LibraryBig, title: "Resources in one place", body: "Keep course material connected to the lesson it supports." },
+  { icon: UserRoundCheck, title: "Progress visibility", body: "See completed lessons and learning activity in your account." },
 ];
 
-/** "Why choose us" — describes the training approach without unverifiable claims. */
 export function WhyChooseUsSection() {
   return (
-    <section aria-labelledby="why-us-heading" className="border-y border-primary-100 bg-gradient-to-b from-primary-50/70 to-[#ffffff]">
-      <Container className="py-16 sm:py-20">
-        <SectionHeading
-          eyebrow="Why choose us"
-          title="Learning designed to keep you on track"
-        />
-        <ul className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {features.map((feature) => (
-            <li key={feature.title}>
-              <div className="flex h-full flex-col gap-3 rounded-2xl border border-primary-100 bg-white/95 p-6 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-card-hover">
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent-100 text-primary-800">
-                  <svg
-                    aria-hidden="true"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    className="h-6 w-6"
-                  >
-                    {feature.icon}
-                  </svg>
-                </span>
-                <h3 className="text-base font-semibold text-slate-900">{feature.title}</h3>
-                <p className="text-sm leading-relaxed text-slate-600">{feature.body}</p>
-              </div>
-            </li>
-          ))}
+    <section className="education-benefits" aria-labelledby="benefits-heading">
+      <Container>
+        <div className="education-section-heading education-section-heading-center" data-reveal>
+          <div><span className="education-eyebrow">Why learn with us</span><h2 id="benefits-heading">Designed around how students actually learn</h2></div>
+          <p>Simple tools, clear structure and practical activity help you spend less time navigating and more time learning.</p>
+        </div>
+        <ul className="education-benefit-grid" data-reveal>
+          {features.map(({ icon: Icon, title, body }) => <li key={title}><span><Icon className="h-6 w-6" /></span><h3>{title}</h3><p>{body}</p></li>)}
         </ul>
       </Container>
     </section>

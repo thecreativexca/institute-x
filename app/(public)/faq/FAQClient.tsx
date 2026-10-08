@@ -221,18 +221,14 @@ export function FAQClient() {
   return (
     <>
       {/* ── Hero ── */}
-      <section className="public-hero-pattern relative overflow-hidden border-b border-primary-100 bg-gradient-to-b from-primary-50/70 via-white to-white">
-        <div aria-hidden="true" className="public-soft-grid absolute inset-0 opacity-40" />
-        <Container className="relative py-14 sm:py-20 text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-accent-300 bg-accent-100 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-primary-900">
-            <HelpCircle className="h-3.5 w-3.5 text-primary-700" aria-hidden="true" />
-            Help Centre
-          </span>
-
-          <h1 className="mt-6 text-balance text-4xl font-extrabold tracking-[-0.03em] text-primary-950 sm:text-5xl">
-            Frequently Asked Questions
-          </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base sm:text-lg leading-relaxed text-slate-600">
+      <section className="public-page-hero">
+        <Container>
+          <div className="public-page-hero-grid">
+            <div data-reveal>
+              <span className="public-kicker"><HelpCircle className="h-3.5 w-3.5" aria-hidden="true" /> Help centre</span>
+              <h1 className="public-page-title mt-8">Questions, <em>answered.</em></h1>
+            </div>
+            <p className="public-page-intro" data-reveal>
             Answers to the most common questions about our courses, admissions, fees, certificates, and portal. Can&apos;t find what you&apos;re looking for?{" "}
             <Link
               href="/contact"
@@ -241,17 +237,18 @@ export function FAQClient() {
               Contact us
             </Link>
             .
-          </p>
+            </p>
+          </div>
         </Container>
       </section>
 
       {/* ── FAQ Body ── */}
-      <section className="py-12 sm:py-16 lg:py-20">
+      <section className="py-16 sm:py-24">
         <Container>
           <div className="mx-auto max-w-4xl">
 
             {/* Category Tabs */}
-            <div className="mb-10 flex flex-wrap gap-2 justify-center">
+            <div className="mb-12 flex flex-wrap gap-2 border-b border-primary-300 pb-6 justify-start">
               {faqCategories.map((cat) => {
                 const Icon = cat.icon;
                 return (
@@ -262,9 +259,9 @@ export function FAQClient() {
                       setOpenItems({});
                     }}
                     className={cn(
-                      "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium border transition-all duration-150",
+                      "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold border transition-all duration-150",
                       activeCategory === cat.id
-                        ? "bg-primary-700 text-white border-primary-700 shadow-md"
+                        ? "bg-accent-500 text-white border-accent-500"
                         : "bg-white text-slate-600 border-slate-200 hover:border-primary-300 hover:text-primary-800 hover:bg-primary-50"
                     )}
                   >
@@ -293,7 +290,7 @@ export function FAQClient() {
             </div>
 
             {/* CTA Banner */}
-            <div className="mt-14 rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50 to-accent-50 px-6 py-10 text-center">
+            <div className="mt-16 border-y border-primary-950 px-6 py-12 text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-100">
                 <MessageSquare className="h-6 w-6 text-primary-700" aria-hidden="true" />
               </div>

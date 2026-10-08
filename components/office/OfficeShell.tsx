@@ -20,6 +20,7 @@ import {
   LogOut,
   Megaphone,
   Menu,
+  MessageSquareText,
   ShieldCheck,
   Settings,
   TicketPercent,
@@ -60,6 +61,7 @@ const navItems = [
   { href: "/office/categories", label: "Categories", icon: FolderTree, permissions: [PERMISSIONS.COURSES_READ] },
   { href: "/office/courses", label: "Courses", icon: BookOpen, permissions: [PERMISSIONS.COURSES_READ] },
   { href: "/office/enrollments", label: "Enrollments", icon: ContactRound, permissions: [PERMISSIONS.ENROLLMENTS_MANAGE] },
+  { href: "/office/requests", label: "Admission Requests", icon: MessageSquareText, permissions: [PERMISSIONS.ADMIN_ACCESS] },
   { href: "/office/payments", label: "Payments & Orders", icon: Wallet, permissions: [PERMISSIONS.PAYMENTS_READ] },
   { href: "/office/coupons", label: "Coupons", icon: TicketPercent, permissions: [PERMISSIONS.PAYMENTS_MANAGE] },
   { href: "/office/sessions", label: "Sessions", icon: CalendarClock, permissions: [PERMISSIONS.SESSIONS_READ] },
@@ -134,20 +136,20 @@ export function OfficeShell({ children, session }: OfficeShellProps) {
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col overflow-hidden border-r border-primary-200 bg-primary-50 text-primary-950 shadow-2xl shadow-primary-950/10 transition-transform duration-200 ease-out lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col overflow-hidden border-r border-primary-800 bg-primary-950 text-white shadow-2xl shadow-primary-950/20 transition-transform duration-200 ease-out lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
         aria-label="Office sidebar navigation"
       >
-        <div aria-hidden="true" className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-accent-300/15 blur-3xl" />
-        <div className="relative flex h-[4.5rem] items-center justify-between border-b border-primary-200 px-5">
+        <div aria-hidden="true" className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-primary-600/25 blur-3xl" />
+        <div className="relative flex h-[4.5rem] items-center justify-between border-b border-white/10 px-5">
           <div className="min-w-0" onClick={() => setSidebarOpen(false)}>
-            <Logo href="/office" variant="compact" />
-            <p className="mt-2 truncate text-xs text-primary-700">Office workspace</p>
+            <span className="inline-flex rounded-md bg-white px-2 py-1 shadow-sm"><Logo href="/office" variant="compact" /></span>
+            <p className="mt-1.5 truncate text-xs text-primary-300">Office workspace</p>
           </div>
           <button
             type="button"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-primary-700 hover:bg-primary-100 hover:text-primary-950 lg:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-primary-200 hover:bg-white/10 hover:text-white lg:hidden"
             onClick={() => setSidebarOpen(false)}
             aria-label="Close navigation menu"
           >
@@ -156,7 +158,7 @@ export function OfficeShell({ children, session }: OfficeShellProps) {
         </div>
 
         <nav className="relative flex min-h-0 flex-1 flex-col px-4 py-5">
-          <p className="shrink-0 px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-600">Workspace</p>
+          <p className="shrink-0 px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-400">Workspace</p>
           <ul className="office-nav-scroll mt-3 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-1" role="list">
             {visibleNavItems.map((item) => (
               <li key={item.href}>
@@ -165,8 +167,8 @@ export function OfficeShell({ children, session }: OfficeShellProps) {
                   className={cn(
                     "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
                     isActive(item.href)
-                      ? "bg-primary-100 text-primary-950 shadow-sm"
-                      : "text-primary-700 hover:bg-primary-100 hover:text-primary-950"
+                      ? "bg-white text-primary-950 shadow-sm"
+                      : "text-primary-200 hover:bg-white/10 hover:text-white"
                   )}
                   onClick={() => setSidebarOpen(false)}
                   aria-current={isActive(item.href) ? "page" : undefined}
@@ -175,32 +177,32 @@ export function OfficeShell({ children, session }: OfficeShellProps) {
                     className={cn(
                       "flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
                       isActive(item.href)
-                        ? "bg-primary-600 text-white"
-                        : "bg-white/80 text-primary-700 group-hover:text-primary-950"
+                        ? "bg-primary-950 text-accent-300"
+                        : "bg-white/10 text-primary-200 group-hover:text-white"
                     )}
                   >
                     <item.icon className="h-4.5 w-4.5" aria-hidden="true" />
                   </span>
                   <span className="flex-1">{item.label}</span>
-                  {isActive(item.href) ? <span className="h-1.5 w-1.5 rounded-full bg-primary-700" aria-hidden="true" /> : null}
+                  {isActive(item.href) ? <span className="h-1.5 w-1.5 rounded-full bg-accent-400" aria-hidden="true" /> : null}
                 </Link>
               </li>
             ))}
           </ul>
 
           <div className="shrink-0 pt-6">
-            <div className="rounded-2xl border border-primary-200 bg-white/80 p-3.5">
+            <div className="rounded-xl border border-white/10 bg-white/[0.06] p-3.5">
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-300 text-xs font-bold text-primary-950">
                   {initials}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-primary-950">{session.name}</p>
-                  <p className="truncate text-xs text-primary-700">{roleLabel}</p>
+                  <p className="truncate text-sm font-semibold text-white">{session.name}</p>
+                  <p className="truncate text-xs text-primary-300">{roleLabel}</p>
                 </div>
               </div>
-              <form action="/api/auth/office-logout" method="POST" className="mt-3 border-t border-primary-200 pt-3">
-                <button type="submit" className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-xs font-medium text-primary-700 transition-colors hover:bg-primary-100 hover:text-primary-950">
+              <form action="/api/auth/office-logout" method="POST" className="mt-3 border-t border-white/10 pt-3">
+                <button type="submit" className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-xs font-medium text-primary-300 transition-colors hover:bg-white/10 hover:text-white">
                   <LogOut className="h-4 w-4" aria-hidden="true" />
                   Sign out securely
                 </button>

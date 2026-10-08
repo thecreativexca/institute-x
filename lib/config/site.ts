@@ -22,10 +22,10 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
 
   contact: {
-    email: "info@creativextycoon.com",
-    phone: "+91-00000-00000",
-    phoneHref: "tel:+910000000000",
-    address: "Creative X Tycoon, City, State — PIN",
+    email: "creativexportal.edu@gmail.com",
+    phone: "9501013548",
+    phoneHref: "tel:+919501013548",
+    address: "",
   },
 
   social: {

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Monitor, Users2, Sparkles, BookOpen } from "lucide-react";
+import { ArrowRight, Monitor, Users2, Sparkles, BookOpen } from "lucide-react";
 import { Container } from "@/components/ui/container";
 
 const facilities = [
@@ -103,7 +103,7 @@ export function CampusShowcaseSection() {
             </span>
             <h3 className="mt-1 text-2xl font-bold">Want to experience our classroom and labs in person?</h3>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-primary-100">
-              Walk into our admissions office during working hours for a free campus tour, free career counseling, and a live demonstration session.
+              Contact our admissions office for course guidance, current batch information, and help choosing a suitable learning path.
             </p>
           </div>
           <div className="mt-6 shrink-0 lg:mt-0">

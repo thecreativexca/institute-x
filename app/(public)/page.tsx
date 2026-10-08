@@ -1,49 +1,51 @@
 import type { Metadata } from "next";
 
-import { BenefitsSection } from "@/components/public/benefits-section";
-import { CampusShowcaseSection } from "@/components/public/campus-showcase-section";
-import { CareerSection } from "@/components/public/career-section";
-import { CategoryGrid } from "@/components/public/category-grid";
-import { CertificateShowcaseSection } from "@/components/public/certificate-showcase-section";
 import { CtaSection } from "@/components/public/cta-section";
+import { CategoryGrid } from "@/components/public/category-grid";
 import { HeroSection } from "@/components/public/hero-section";
 import { HowLearningWorksSection } from "@/components/public/how-learning-works-section";
 import { PopularCoursesSection } from "@/components/public/popular-courses-section";
-import { StudentDashboardPreviewSection } from "@/components/public/student-dashboard-preview-section";
-import { TestimonialsSection } from "@/components/public/testimonials-section";
+import { TrustBar } from "@/components/public/trust-bar";
 import { TrustBenefitsSection } from "@/components/public/trust-benefits-section";
 import { WhyChooseUsSection } from "@/components/public/why-choose-us-section";
+import { getPublishedCourses } from "@/lib/catalog/public-courses";
 import { siteConfig } from "@/lib/config/site";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
+  title: "Practical Online Courses for Career & Digital Skills",
   description: siteConfig.description,
   openGraph: {
     type: "website",
     siteName: siteConfig.name,
-    title: `${siteConfig.name} — Premier Technology & Vocational Institute`,
+    title: `Learn practical skills online | ${siteConfig.name}`,
     description: siteConfig.description,
   },
 };
 
-/**
- * Home page — High-end Institute experience with authentic campus imagery,
- * practical labs showcase, course covers, certified credentials, and alumni reviews.
- */
-export default function HomePage() {
+export default async function HomePage() {
+  const courses = await getPublishedCourses();
+  const featuredCourse = courses.find((course) => course.featured) ?? courses[0];
+  const totalLessons = courses.reduce(
+    (courseTotal, course) =>
+      courseTotal + course.syllabus.reduce((moduleTotal, module) => moduleTotal + module.lessons.length, 0),
+    0
+  );
+
   return (
     <>
-      <HeroSection />
-      <TrustBenefitsSection />
+      <HeroSection
+        featuredCourse={featuredCourse}
+        totalCourses={courses.length}
+        totalLessons={totalLessons}
+      />
+      <TrustBar />
       <CategoryGrid />
-      <PopularCoursesSection />
-      <CampusShowcaseSection />
+      <PopularCoursesSection courses={courses} />
+      <TrustBenefitsSection />
       <WhyChooseUsSection />
-      <CertificateShowcaseSection />
       <HowLearningWorksSection />
-      <TestimonialsSection />
-      <StudentDashboardPreviewSection />
-      <BenefitsSection />
-      <CareerSection />
       <CtaSection />
     </>
   );

@@ -13,13 +13,14 @@ interface CourseSearchProps {
   placeholder?: string;
   /** Additional CSS classes */
   className?: string;
+  variant?: "default" | "hero";
 }
 
 /**
  * Course search input with URL sync.
  * Updates the `search` query parameter on change.
  */
-export function CourseSearch({ value, placeholder = "Search courses...", className }: CourseSearchProps) {
+export function CourseSearch({ value, placeholder = "Search courses...", className, variant = "default" }: CourseSearchProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -56,12 +57,17 @@ export function CourseSearch({ value, placeholder = "Search courses...", classNa
         value={value}
         onChange={handleChange}
         placeholder={placeholder}
-        className="h-11 w-full rounded-xl border border-primary-200 bg-primary-50/35 pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-primary-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-600/20"
+        className={cn(
+          "w-full pl-11 pr-10 text-sm transition-colors focus:outline-none",
+          variant === "hero"
+            ? "h-14 rounded-2xl border border-white/15 bg-white/10 text-white placeholder:text-white/45 focus:border-amber-300 focus:bg-white/15 focus:ring-2 focus:ring-amber-300/15"
+            : "h-11 rounded-xl border border-primary-200 bg-primary-50/35 text-slate-900 placeholder:text-slate-400 focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-600/20"
+        )}
         autoComplete="off"
       />
       <svg
         aria-hidden="true"
-        className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+        className={cn("absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2", variant === "hero" ? "text-amber-300" : "text-slate-400")}
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -76,7 +82,7 @@ export function CourseSearch({ value, placeholder = "Search courses...", classNa
         <button
           type="button"
           onClick={handleClear}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+          className={cn("absolute right-3 top-1/2 -translate-y-1/2 transition-colors", variant === "hero" ? "text-white/60 hover:text-white" : "text-slate-400 hover:text-slate-600")}
           aria-label="Clear search"
         >
           <svg

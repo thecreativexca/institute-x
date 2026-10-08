@@ -85,7 +85,7 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
   const category = getCategoryBySlug(course.categorySlug);
 
   return (
-    <Container className="py-8 sm:py-12 lg:py-16">
+    <Container className="course-detail-shell">
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
@@ -94,18 +94,18 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
           { label: category?.name ?? "Courses", href: `/courses?category=${course.categorySlug}` },
           { label: course.name, href: `/courses/${course.slug}`, current: true },
         ]}
-        className="mb-6"
+        className="mb-8"
       />
 
       {/* Hero Section */}
       <CourseHero course={course} category={category} />
 
       {/* Main Content Grid */}
-      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <div className="course-content-grid">
         {/* Main Content - 2/3 width */}
-        <div className="lg:col-span-2 space-y-10">
+        <div className="course-content-main">
           {/* About This Course */}
-          <section aria-labelledby="about-heading" className="space-y-4 rounded-2xl border border-primary-100 bg-white p-6 shadow-card sm:p-7">
+          <section aria-labelledby="about-heading" className="space-y-4">
             <h2 id="about-heading" className="text-2xl font-semibold text-slate-900">
               About This Course
             </h2>
@@ -137,7 +137,7 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
         </div>
 
         {/* Sidebar - 1/3 width */}
-        <aside className="lg:col-span-1">
+        <aside>
           <div className="sticky top-24 space-y-6">
             {/* Course Meta & Enrollment Card */}
             <CourseMeta course={course} category={category} />

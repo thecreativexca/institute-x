@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Source_Serif_4 } from "next/font/google";
 
 import { siteConfig } from "@/lib/config/site";
 
@@ -11,7 +11,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const outfit = Outfit({
+const sourceSerif = Source_Serif_4({
   variable: "--font-heading",
   subsets: ["latin"],
   display: "swap",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${plusJakartaSans.variable} ${outfit.variable} h-full antialiased`}>
+    <html lang="en" className={`${plusJakartaSans.variable} ${sourceSerif.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">
         {/* Keyboard users can jump straight to content. */}
         <a
