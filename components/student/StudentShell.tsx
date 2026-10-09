@@ -27,7 +27,7 @@ import {
   X,
 } from "lucide-react";
 
-import { Logo } from "@/components/layout/logo";
+import { PortalSidebarLogo } from "@/components/layout/portal-sidebar-logo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -119,7 +119,7 @@ export function StudentShell({ children, session }: StudentShellProps) {
 
         <div className="relative flex h-[4.5rem] items-center justify-between border-b border-white/10 px-5">
           <div className="min-w-0" onClick={() => setSidebarOpen(false)}>
-            <span className="inline-flex rounded-md bg-white px-2 py-1 shadow-sm"><Logo href="/student/dashboard" variant="compact" /></span>
+            <PortalSidebarLogo href="/student/dashboard" />
             <p className="mt-1.5 truncate text-xs text-primary-300">Student learning portal</p>
           </div>
           <button

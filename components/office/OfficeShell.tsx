@@ -33,7 +33,7 @@ import {
   X,
 } from "lucide-react";
 
-import { Logo } from "@/components/layout/logo";
+import { PortalSidebarLogo } from "@/components/layout/portal-sidebar-logo";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { NotificationMenu } from "@/components/notifications/notification-menu";
@@ -144,7 +144,7 @@ export function OfficeShell({ children, session }: OfficeShellProps) {
         <div aria-hidden="true" className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-primary-600/25 blur-3xl" />
         <div className="relative flex h-[4.5rem] items-center justify-between border-b border-white/10 px-5">
           <div className="min-w-0" onClick={() => setSidebarOpen(false)}>
-            <span className="inline-flex rounded-md bg-white px-2 py-1 shadow-sm"><Logo href="/office" variant="compact" /></span>
+            <PortalSidebarLogo href="/office" />
             <p className="mt-1.5 truncate text-xs text-primary-300">Office workspace</p>
           </div>
           <button
