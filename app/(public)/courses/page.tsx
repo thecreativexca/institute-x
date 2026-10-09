@@ -93,7 +93,6 @@ export default async function CoursesPage({ searchParams }: { searchParams: Prom
               hasSearch={!!filters.search?.trim()}
               searchQuery={filters.search}
               hasFilters={!!(filters.category || (filters.level && filters.level !== "all_levels") || filters.duration)}
-              onClearFilters={() => {}}
             />
           )}
         </Container>

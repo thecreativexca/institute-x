@@ -48,7 +48,7 @@ export default async function AboutPage() {
           <div className="about-story-grid">
             <div className="about-image-stack" data-reveal>
               <div className="about-image-main">
-                <Image src="/images/learning-together.jpg" alt="A student participating in a computer classroom" fill sizes="(max-width: 1024px) 100vw, 44vw" className="object-cover" />
+                <Image src="/images/learning-together.jpg" alt="A student participating in a computer classroom" fill loading="eager" sizes="(max-width: 1024px) 100vw, 44vw" className="object-cover" />
               </div>
               <div className="about-image-secondary">
                 <Image src="/images/student-collaboration.jpg" alt="Students learning together around a laptop" fill sizes="(max-width: 768px) 46vw, 20vw" className="object-cover" />

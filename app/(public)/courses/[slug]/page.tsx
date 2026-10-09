@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { getCategoryBySlug } from "@/lib/config/course-filters";
 import {
+  getPublishedCourses,
   getPublishedCourseBySlug,
 } from "@/lib/catalog/public-courses";
 import { siteConfig } from "@/lib/config/site";
@@ -76,7 +77,8 @@ export async function generateMetadata({ params }: CourseDetailPageProps): Promi
  */
 export default async function CourseDetailPage({ params }: CourseDetailPageProps) {
   const { slug } = await params;
-  const course = await getPublishedCourseBySlug(slug);
+  const courses = await getPublishedCourses();
+  const course = courses.find((candidate) => candidate.slug === slug);
 
   if (!course || course.status !== "published") {
     notFound();
@@ -147,6 +149,7 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
               currentCourseSlug={course.slug}
               categorySlug={course.categorySlug}
               tags={course.tags}
+              courses={courses}
             />
           </div>
         </aside>

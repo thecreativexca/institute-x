@@ -75,7 +75,7 @@ export function RequestForm({ type, courses = [], selectedCourse, className }: R
     <form onSubmit={handleSubmit} className={cn("contact-form-shell", className)}>
       <div className="mb-6">
         <p className="text-xs font-extrabold uppercase tracking-[0.18em] !text-amber-300">{type === "enrollment" ? "Admission request" : "Talk to our team"}</p>
-        <h2 className="mt-2 text-2xl font-semibold">{type === "enrollment" ? `Enroll in ${selectedCourse?.name ?? "this course"}` : "How can we help?"}</h2>
+        <h2 className="mt-2 text-2xl font-semibold">{type === "enrollment" ? (selectedCourse ? `Enroll in ${selectedCourse.name}` : "Start an admission enquiry") : "How can we help?"}</h2>
         <p className="mt-2 text-sm">Submit once—your request will appear directly in the admin portal.</p>
       </div>
 
@@ -92,7 +92,7 @@ export function RequestForm({ type, courses = [], selectedCourse, className }: R
             <p className="mt-0.5 font-semibold !text-white">{selectedCourse.name}</p>
           </div>
         ) : courses.length ? (
-          <label className="text-sm font-semibold">Course of interest<select value={courseSlug} onChange={(event) => setCourseSlug(event.target.value)} className={`${fieldClassName} mt-1.5`}><option value="">General guidance</option>{courses.map((course) => <option key={course.slug} value={course.slug}>{course.name}</option>)}</select></label>
+          <label className="text-sm font-semibold">Course of interest<select name="courseSlug" required={type === "enrollment"} value={courseSlug} onChange={(event) => setCourseSlug(event.target.value)} className={`${fieldClassName} mt-1.5`}><option value="">{type === "enrollment" ? "Choose a course" : "General guidance"}</option>{courses.map((course) => <option key={course.slug} value={course.slug}>{course.name}</option>)}</select></label>
         ) : null}
 
         <label className="text-sm font-semibold">Message <span className="font-normal text-white/50">(optional)</span><textarea name="message" rows={4} maxLength={1500} placeholder={type === "enrollment" ? "Tell us the best time to call or ask about fees and batches." : "Tell us what you would like to know."} className={`${fieldClassName} mt-1.5 resize-y`} /></label>

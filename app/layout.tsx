@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${plusJakartaSans.variable} ${sourceSerif.variable} h-full antialiased`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${plusJakartaSans.variable} ${sourceSerif.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">
         {/* Keyboard users can jump straight to content. */}
         <a

@@ -13,14 +13,12 @@ interface CourseEmptyStateProps {
   searchQuery?: string;
   /** Whether any filters are active */
   hasFilters: boolean;
-  /** Callback to clear all filters */
-  onClearFilters: () => void;
 }
 
 /**
  * Empty state shown when no courses match the current filters.
  */
-export function CourseEmptyState({ hasSearch, searchQuery, hasFilters, onClearFilters }: CourseEmptyStateProps) {
+export function CourseEmptyState({ hasSearch, searchQuery, hasFilters }: CourseEmptyStateProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -32,7 +30,6 @@ export function CourseEmptyState({ hasSearch, searchQuery, hasFilters, onClearFi
     params.delete(COURSE_FILTER_PARAMS.duration);
     params.delete(COURSE_FILTER_PARAMS.sort);
     router.push(`/courses?${params.toString()}`);
-    onClearFilters();
   };
 
   return (

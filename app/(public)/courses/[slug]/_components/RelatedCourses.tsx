@@ -1,22 +1,23 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getCategoryBySlug } from "@/lib/config/course-filters";
-import { CATALOG_COURSES } from "@/lib/config/catalog";
 import type { CatalogCourse } from "@/lib/config/catalog";
 
 interface RelatedCoursesProps {
   currentCourseSlug: string;
   categorySlug: string;
   tags: string[];
+  courses: readonly CatalogCourse[];
 }
 
 function getRelatedCourses(
   currentSlug: string,
   categorySlug: string,
-  tags: string[]
+  tags: string[],
+  courses: readonly CatalogCourse[]
 ): CatalogCourse[] {
   // First priority: same category, excluding current
-  const sameCategory = CATALOG_COURSES.filter(
+  const sameCategory = courses.filter(
     (c) => c.categorySlug === categorySlug && c.slug !== currentSlug && c.status === "published"
   );
 
@@ -25,7 +26,7 @@ function getRelatedCourses(
   }
 
   // Second priority: matching tags
-  const tagMatches = CATALOG_COURSES.filter(
+  const tagMatches = courses.filter(
     (c) =>
       c.slug !== currentSlug &&
       c.status === "published" &&
@@ -44,7 +45,7 @@ function getRelatedCourses(
   }
 
   // Fallback: other published courses
-  const fallback = CATALOG_COURSES.filter(
+  const fallback = courses.filter(
     (c) => c.slug !== currentSlug && c.status === "published"
   );
 
@@ -57,8 +58,8 @@ function getRelatedCourses(
   return combined.slice(0, 4);
 }
 
-export function RelatedCourses({ currentCourseSlug, categorySlug, tags }: RelatedCoursesProps) {
-  const relatedCourses = getRelatedCourses(currentCourseSlug, categorySlug, tags);
+export function RelatedCourses({ currentCourseSlug, categorySlug, tags, courses }: RelatedCoursesProps) {
+  const relatedCourses = getRelatedCourses(currentCourseSlug, categorySlug, tags, courses);
 
   if (relatedCourses.length === 0) {
     return null;
@@ -76,7 +77,7 @@ export function RelatedCourses({ currentCourseSlug, categorySlug, tags }: Relate
               href={`/courses/${course.slug}`}
               className="flex items-center gap-3 rounded-xl border border-primary-100 bg-white p-3 transition-colors hover:border-primary-200 hover:bg-primary-50/50"
             >
-              <div className="h-16 w-16 flex-shrink-0 rounded-lg bg-surface-inset flex items-center justify-center overflow-hidden">
+              <div className="relative h-16 w-16 flex-shrink-0 rounded-lg bg-surface-inset flex items-center justify-center overflow-hidden">
                 {course.thumbnailUrl ? (
                   <Image
                     src={course.thumbnailUrl}

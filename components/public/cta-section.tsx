@@ -15,7 +15,7 @@ export function CtaSection() {
             <p>Explore the current catalog, review the full syllabus and choose the course that fits your goal. Send a request and our admissions team will guide you.</p>
             <div>
               <Link href="/courses" className="education-amber-button">Explore courses <ArrowRight className="h-4 w-4" /></Link>
-              <Link href="/contact" className="education-outline-button">Get course guidance</Link>
+              <Link href="/admission" className="education-outline-button">Start admission enquiry</Link>
             </div>
           </div>
           <div className="education-cta-image">

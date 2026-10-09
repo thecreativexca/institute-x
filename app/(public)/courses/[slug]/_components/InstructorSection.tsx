@@ -6,33 +6,7 @@ interface InstructorSectionProps {
 }
 
 export function InstructorSection({ instructor }: InstructorSectionProps) {
-  if (!instructor) {
-    return (
-      <section aria-labelledby="instructor-heading" className="space-y-4">
-        <h2 id="instructor-heading" className="text-2xl font-semibold text-slate-900">
-          Instructor
-        </h2>
-        <div className="rounded-2xl border border-primary-100 bg-primary-50/60 p-8 text-center">
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            className="mx-auto h-12 w-12 text-slate-300"
-          >
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
-          <p className="mt-4 text-slate-600">
-            Instructor information will be available soon.
-          </p>
-        </div>
-      </section>
-    );
-  }
+  if (!instructor) return null;
 
   return (
     <section aria-labelledby="instructor-heading" className="space-y-4">

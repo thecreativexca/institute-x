@@ -21,6 +21,46 @@ function getCatalogFallbackCourses(): CatalogCourse[] {
   }));
 }
 
+const CANONICAL_CATEGORY_SLUGS = new Set([
+  "basic-office-skills",
+  "web-programming",
+  "creative-digital",
+  "communication-development",
+  "healthcare-wellness",
+]);
+
+/**
+ * Older/imported course records can reference categories that no longer exist
+ * or use a legacy slug. Keep public filtering useful without mutating office
+ * data by mapping the category name/slug and course content to the five public
+ * catalog groups.
+ */
+function resolvePublicCategorySlug(input: {
+  categorySlug?: string;
+  categoryName?: string;
+  courseName: string;
+  shortDescription?: string;
+  tags?: string[];
+}): string {
+  if (input.categorySlug && CANONICAL_CATEGORY_SLUGS.has(input.categorySlug)) {
+    return input.categorySlug;
+  }
+
+  const text = [
+    input.categorySlug,
+    input.categoryName,
+    input.courseName,
+    input.shortDescription,
+    ...(input.tags ?? []),
+  ].filter(Boolean).join(" ").toLowerCase();
+
+  if (/health|medical|yoga|wellness|meditation/.test(text)) return "healthcare-wellness";
+  if (/spoken|english|communication|personality|interview|soft skill/.test(text)) return "communication-development";
+  if (/graphic|design|marketing|seo|youtube|shopify|dropship|freelanc|content|social media/.test(text)) return "creative-digital";
+  if (/basic computer|office|typing|data entry|tally|account|business application|microsoft/.test(text)) return "basic-office-skills";
+  return "web-programming";
+}
+
 /**
  * Public catalog queries (Phase 17, req. 74–76). MongoDB is authoritative:
  * only PUBLISHED (+displayed) courses are returned. When the database is
@@ -51,8 +91,8 @@ export async function getPublishedCourses(): Promise<CatalogCourse[]> {
       return getCatalogFallbackCourses();
     }
 
-    const categorySlugById = new Map(
-      categories.map((c) => [String(c._id), c.slug])
+    const categoryById = new Map(
+      categories.map((c) => [String(c._id), { slug: c.slug, name: c.name }])
     );
 
     const courseIds = courses.map((c) => c._id);
@@ -91,7 +131,13 @@ export async function getPublishedCourses(): Promise<CatalogCourse[]> {
         slug: course.slug,
         _id: String(course._id),
         name: course.name,
-        categorySlug: categorySlugById.get(String(course.category)) ?? "",
+        categorySlug: resolvePublicCategorySlug({
+          categorySlug: categoryById.get(String(course.category))?.slug,
+          categoryName: categoryById.get(String(course.category))?.name,
+          courseName: course.name,
+          shortDescription: course.shortDescription,
+          tags: course.tags,
+        }),
         shortDescription: course.shortDescription ?? "",
         description: course.description ?? "",
         level: course.level,

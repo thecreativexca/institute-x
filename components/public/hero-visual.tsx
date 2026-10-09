@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Award, CheckCircle2, Sparkles, Users, Star } from "lucide-react";
+import { Award, CheckCircle2, Users, Star } from "lucide-react";
 
 /**
  * Enhanced Hero visual — displays authentic institute campus reception,

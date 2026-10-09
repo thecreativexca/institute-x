@@ -51,10 +51,12 @@ export const siteConfig = {
 
   navigation: [
     { label: "Home", href: "/" },
-    { label: "Courses", href: "/courses" },
     { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
+    { label: "Courses", href: "/courses" },
+    { label: "Internship", href: "/internship" },
+    { label: "Admission", href: "/admission" },
     { label: "FAQ", href: "/faq" },
+    { label: "Contact", href: "/contact" },
   ],
 } as const;
 

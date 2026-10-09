@@ -4,6 +4,7 @@ import { CtaSection } from "@/components/public/cta-section";
 import { CategoryGrid } from "@/components/public/category-grid";
 import { HeroSection } from "@/components/public/hero-section";
 import { HowLearningWorksSection } from "@/components/public/how-learning-works-section";
+import { InternshipSection } from "@/components/public/internship-section";
 import { PopularCoursesSection } from "@/components/public/popular-courses-section";
 import { TrustBar } from "@/components/public/trust-bar";
 import { TrustBenefitsSection } from "@/components/public/trust-benefits-section";
@@ -41,9 +42,10 @@ export default async function HomePage() {
         totalLessons={totalLessons}
       />
       <TrustBar />
-      <CategoryGrid />
+      <CategoryGrid courses={courses} />
       <PopularCoursesSection courses={courses} />
       <TrustBenefitsSection />
+      <InternshipSection />
       <WhyChooseUsSection />
       <HowLearningWorksSection />
       <CtaSection />
