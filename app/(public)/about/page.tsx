@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Blocks, Compass, Mail, MonitorPlay, Phone, ShieldCheck } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Blocks, CheckCircle2, Code2, Compass, Eye, FileSpreadsheet, Gamepad2, Handshake, Laptop2, Mail, Megaphone, MonitorPlay, Palette, Phone, ShieldCheck, ShoppingCart, Target, Terminal } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
+import { InteriorHero } from "@/components/public/interior-hero";
 import { getPublishedCourses } from "@/lib/catalog/public-courses";
 import { siteConfig } from "@/lib/config/site";
 
@@ -21,6 +22,26 @@ const principles = [
   { icon: ShieldCheck, title: "Clarity at every decision", body: "Duration, fee, curriculum and requirements are visible before you request admission." },
 ];
 
+const skillAreas = [
+  { icon: Code2, title: "Web development", body: "Build technical foundations and understand how modern websites are created." },
+  { icon: Terminal, title: "Programming", body: "Develop logical thinking through code, problem-solving and structured practice." },
+  { icon: Palette, title: "Graphic design", body: "Develop visual communication skills through tools, composition and practical outputs." },
+  { icon: Megaphone, title: "Digital marketing", body: "Learn the channels and working methods behind modern online promotion." },
+  { icon: ShieldCheck, title: "Cyber security", body: "Explore safer digital practices and core security concepts through structured learning." },
+  { icon: ShoppingCart, title: "E-commerce", body: "Understand online stores, digital selling and practical commerce workflows." },
+  { icon: Handshake, title: "Freelancing", body: "Learn how independent project work is planned, communicated and delivered." },
+  { icon: Laptop2, title: "Computer fundamentals", body: "Build confidence with computers, files, internet use and core digital tasks." },
+  { icon: FileSpreadsheet, title: "Office skills", body: "Work more confidently with everyday productivity and business tools." },
+  { icon: Gamepad2, title: "Game development", body: "Explore interactive thinking, game logic and the building blocks of digital experiences." },
+];
+
+const learningJourney = [
+  { title: "Learn", body: "Follow clear lessons and understand the foundations." },
+  { title: "Practice", body: "Apply each idea through focused tasks and exercises." },
+  { title: "Build", body: "Turn practice into projects and demonstrable work." },
+  { title: "Grow", body: "Use feedback and continued learning to move forward." },
+];
+
 export default async function AboutPage() {
   const courses = await getPublishedCourses();
   const totalModules = courses.reduce((total, course) => total + course.syllabus.length, 0);
@@ -28,20 +49,15 @@ export default async function AboutPage() {
 
   return (
     <>
-      <section className="public-page-hero">
-        <Container>
-          <div className="public-page-hero-grid">
-            <div data-reveal>
-              <span className="public-kicker">About {siteConfig.shortName}</span>
-              <h1 className="public-page-title mt-8">Learning with <em>direction.</em></h1>
-            </div>
-            <p className="public-page-intro" data-reveal>
-              We make career, digital and creative learning easier to navigate—from choosing the right course to
-              submitting an admission request and completing each lesson.
-            </p>
-          </div>
-        </Container>
-      </section>
+      <InteriorHero
+        kicker={`About ${siteConfig.shortName}`}
+        title={<>Skills that prepare you for the <em>real world.</em></>}
+        description="Build practical digital, creative and professional skills through structured learning designed to turn understanding into useful ability."
+        imageSrc="/images/hero-students-learning.jpg"
+        imageAlt="Students learning practical technology skills together"
+        imageNote="Learn with direction. Build with purpose."
+        actions={[{ label: "Explore Courses", href: "/courses" }, { label: "Contact Us", href: "/contact", variant: "outline" }]}
+      />
 
       <section className="about-story">
         <Container>
@@ -68,6 +84,25 @@ export default async function AboutPage() {
         </Container>
       </section>
 
+      <section className="about-purpose">
+        <Container>
+          <div className="about-purpose-grid">
+            <article data-reveal>
+              <Target className="h-6 w-6" aria-hidden="true" />
+              <span>Our mission</span>
+              <h2>Make useful skills easier to learn and apply.</h2>
+              <p>We organise career-focused learning into understandable steps, with practical work that helps learners move from knowing to doing.</p>
+            </article>
+            <article data-reveal>
+              <Eye className="h-6 w-6" aria-hidden="true" />
+              <span>Our vision</span>
+              <h2>A clearer path from curiosity to capability.</h2>
+              <p>We want students from different starting points to see what they can learn, how they can practise it and where that skill can take them next.</p>
+            </article>
+          </div>
+        </Container>
+      </section>
+
       <section className="method-section">
         <Container className="py-20 sm:py-28">
           <div className="method-grid">
@@ -85,6 +120,46 @@ export default async function AboutPage() {
                 </li>
               ))}
             </ol>
+          </div>
+        </Container>
+      </section>
+
+      <section className="about-skills">
+        <Container>
+          <div className="education-section-heading">
+            <div><span className="public-kicker">Skills we focus on</span><h2>Learning shaped around real digital work.</h2></div>
+            <p>Course availability changes with the published catalog. These focus areas show the kind of practical, job-relevant capabilities the institute develops.</p>
+          </div>
+          <div className="about-skills-grid">
+            {skillAreas.map(({ icon: Icon, title, body }) => (
+              <article key={title} data-reveal><Icon className="h-6 w-6" aria-hidden="true" /><h3>{title}</h3><p>{body}</p></article>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="about-learning-journey">
+        <Container>
+          <span className="public-kicker">Practical learning approach</span>
+          <div className="about-journey-heading"><h2>Learn → Practice → Build → Grow</h2><p>A simple rhythm keeps learning purposeful. Each stage builds on the one before it, so progress feels visible and manageable.</p></div>
+          <ol>
+            {learningJourney.map((step, index) => (
+              <li key={step.title} data-reveal><span>0{index + 1}</span><h3>{step.title}</h3><p>{step.body}</p>{index < learningJourney.length - 1 ? <ArrowRight aria-hidden="true" /> : null}</li>
+            ))}
+          </ol>
+        </Container>
+      </section>
+
+      <section className="about-benefits">
+        <Container>
+          <div className="about-benefits-image" data-reveal><Image src="/images/students-classroom.jpg" alt="Students building practical computer skills in a classroom" fill sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover" /></div>
+          <div data-reveal>
+            <span className="public-kicker">Built around the learner</span>
+            <h2>Support for every stage of the learning journey.</h2>
+            <ul>
+              {["Course information before admission", "A structured student learning portal", "Progress, resources and submissions in one place", "Clear ways to ask for academic or technical support"].map((benefit) => <li key={benefit}><CheckCircle2 className="h-5 w-5" aria-hidden="true" />{benefit}</li>)}
+            </ul>
+            <Link href="/courses" className="public-button-dark mt-8">Explore courses <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></Link>
           </div>
         </Container>
       </section>

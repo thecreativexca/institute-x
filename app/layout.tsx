@@ -31,8 +31,7 @@ export const metadata: Metadata = {
     description: siteConfig.description,
   },
   icons: {
-    icon: siteConfig.logo,
-    apple: siteConfig.logo,
+    apple: "/icon.png",
   },
 };
 

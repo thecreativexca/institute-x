@@ -28,6 +28,8 @@ export function RequestForm({ type, courses = [], selectedCourse, className }: R
 
     const form = event.currentTarget;
     const data = new FormData(form);
+    const reason = String(data.get("reason") ?? "").trim();
+    const message = String(data.get("message") ?? "").trim();
     try {
       const response = await fetch("/api/requests", {
         method: "POST",
@@ -38,7 +40,7 @@ export function RequestForm({ type, courses = [], selectedCourse, className }: R
           phone: data.get("phone"),
           email: data.get("email"),
           courseSlug: (selectedCourse?.slug ?? courseSlug) || undefined,
-          message: data.get("message"),
+          message: reason ? `${reason}${message ? `: ${message}` : ""}` : message,
           sourcePath: window.location.pathname,
           website: data.get("website"),
         }),
@@ -62,7 +64,7 @@ export function RequestForm({ type, courses = [], selectedCourse, className }: R
         </span>
         <h2 className="mt-5 text-2xl font-semibold">Request received</h2>
         <p className="mt-2 max-w-xl leading-7">
-          Our admissions team will review it and contact you on the phone number you provided.
+          Our team will review it and contact you on the phone number you provided.
         </p>
         <button type="button" onClick={() => setSubmitted(false)} className="mt-6 text-sm font-bold text-amber-300 hover:text-amber-200">
           Send another request
@@ -93,6 +95,10 @@ export function RequestForm({ type, courses = [], selectedCourse, className }: R
           </div>
         ) : courses.length ? (
           <label className="text-sm font-semibold">Course of interest<select name="courseSlug" required={type === "enrollment"} value={courseSlug} onChange={(event) => setCourseSlug(event.target.value)} className={`${fieldClassName} mt-1.5`}><option value="">{type === "enrollment" ? "Choose a course" : "General guidance"}</option>{courses.map((course) => <option key={course.slug} value={course.slug}>{course.name}</option>)}</select></label>
+        ) : null}
+
+        {type === "contact" ? (
+          <label className="text-sm font-semibold">Reason for contact<select name="reason" required defaultValue="" className={`${fieldClassName} mt-1.5`}><option value="" disabled>Choose a reason</option><option value="Course enquiry">Course enquiry</option><option value="Admission enquiry">Admission enquiry</option><option value="Internship enquiry">Internship enquiry</option><option value="Technical support">Technical support</option><option value="General enquiry">General enquiry</option></select></label>
         ) : null}
 
         <label className="text-sm font-semibold">Message <span className="font-normal text-white/50">(optional)</span><textarea name="message" rows={4} maxLength={1500} placeholder={type === "enrollment" ? "Tell us the best time to call or ask about fees and batches." : "Tell us what you would like to know."} className={`${fieldClassName} mt-1.5 resize-y`} /></label>
