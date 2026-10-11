@@ -678,7 +678,8 @@ export async function createLessonAction(
       title: data.title,
       content: data.description || undefined,
       videoProvider: video ? "youtube" : undefined,
-      videoUrl: video ? video.watchUrl : undefined,
+      // Preserve the submitted URL; normalize only when constructing a player URL.
+      videoUrl: video ? data.youtubeUrl : undefined,
       durationMinutes: data.durationMinutes,
       isPreview: data.isPreview,
       isPublished: data.isPublished,
@@ -745,7 +746,8 @@ export async function updateLessonAction(
           };
         }
         lesson.videoProvider = "youtube";
-        lesson.videoUrl = video.watchUrl;
+        // Preserve the submitted URL; normalize only when constructing a player URL.
+        lesson.videoUrl = parsed.data.youtubeUrl;
       }
     }
     if (parsed.data.durationMinutes !== undefined)

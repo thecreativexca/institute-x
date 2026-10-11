@@ -412,7 +412,8 @@ function lessonDocument(courseId: Types.ObjectId, moduleId: Types.ObjectId, less
         ? [lesson.description.trim(), lesson.textContent].filter(Boolean).join("\n\n")
         : lesson.description || undefined,
     videoProvider: youtube ? "youtube" : undefined,
-    videoUrl: youtube?.watchUrl,
+    // Preserve the imported URL; normalize only when constructing a player URL.
+    videoUrl: youtube ? lesson.youtubeUrl : undefined,
     pdfUrl: lesson.type === "pdf" ? lesson.pdfUrl : undefined,
     durationMinutes: lesson.durationMinutes,
     isPreview: lesson.isPreview,

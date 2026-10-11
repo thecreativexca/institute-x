@@ -25,10 +25,19 @@
 *.pem
 
 # debug
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+
+# local diagnostic reports
+/bson-tree.txt
+/eslint-*.txt
+/head-package-dump.txt
+/lint-*.txt
+/tmp-*.txt
+/tsc-*.txt
 
 # env files (can opt-in for committing if needed)
 .env*

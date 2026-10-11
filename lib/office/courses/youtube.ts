@@ -72,9 +72,9 @@ export function parseYouTubeVideoId(rawUrl: string): string | null {
   return VIDEO_ID_PATTERN.test(videoId) ? videoId : null;
 }
 
-/** Builds the privacy-enhanced embed URL for a video id. */
+/** Builds the canonical embed URL for a video id. */
 export function buildYouTubeEmbedUrl(videoId: string): string {
-  return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0`;
+  return `https://www.youtube.com/embed/${videoId}?rel=0&playsinline=1`;
 }
 
 /** Builds the canonical watch URL for a video id. */

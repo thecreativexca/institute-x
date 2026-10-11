@@ -621,8 +621,9 @@ function LessonModal({
             <iframe
               src={buildYouTubeEmbedUrl(videoId)}
               title="Lesson video preview"
-              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
+              referrerPolicy="strict-origin-when-cross-origin"
               className="h-full w-full"
             />
           </div>
@@ -857,8 +858,9 @@ function LessonRow({
               <iframe
                 src={buildYouTubeEmbedUrl(lesson.videoId)}
                 title={`${lesson.title} video preview`}
-                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
+                referrerPolicy="strict-origin-when-cross-origin"
                 className="h-full w-full"
               />
             </div>
