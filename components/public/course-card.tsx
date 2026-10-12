@@ -28,7 +28,7 @@ export function CourseCard({ course }: CourseCardProps) {
         {course.shortDescription ? <p className="course-card-v2-description">{course.shortDescription}</p> : null}
 
         <div className="course-card-v2-meta">
-          <span><Clock3 className="h-4 w-4" aria-hidden="true" /> {course.durationWeeks ? `${course.durationWeeks} weeks` : "Flexible"}</span>
+          <span><Clock3 className="h-4 w-4" aria-hidden="true" /> {course.durationWeeks ? `${course.durationWeeks} months` : "Flexible"}</span>
           <span><GraduationCap className="h-4 w-4" aria-hidden="true" /> {levelLabels[course.level]}</span>
         </div>
 

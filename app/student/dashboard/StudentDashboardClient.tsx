@@ -359,7 +359,7 @@ export function StudentDashboardClient({
                           <h4 className="font-medium text-slate-900 truncate">{course.course.name}</h4>
                           <p className="text-sm text-slate-500">{course.course.level}</p>
                           <div className="mt-1 flex items-center gap-2">
-                            <Badge variant="neutral">{course.course.durationWeeks ? `${course.course.durationWeeks} weeks` : "Self-paced"}</Badge>
+                            <Badge variant="neutral">{course.course.durationWeeks ? `${course.course.durationWeeks} months` : "Self-paced"}</Badge>
                             {getStatusBadge(course.status)}
                           </div>
                         </div>

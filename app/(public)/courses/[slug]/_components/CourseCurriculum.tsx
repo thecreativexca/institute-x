@@ -55,19 +55,19 @@ function ModuleItem({ module, index }: { module: CatalogModule; index: number })
         {
           value: module.slug,
           trigger: (
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-semibold text-lg flex-shrink-0">
+            <div className="course-module-trigger">
+              <div className="course-module-copy">
+                <span className="course-module-number">
                   {index + 1}
                 </span>
                 <div className="min-w-0">
-                  <p className="font-semibold text-slate-900 truncate">{module.title}</p>
+                  <p className="course-module-title">{module.title}</p>
                   {module.description && (
-                    <p className="text-sm text-slate-500 truncate">{module.description}</p>
+                    <p className="course-module-description">{module.description}</p>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-4 text-sm text-slate-500 flex-shrink-0">
+              <div className="course-module-meta">
                 <span>{totalLessons} lessons</span>
                 {previewLessons > 0 && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">
@@ -96,7 +96,7 @@ export function CourseCurriculum({ syllabus }: CourseCurriculumProps) {
   }
 
   return (
-    <section aria-labelledby="curriculum-heading" className="space-y-4">
+    <section id="course-curriculum" aria-labelledby="curriculum-heading" className="space-y-4 scroll-mt-28">
       <h2 id="curriculum-heading" className="text-2xl font-semibold text-slate-900">
         Course Curriculum
       </h2>
@@ -105,7 +105,7 @@ export function CourseCurriculum({ syllabus }: CourseCurriculumProps) {
         {syllabus.reduce((acc, m) => acc + m.lessons.length, 0)} lesson{syllabus.reduce((acc, m) => acc + m.lessons.length, 0) !== 1 ? "s" : ""}
         {syllabus.some((m) => m.lessons.some((l) => l.isPreview)) && " • Preview lessons available"}
       </p>
-      <div className="space-y-3">
+      <div className="course-curriculum-list">
         {syllabus.map((module, index) => (
           <ModuleItem key={module.slug} module={module} index={index} />
         ))}

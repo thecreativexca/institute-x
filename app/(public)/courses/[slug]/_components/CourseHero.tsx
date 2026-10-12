@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, Award, BookOpenCheck, GraduationCap, PlayCircle } from "lucide-react";
 
 import type { CatalogCategory, CatalogCourse } from "@/lib/config/catalog";
 import { getCourseImage } from "@/lib/utils/course-images";
@@ -18,34 +18,33 @@ export function CourseHero({ course, category }: CourseHeroProps) {
   return (
     <header className="course-detail-hero">
       <div className="course-detail-copy" data-reveal>
-        <div>
-          <div className="course-detail-badges">
-            {category ? <span>{category.name}</span> : null}
-            <span>{levelLabels[course.level]}</span>
-            <span>{course.durationWeeks} weeks</span>
-          </div>
-          <h1 className="mt-8">{course.name}</h1>
-          <p className="mt-7 text-base sm:text-lg">{course.shortDescription}</p>
+        <div className="course-detail-eyebrow">
+          <span><GraduationCap aria-hidden="true" /> {category?.name ?? "Professional course"}</span>
+          <span>Admissions open</span>
         </div>
-
-        <div>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="#enrollment-request" className="public-button">
-              Request admission
-              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-            <Link href="/contact" className="public-button-line">Ask a question</Link>
-          </div>
-          <div className="course-detail-meta">
-            <div><strong>{course.syllabus.length}</strong><span>Modules</span></div>
-            <div><strong>{totalLessons}</strong><span>Lessons</span></div>
-            <div><strong>{levelLabels[course.level]}</strong><span>Level</span></div>
-            <div><strong>{course.learningMode}</strong><span>Mode</span></div>
-          </div>
+        <h1>{course.name}</h1>
+        <p className="course-detail-lead">{course.shortDescription}</p>
+        <div className="course-detail-actions">
+          <Link href="#enrollment-request" className="course-primary-cta">
+            Request admission <ArrowRight aria-hidden="true" />
+          </Link>
+          <Link href="#course-curriculum" className="course-secondary-cta">
+            <PlayCircle aria-hidden="true" /> View curriculum
+          </Link>
+        </div>
+        <div className="course-detail-trust">
+          <span><Award aria-hidden="true" /> Practical curriculum</span>
+          <span><BookOpenCheck aria-hidden="true" /> Guided learning</span>
         </div>
       </div>
       <div className="course-detail-media" data-reveal>
-        <Image src={image} alt={`${course.name} course`} fill priority sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover" />
+        <Image src={image} alt={`${course.name} course`} fill priority sizes="(max-width: 1280px) 100vw, 1200px" className="object-contain" />
+      </div>
+      <div className="course-detail-meta" aria-label="Course summary">
+        <div><span>01</span><strong>{course.syllabus.length}</strong><small>Modules</small></div>
+        <div><span>02</span><strong>{totalLessons}</strong><small>Lessons</small></div>
+        <div><span>03</span><strong>{levelLabels[course.level]}</strong><small>Level</small></div>
+        <div><span>04</span><strong>{course.learningMode}</strong><small>Mode</small></div>
       </div>
     </header>
   );

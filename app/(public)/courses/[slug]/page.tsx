@@ -87,8 +87,8 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
   const category = getCategoryBySlug(course.categorySlug);
 
   return (
+    <div className="course-detail-page">
     <Container className="course-detail-shell">
-      {/* Breadcrumb */}
       <Breadcrumb
         items={[
           { label: "Home", href: "/" },
@@ -96,22 +96,24 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
           { label: category?.name ?? "Courses", href: `/courses?category=${course.categorySlug}` },
           { label: course.name, href: `/courses/${course.slug}`, current: true },
         ]}
-        className="mb-8"
+        className="course-detail-breadcrumb"
       />
 
-      {/* Hero Section */}
       <CourseHero course={course} category={category} />
 
-      {/* Main Content Grid */}
+      <nav className="course-detail-nav" aria-label="Course page sections">
+        <a href="#course-overview">Overview</a>
+        <a href="#learning-outcomes">What you&rsquo;ll learn</a>
+        <a href="#course-curriculum">Curriculum</a>
+        <a href="#enrollment-request">Admission</a>
+      </nav>
+
       <div className="course-content-grid">
-        {/* Main Content - 2/3 width */}
         <div className="course-content-main">
-          {/* About This Course */}
-          <section aria-labelledby="about-heading" className="space-y-4">
-            <h2 id="about-heading" className="text-2xl font-semibold text-slate-900">
-              About This Course
-            </h2>
-            <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed">
+          <section id="course-overview" aria-labelledby="about-heading" className="course-about-card scroll-mt-32">
+            <span className="course-section-kicker">Course overview</span>
+            <h2 id="about-heading">Build practical skills, one clear step at a time</h2>
+            <div className="course-about-copy">
               <p>{course.description}</p>
             </div>
           </section>
@@ -138,13 +140,9 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
           <CourseFAQ faqs={course.faqs} />
         </div>
 
-        {/* Sidebar - 1/3 width */}
         <aside>
-          <div className="sticky top-24 space-y-6">
-            {/* Course Meta & Enrollment Card */}
+          <div className="course-sidebar-stack">
             <CourseMeta course={course} category={category} />
-
-            {/* Related Courses */}
             <RelatedCourses
               currentCourseSlug={course.slug}
               categorySlug={course.categorySlug}
@@ -155,8 +153,8 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
         </aside>
       </div>
 
-      {/* Bottom CTA Section */}
       <CourseCTA course={course} />
     </Container>
+    </div>
   );
 }

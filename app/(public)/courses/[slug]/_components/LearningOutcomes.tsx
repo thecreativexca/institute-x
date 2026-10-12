@@ -8,7 +8,7 @@ export function LearningOutcomes({ outcomes }: LearningOutcomesProps) {
   }
 
   return (
-    <section aria-labelledby="outcomes-heading" className="space-y-4">
+    <section id="learning-outcomes" aria-labelledby="outcomes-heading" className="space-y-4 scroll-mt-32">
       <h2 id="outcomes-heading" className="text-2xl font-semibold text-slate-900">
         What You&rsquo;ll Learn
       </h2>

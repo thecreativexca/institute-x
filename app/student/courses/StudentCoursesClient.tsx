@@ -163,7 +163,7 @@ export function StudentCoursesClient({ courses, activeFilter, certificateCourseI
                     {course.course.durationWeeks && (
                       <span className="flex items-center gap-1">
                         <Clock className="h-3.5 w-3.5" aria-hidden="true" />
-                        {course.course.durationWeeks} weeks
+                        {course.course.durationWeeks} months
                       </span>
                     )}
                   </div>

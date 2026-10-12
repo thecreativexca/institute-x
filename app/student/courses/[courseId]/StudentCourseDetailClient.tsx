@@ -115,7 +115,7 @@ export function StudentCourseDetailClient({ course, enrollment, modules = [], ce
               {course.durationWeeks && (
                 <span className="flex items-center gap-1.5">
                   <Calendar className="h-4 w-4" aria-hidden="true" />
-                  {course.durationWeeks} weeks
+                  {course.durationWeeks} months
                 </span>
               )}
               <span className="flex items-center gap-1.5">

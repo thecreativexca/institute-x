@@ -19,7 +19,7 @@ export const siteConfig = {
     "Creative X Tycoon offers structured, career-focused training in technology, design, digital marketing, healthcare and professional development.",
   logo: "/assets/creative-x-tycoon-logo.png",
   /** Path to logo asset inside /public. Replace with client's logo. */
-  url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+  url: process.env.NEXT_PUBLIC_APP_URL ?? "https://www.thecx.in",
 
   contact: {
     email: "creativexportal.edu@gmail.com",

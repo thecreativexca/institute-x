@@ -5,15 +5,12 @@ import { destroySession } from "@/lib/auth/session";
 export async function POST() {
   try {
     await destroySession();
-    return NextResponse.json(
-      { success: true, message: "Logged out successfully" },
-      { status: 200 }
-    );
   } catch (error) {
     console.error("Logout error:", error);
-    return NextResponse.json(
-      { success: false, error: "An unexpected error occurred." },
-      { status: 500 }
-    );
   }
+
+  // This endpoint is submitted by regular HTML forms in the public header
+  // and student portal. A 303 changes the POST into a clean GET and keeps
+  // the destination independent from a localhost/deployment request origin.
+  return NextResponse.redirect("https://www.thecx.in/", 303);
 }

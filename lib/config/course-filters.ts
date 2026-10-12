@@ -39,9 +39,9 @@ export const COURSE_DURATION_OPTIONS: readonly {
   value: CatalogCourse["durationBucket"];
   label: string;
 }[] = [
-  { value: "short", label: "Short Courses (≤8 weeks)" },
-  { value: "medium", label: "Medium Duration (9–16 weeks)" },
-  { value: "long", label: "Long Duration (17+ weeks)" },
+  { value: "short", label: "Short Courses (≤8 months)" },
+  { value: "medium", label: "Medium Duration (9–16 months)" },
+  { value: "long", label: "Long Duration (17+ months)" },
 ] as const;
 
 /** Category filter options (includes "All Courses") */

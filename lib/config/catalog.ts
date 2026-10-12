@@ -64,7 +64,7 @@ export interface CatalogCourse {
   level: CourseLevel;
   /** Course status - only published courses are publicly accessible */
   status: CourseStatus;
-  /** Duration in weeks */
+  /** Course duration value. Legacy property name; displayed as months. */
   durationWeeks: number;
   /** Duration bucket for filtering */
   durationBucket: CourseDuration;

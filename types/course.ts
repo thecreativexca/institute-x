@@ -48,7 +48,7 @@ export interface CourseSummary {
   level: CourseLevel;
   status: CourseStatus;
   thumbnailUrl?: string;
-  /** Course duration in weeks */
+  /** Course duration in months (legacy property name). */
   durationWeeks?: number;
   /** Course price in INR */
   price?: number;
@@ -68,7 +68,7 @@ export interface CatalogCourseData {
   level: CourseLevel;
   status: CourseStatus;
   thumbnailUrl?: string;
-  /** Course duration in weeks */
+  /** Course duration in months (legacy property name). */
   durationWeeks?: number;
   /** Course price in INR */
   price?: number;

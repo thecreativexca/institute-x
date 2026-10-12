@@ -307,7 +307,7 @@ export function CourseForm({ mode, courseId, categories, initial, canSubmit }: C
           </FieldShell>
 
           <div className="grid gap-4 sm:grid-cols-3">
-            <FieldShell label="Duration (weeks)" id="durationWeeks" optionalLabel="optional">
+            <FieldShell label="Duration (months)" id="durationWeeks" optionalLabel="optional">
               <input
                 id="durationWeeks"
                 name="durationWeeks"
