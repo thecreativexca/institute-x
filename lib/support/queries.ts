@@ -2,7 +2,6 @@ import { connectDB } from "@/lib/db/connect";
 import { SupportTicket } from "@/models/SupportTicket";
 import { User } from "@/models/User";
 import { Course } from "@/models/Course";
-import { Enrollment } from "@/models/Enrollment";
 import { Types } from "mongoose";
 import {
   OfficeTicketSummary,
@@ -17,7 +16,7 @@ import {
   StudentSupportListResult,
   SupportStats,
 } from "./dto";
-import { TICKET_STATUSES, TICKET_PRIORITIES, TICKET_CATEGORIES, type TicketStatus, type TicketPriority, type TicketCategory } from "@/lib/constants";
+import { TICKET_STATUSES, TICKET_PRIORITIES } from "@/lib/constants";
 
 function toObjectId(id: string): Types.ObjectId {
   return new Types.ObjectId(id);
@@ -84,8 +83,9 @@ export async function getOfficeSupportTickets(
   sort: SupportSortOptions,
   pagination: PaginationParams,
   userId: string,
-  role: string
+  _role: string
 ): Promise<SupportListResult> {
+  void _role;
   await connectDB();
 
   const { page, limit } = pagination;
@@ -100,7 +100,11 @@ export async function getOfficeSupportTickets(
       .select("_id")
       .lean();
     const studentIds = students.map((s) => s._id);
-    query.student = { $in: studentIds };
+    query.$or = [
+      { ticketNumber: regex },
+      { subject: regex },
+      { student: { $in: studentIds } },
+    ];
   }
 
   if (filters.status && filters.status !== "all") {
@@ -256,9 +260,11 @@ export async function getStudentSupportTickets(
 
 export async function getOfficeTicketDetail(
   ticketId: string,
-  userId: string,
-  role: string
+  _userId: string,
+  _role: string
 ): Promise<OfficeTicketDetail | null> {
+  void _userId;
+  void _role;
   await connectDB();
 
   const ticket = await SupportTicket.findById(toObjectId(ticketId))

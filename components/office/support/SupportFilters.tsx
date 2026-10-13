@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,13 +34,21 @@ export function SupportFilters({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [search, setSearch] = useState(initialFilters.search ?? "");
+  const [status, setStatus] = useState(initialFilters.status ?? "all");
+  const [priority, setPriority] = useState(initialFilters.priority ?? "all");
+  const [category, setCategory] = useState(initialFilters.category ?? "all");
+  const [courseId, setCourseId] = useState(initialFilters.courseId ?? "all");
+  const [assignedToMe, setAssignedToMe] = useState(initialFilters.assignedToMe ?? false);
+  const [unassigned, setUnassigned] = useState(initialFilters.unassigned ?? false);
+  const [sort, setSort] = useState(`${initialSort.field},${initialSort.direction}`);
 
   const hasActiveFilters = Object.values(initialFilters).some((v) => v !== undefined && v !== "" && v !== "all" && v !== false);
 
   const buildUrl = (updates: Record<string, string | undefined>) => {
     const params = new URLSearchParams(searchParams.toString());
     Object.entries(updates).forEach(([key, value]) => {
-      if (value === undefined || value === "") {
+      if (value === undefined || value === "" || value === "all" || value === "false") {
         params.delete(key);
       } else {
         params.set(key, value);
@@ -53,15 +60,29 @@ export function SupportFilters({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const updates: Record<string, string | undefined> = {};
-    formData.forEach((value, key) => {
-      if (value) updates[key] = value.toString();
-    });
-    router.push(buildUrl(updates));
+    const [sortField, sortDirection] = sort.split(",");
+    router.push(buildUrl({
+      search: search.trim() || undefined,
+      status,
+      priority,
+      category,
+      courseId,
+      assignedToMe: assignedToMe ? "true" : undefined,
+      unassigned: unassigned ? "true" : undefined,
+      sort: sortField,
+      direction: sortDirection,
+    }));
   };
 
   const clearFilters = () => {
+    setSearch("");
+    setStatus("all");
+    setPriority("all");
+    setCategory("all");
+    setCourseId("all");
+    setAssignedToMe(false);
+    setUnassigned(false);
+    setSort("lastMessageAt,desc");
     router.push("/office/support");
   };
 
@@ -106,7 +127,8 @@ export function SupportFilters({
               id="search"
               name="search"
               placeholder="Search tickets..."
-              value={initialFilters.search || ""}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
             />
           </div>
 
@@ -114,8 +136,8 @@ export function SupportFilters({
             <label htmlFor="status" className="block text-sm font-medium text-slate-700 mb-1">
               Status
             </label>
-            <Select value={initialFilters.status || "all"} onValueChange={(value) => {}}>
-              <SelectTrigger id="status" name="status">
+            <Select value={status} onValueChange={setStatus}>
+              <SelectTrigger id="status">
                 <SelectValue placeholder="All" />
               </SelectTrigger>
               <SelectContent>
@@ -133,8 +155,8 @@ export function SupportFilters({
             <label htmlFor="priority" className="block text-sm font-medium text-slate-700 mb-1">
               Priority
             </label>
-            <Select value={initialFilters.priority || "all"} onValueChange={(value) => {}}>
-              <SelectTrigger id="priority" name="priority">
+            <Select value={priority} onValueChange={setPriority}>
+              <SelectTrigger id="priority">
                 <SelectValue placeholder="All" />
               </SelectTrigger>
               <SelectContent>
@@ -153,8 +175,8 @@ export function SupportFilters({
             <label htmlFor="category" className="block text-sm font-medium text-slate-700 mb-1">
               Category
             </label>
-            <Select value={initialFilters.category || "all"} onValueChange={(value) => {}}>
-              <SelectTrigger id="category" name="category">
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger id="category">
                 <SelectValue placeholder="All" />
               </SelectTrigger>
               <SelectContent>
@@ -175,8 +197,8 @@ export function SupportFilters({
             <label htmlFor="course" className="block text-sm font-medium text-slate-700 mb-1">
               Course
             </label>
-            <Select value={initialFilters.courseId || "all"} onValueChange={(value) => {}}>
-              <SelectTrigger id="course" name="courseId">
+            <Select value={courseId} onValueChange={setCourseId}>
+              <SelectTrigger id="course">
                 <SelectValue placeholder="All courses" />
               </SelectTrigger>
               <SelectContent>
@@ -194,8 +216,11 @@ export function SupportFilters({
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
-                name="assignedToMe"
-                checked={initialFilters.assignedToMe || false}
+                checked={assignedToMe}
+                onChange={(event) => {
+                  setAssignedToMe(event.target.checked);
+                  if (event.target.checked) setUnassigned(false);
+                }}
               />
               <span className="text-sm text-slate-700">Assigned to me</span>
             </label>
@@ -205,8 +230,11 @@ export function SupportFilters({
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
-                name="unassigned"
-                checked={initialFilters.unassigned || false}
+                checked={unassigned}
+                onChange={(event) => {
+                  setUnassigned(event.target.checked);
+                  if (event.target.checked) setAssignedToMe(false);
+                }}
               />
               <span className="text-sm text-slate-700">Unassigned</span>
             </label>
@@ -216,8 +244,8 @@ export function SupportFilters({
             <label htmlFor="sort" className="block text-sm font-medium text-slate-700 mb-1">
               Sort by
             </label>
-            <Select value={`${initialSort.field},${initialSort.direction}`} onValueChange={(value) => {}}>
-              <SelectTrigger id="sort" name="sort">
+            <Select value={sort} onValueChange={setSort}>
+              <SelectTrigger id="sort">
                 <SelectValue placeholder="Sort" />
               </SelectTrigger>
               <SelectContent>

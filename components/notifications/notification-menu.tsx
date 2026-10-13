@@ -41,7 +41,7 @@ export function NotificationMenu() {
   }, []);
 
   useEffect(() => {
-    void load(true);
+    const initialLoad = window.setTimeout(() => void load(true), 0);
     const interval = window.setInterval(() => void load(), POLL_INTERVAL_MS);
     const onRefresh = () => void load();
     const onVisibility = () => {
@@ -52,15 +52,12 @@ export function NotificationMenu() {
     document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
+      window.clearTimeout(initialLoad);
       window.clearInterval(interval);
       window.removeEventListener(NOTIFICATIONS_REFRESH_EVENT, onRefresh);
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [load]);
-
-  useEffect(() => {
-    if (open) void load(true);
-  }, [open, load]);
 
   useEffect(() => {
     if (!open) return;
@@ -104,7 +101,10 @@ export function NotificationMenu() {
         variant="ghost"
         size="sm"
         className="relative h-10 w-10 rounded-xl p-0"
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => {
+          if (!open) void load(true);
+          setOpen(!open);
+        }}
         aria-label={`Notifications${unread ? `, ${unread} unread` : ""}`}
         aria-expanded={open}
         aria-haspopup="true"
@@ -115,7 +115,7 @@ export function NotificationMenu() {
         ) : null}
       </Button>
       {open ? (
-        <div className="absolute right-0 z-50 mt-2 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-primary-100 bg-white shadow-2xl shadow-primary-950/10">
+        <div className="fixed inset-x-4 top-[4.75rem] z-50 overflow-hidden rounded-2xl border border-primary-100 bg-white shadow-2xl shadow-primary-950/10 sm:absolute sm:inset-x-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-[min(22rem,calc(100vw-2rem))]">
           <div className="flex items-center justify-between border-b border-primary-100 px-4 py-3.5">
             <h3 className="font-semibold text-slate-900">Notifications</h3>
             {unread ? (
@@ -130,7 +130,7 @@ export function NotificationMenu() {
               <span className="text-xs text-slate-500">All clear</span>
             )}
           </div>
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-[calc(100dvh-9rem)] overflow-y-auto sm:max-h-96">
             {loading && !items.length ? (
               <p className="px-5 py-8 text-center text-sm text-slate-500">
                 Loading…

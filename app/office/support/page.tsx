@@ -26,15 +26,15 @@ export const dynamic = "force-dynamic";
 
 interface SupportListPageProps {
   searchParams: Promise<{
-    q?: string;
+    search?: string;
     status?: string;
     priority?: string;
     category?: string;
-    assigned?: string;
+    assignedToMe?: string;
     unassigned?: string;
-    course?: string;
+    courseId?: string;
     sort?: string;
-    dir?: string;
+    direction?: string;
     page?: string;
     limit?: string;
   }>;
