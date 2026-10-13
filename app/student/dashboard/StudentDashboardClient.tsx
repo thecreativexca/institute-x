@@ -200,7 +200,7 @@ export function StudentDashboardClient({
           <div aria-hidden="true" className="student-grid-pattern absolute inset-0 opacity-55" />
           <div aria-hidden="true" className="absolute -right-14 -top-20 h-64 w-64 rounded-full bg-accent-300/20 blur-3xl" />
           <div aria-hidden="true" className="absolute -bottom-24 left-1/3 h-52 w-52 rounded-full bg-primary-400/20 blur-3xl" />
-          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="relative flex flex-col gap-4 sm:gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-2 rounded-full border border-accent-200/30 bg-accent-200/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-accent-200">
                 <GraduationCap className="h-3.5 w-3.5" aria-hidden="true" /> My learning dashboard
@@ -214,14 +214,14 @@ export function StudentDashboardClient({
                 <span className="rounded-full bg-white/[0.08] px-3 py-1.5">{pendingTasks.length} pending tasks</span>
               </div>
             </div>
-            <Button asChild className="h-11 shrink-0 border border-accent-200 bg-accent-300 px-5 font-semibold text-primary-950 shadow-lg shadow-primary-950/25 hover:bg-accent-200">
+            <Button asChild className="h-11 w-full shrink-0 border border-accent-200 bg-accent-300 px-5 font-semibold text-primary-950 shadow-lg shadow-primary-950/25 hover:bg-accent-200 sm:w-auto">
               <Link href="/courses">Explore Courses <ChevronRight className="ml-2 h-4 w-4" /></Link>
             </Button>
           </div>
         </section>
 
         {(career.enrollment || career.activeProjects > 0) && (
-          <Card className="border-accent-200 bg-accent-50/50"><CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center"><div className="flex-1"><p className="text-xs font-semibold uppercase tracking-wider text-primary-600">Career experience</p><h2 className="mt-1 font-semibold text-slate-900">{career.enrollment?.internship?.title ?? `${career.activeProjects} active project${career.activeProjects === 1 ? "" : "s"}`}</h2><p className="mt-1 text-sm text-slate-600">{career.enrollment ? `${career.enrollment.progressPercentage}% internship progress` : "Continue your assigned practical projects."}</p></div><Button asChild><Link href={career.enrollment ? `/student/internships/${career.enrollment.internship._id}` : "/student/projects"}>Continue <ChevronRight className="h-4 w-4" /></Link></Button></CardContent></Card>
+          <Card className="border-accent-200 bg-accent-50/50"><CardContent className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-5"><div className="flex-1"><p className="text-xs font-semibold uppercase tracking-wider text-primary-600">Career experience</p><h2 className="mt-1 font-semibold text-slate-900">{career.enrollment?.internship?.title ?? `${career.activeProjects} active project${career.activeProjects === 1 ? "" : "s"}`}</h2><p className="mt-1 text-sm text-slate-600">{career.enrollment ? `${career.enrollment.progressPercentage}% internship progress` : "Continue your assigned practical projects."}</p></div><Button asChild className="w-full sm:w-auto"><Link href={career.enrollment ? `/student/internships/${career.enrollment.internship._id}` : "/student/projects"}>Continue <ChevronRight className="h-4 w-4" /></Link></Button></CardContent></Card>
         )}
 
         {/* Statistics Cards */}
@@ -269,16 +269,16 @@ export function StudentDashboardClient({
                     <Link
                       key={course.enrollment._id}
                       href={`/student/courses/${course.course.slug}`}
-                      className="flex items-center gap-4 p-3 rounded-lg border border-slate-200 hover:border-primary-300 hover:bg-primary-50 transition-colors"
+                      className="grid grid-cols-[5rem_minmax(0,1fr)] items-center gap-3 rounded-lg border border-slate-200 p-3 transition-colors hover:border-primary-300 hover:bg-primary-50 sm:flex sm:gap-4"
                     >
                       {course.course.thumbnailUrl ? (
                         <img
                           src={course.course.thumbnailUrl}
                           alt=""
-                          className="h-16 w-24 rounded-lg object-cover bg-slate-100"
+                          className="h-14 w-20 rounded-lg object-cover bg-slate-100 sm:h-16 sm:w-24"
                         />
                       ) : (
-                        <div className="h-16 w-24 rounded-lg bg-primary-100 flex items-center justify-center">
+                        <div className="flex h-14 w-20 items-center justify-center rounded-lg bg-primary-100 sm:h-16 sm:w-24">
                           <BookOpen className="h-8 w-8 text-primary-400" aria-hidden="true" />
                         </div>
                       )}
@@ -297,7 +297,7 @@ export function StudentDashboardClient({
                           </p>
                         )}
                       </div>
-                      <Button size="sm" variant="primary" className="shrink-0">
+                      <Button size="sm" variant="primary" className="col-span-2 w-full shrink-0 sm:w-auto">
                         {course.status === "in_progress" ? "Continue" : "Start"}
                       </Button>
                     </Link>
@@ -342,7 +342,7 @@ export function StudentDashboardClient({
                       <Link
                         key={course.enrollment._id}
                         href={`/student/courses/${course.course.slug}`}
-                        className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 hover:border-primary-300 hover:bg-primary-50 transition-colors"
+                        className="grid grid-cols-[5rem_minmax(0,1fr)] items-center gap-3 rounded-lg border border-slate-200 p-3 transition-colors hover:border-primary-300 hover:bg-primary-50 sm:flex"
                       >
                         {course.course.thumbnailUrl ? (
                           <img
@@ -363,9 +363,9 @@ export function StudentDashboardClient({
                             {getStatusBadge(course.status)}
                           </div>
                         </div>
-                        <div className="text-right">
+                        <div className="col-span-2 w-full text-left sm:w-auto sm:text-right">
                           <p className="text-sm font-medium text-slate-700">{course.progressPercent}%</p>
-                          <Progress value={course.progressPercent} className="w-32 h-1.5 mt-1" />
+                          <Progress value={course.progressPercent} className="mt-1 h-1.5 w-full sm:w-32" />
                         </div>
                       </Link>
                     ))}
@@ -411,7 +411,7 @@ export function StudentDashboardClient({
                   {recentActivity.slice(0, 5).map((activity) => (
                     <div
                       key={activity.lessonId}
-                      className="flex items-center gap-3 p-3 rounded-lg border border-slate-200"
+                      className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 p-3"
                     >
                       <div
                         className={cn(
@@ -471,7 +471,7 @@ export function StudentDashboardClient({
                   {pendingTasks.slice(0, 5).map((task) => (
                     <div
                       key={task.id}
-                      className="flex items-center gap-3 p-3 rounded-lg border border-slate-200"
+                      className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 p-3"
                     >
                       <div
                         className={cn(
@@ -496,7 +496,7 @@ export function StudentDashboardClient({
                           </p>
                         )}
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="ml-11 flex flex-wrap items-center gap-2 sm:ml-0">
                         <Badge variant={task.type === "assignment" ? "warning" : "primary"}>
                           {task.type === "assignment" ? "Assignment" : "Quiz"}
                         </Badge>
@@ -611,7 +611,7 @@ export function StudentDashboardClient({
                     <Link
                       key={cert.id}
                       href={`/student/certificates/${cert.id}`}
-                      className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-amber-50 hover:border-amber-300 transition-colors"
+                      className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 bg-amber-50 p-3 transition-colors hover:border-amber-300"
                     >
                       <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-100">
                         <Award className="h-6 w-6 text-amber-700" aria-hidden="true" />
@@ -652,7 +652,7 @@ export function StudentDashboardClient({
             </CardHeader>
             <CardContent>
               {profile ? (
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col items-stretch gap-3 min-[420px]:flex-row min-[420px]:items-center min-[420px]:gap-4">
                   <Avatar className="h-16 w-16">
                     <AvatarImage src={profile.avatarUrl ?? ""} alt={profile.name} />
                     <AvatarFallback>{profile.name.charAt(0).toUpperCase()}</AvatarFallback>
@@ -669,7 +669,7 @@ export function StudentDashboardClient({
                       </Badge>
                     </div>
                   </div>
-                  <Button asChild variant="outline" size="sm">
+                  <Button asChild variant="outline" size="sm" className="w-full min-[420px]:w-auto">
                     <Link href="/student/profile">Edit Profile <ChevronRight className="h-4 w-4 ml-1" /></Link>
                   </Button>
                 </div>

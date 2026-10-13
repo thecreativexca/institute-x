@@ -5,7 +5,7 @@ import { Logo } from "@/components/layout/logo";
 
 export function StudentAuthShell({ children }: { children: React.ReactNode }) {
   return (
-    <main id="main-content" className="public-theme auth-theme relative flex min-h-screen items-center overflow-hidden px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
+    <main id="main-content" className="public-theme auth-theme relative flex min-h-screen items-center overflow-hidden px-2 py-3 sm:px-6 sm:py-10 lg:px-8">
       <div aria-hidden="true" className="public-soft-grid absolute inset-0 opacity-55" />
       <div className="relative mx-auto grid w-full max-w-6xl overflow-hidden rounded-[2rem] border border-primary-100 bg-white shadow-2xl shadow-primary-950/10 lg:min-h-[42rem] lg:grid-cols-[0.88fr_1.12fr]">
         <aside className="relative hidden overflow-hidden bg-primary-50 p-10 text-primary-950 lg:flex lg:flex-col lg:justify-between xl:p-12">
@@ -35,8 +35,8 @@ export function StudentAuthShell({ children }: { children: React.ReactNode }) {
           </div>
         </aside>
 
-        <section className="flex min-w-0 flex-col bg-[#ffffff] p-5 sm:p-8 lg:p-10 xl:p-12">
-          <div className="mb-7 flex items-center justify-between gap-4 lg:hidden">
+        <section className="flex min-w-0 flex-col bg-[#ffffff] p-3 sm:p-8 lg:p-10 xl:p-12">
+          <div className="mb-4 flex items-center justify-between gap-3 sm:mb-7 sm:gap-4 lg:hidden">
             <Logo variant="auth" />
             <Link href="/" className="text-xs font-semibold text-primary-700 hover:text-primary-900">Back to website</Link>
           </div>
@@ -46,7 +46,7 @@ export function StudentAuthShell({ children }: { children: React.ReactNode }) {
             </Link>
           </div>
           <div className="my-auto mx-auto w-full max-w-xl py-2 lg:py-6">{children}</div>
-          <p className="mt-7 text-center text-xs text-slate-400">By continuing, you agree to the institute&rsquo;s terms and privacy policy.</p>
+          <p className="mt-4 text-center text-xs text-slate-400 sm:mt-7">By continuing, you agree to the institute&rsquo;s terms and privacy policy.</p>
         </section>
       </div>
     </main>

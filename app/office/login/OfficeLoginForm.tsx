@@ -132,8 +132,8 @@ export function OfficeLoginForm() {
         </button>
       </div>
 
-      <div className="flex items-center justify-between gap-4">
-        <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600">
+      <div className="flex items-center justify-between gap-2">
+        <label className="flex min-w-0 cursor-pointer items-center gap-1.5 text-xs text-slate-600 min-[360px]:gap-2 min-[360px]:text-sm">
           <input
             type="checkbox"
             checked={rememberMe}
@@ -142,7 +142,7 @@ export function OfficeLoginForm() {
           />
           Remember me
         </label>
-        <Link href="/office/forgot-password" className="text-sm font-medium text-primary-700 hover:text-primary-800">
+        <Link href="/office/forgot-password" className="shrink-0 text-right text-xs font-medium text-primary-700 hover:text-primary-800 min-[360px]:text-sm">
           Forgot password?
         </Link>
       </div>

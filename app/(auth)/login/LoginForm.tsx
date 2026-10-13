@@ -138,7 +138,7 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4" noValidate>
       {generalError && (
         <Alert variant="destructive" className="mb-2">
           <AlertDescription>{generalError}</AlertDescription>
@@ -198,8 +198,8 @@ export function LoginForm() {
         </button>
       </div>
 
-      <div className="flex items-center justify-between">
-        <label className="flex items-center gap-2 cursor-pointer">
+      <div className="flex items-center justify-between gap-2">
+        <label className="flex min-w-0 items-center gap-1.5 cursor-pointer sm:gap-2">
           <input
             id="remember-me"
             type="checkbox"
@@ -207,11 +207,11 @@ export function LoginForm() {
             onChange={(event) => setRememberMe(event.target.checked)}
             className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
           />
-          <span className="text-sm text-slate-600">Remember me</span>
+          <span className="text-xs text-slate-600 min-[360px]:text-sm">Remember me</span>
         </label>
         <Link
           href="/forgot-password"
-          className="text-sm font-semibold text-primary-700 hover:text-primary-900"
+          className="shrink-0 text-right text-xs font-semibold text-primary-700 hover:text-primary-900 min-[360px]:text-sm"
         >
           Forgot password?
         </Link>
