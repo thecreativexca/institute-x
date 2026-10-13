@@ -4,7 +4,7 @@ import { Building2, ClipboardCheck, LockKeyhole, ShieldCheck } from "lucide-reac
 
 export function OfficeAuthShell({ children }: { children: React.ReactNode }) {
   return (
-    <main id="main-content" className="office-theme relative flex min-h-screen items-center overflow-hidden bg-[#f8fbfd] px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
+    <main id="main-content" className="office-theme relative flex min-h-screen items-center overflow-hidden bg-[#f8fbfd] px-2 py-3 sm:px-6 sm:py-10 lg:px-8">
       <div aria-hidden="true" className="office-grid-pattern absolute inset-0 opacity-45" />
       <div aria-hidden="true" className="absolute -left-28 -top-28 h-96 w-96 rounded-full bg-primary-200/55 blur-3xl" />
       <div aria-hidden="true" className="absolute -bottom-32 -right-20 h-96 w-96 rounded-full bg-accent-200/55 blur-3xl" />
@@ -33,8 +33,8 @@ export function OfficeAuthShell({ children }: { children: React.ReactNode }) {
             ))}
           </div>
         </aside>
-        <section className="flex min-w-0 flex-col bg-[#ffffff] p-5 sm:p-8 lg:p-10 xl:p-12">
-          <div className="mb-7 flex items-center justify-between gap-4 lg:hidden">
+        <section className="flex min-w-0 flex-col bg-[#ffffff] p-3 sm:p-8 lg:p-10 xl:p-12">
+          <div className="mb-4 flex items-center justify-between gap-4 sm:mb-7 lg:hidden">
             <Logo variant="auth" />
             <Link href="/" className="text-xs font-semibold text-primary-700 hover:text-primary-900">Public website</Link>
           </div>
@@ -42,7 +42,7 @@ export function OfficeAuthShell({ children }: { children: React.ReactNode }) {
             <Link href="/" className="text-sm font-medium text-slate-500 hover:text-primary-800">Return to website</Link>
           </div>
           <div className="my-auto mx-auto w-full max-w-xl py-2 lg:py-6">{children}</div>
-          <p className="mt-7 text-center text-xs text-slate-400">Office Portal access is monitored and restricted by staff role.</p>
+          <p className="mt-4 text-center text-xs text-slate-400 sm:mt-7">Office Portal access is monitored and restricted by staff role.</p>
         </section>
       </div>
     </main>

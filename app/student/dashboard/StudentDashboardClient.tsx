@@ -194,9 +194,9 @@ export function StudentDashboardClient({
   const completedCourses = enrolledCourses.filter((c) => c.status === "completed");
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-3 sm:space-y-7">
         {/* Welcome Section */}
-        <section className="relative overflow-hidden rounded-[1.75rem] border border-primary-900 bg-[#103a50] px-6 py-7 text-white shadow-2xl shadow-primary-950/15 sm:px-8 sm:py-9">
+        <section className="relative overflow-hidden rounded-[1.75rem] border border-primary-900 bg-[#103a50] px-3 py-4 text-white shadow-2xl shadow-primary-950/15 sm:px-8 sm:py-9">
           <div aria-hidden="true" className="student-grid-pattern absolute inset-0 opacity-55" />
           <div aria-hidden="true" className="absolute -right-14 -top-20 h-64 w-64 rounded-full bg-accent-300/20 blur-3xl" />
           <div aria-hidden="true" className="absolute -bottom-24 left-1/3 h-52 w-52 rounded-full bg-primary-400/20 blur-3xl" />
@@ -225,10 +225,10 @@ export function StudentDashboardClient({
         )}
 
         {/* Statistics Cards */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-2 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {statsWithValues.map((stat) => (
             <Card key={stat.label} className="group overflow-hidden rounded-2xl border-primary-100 transition-all hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-card-hover">
-              <CardContent className="p-5 sm:p-5">
+              <CardContent className="p-3 sm:p-5">
                 <div className="flex items-center gap-3.5">
                   <div className={cn("flex h-11 w-11 items-center justify-center rounded-xl", stat.iconSurface)}>
                     <stat.icon className={cn("h-5 w-5", stat.iconColor)} aria-hidden={true} />
@@ -247,7 +247,7 @@ export function StudentDashboardClient({
         </div>
 
         {/* Continue Learning */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-3 sm:gap-6 lg:grid-cols-2">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">

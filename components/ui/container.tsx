@@ -15,7 +15,7 @@ export interface ContainerProps extends HTMLAttributes<HTMLElement> {
 export function Container({ className, children, as: Tag = "div", ...props }: ContainerProps) {
   return (
     <Tag
-      className={cn("mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8", className)}
+      className={cn("mx-auto w-full max-w-6xl px-2 sm:px-6 lg:px-8", className)}
       {...props}
     >
       {children}

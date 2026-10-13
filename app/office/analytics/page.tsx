@@ -85,7 +85,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
 
   return (
     <OfficeShell session={user}>
-      <div className="space-y-6">
+      <div className="space-y-3 sm:space-y-6">
         <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary-600">Insights</p>
@@ -125,12 +125,12 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
           <KpiTile icon={TrendingUp} label="Active learners" value={formatNumber(enrollments.active)} sub={`${formatNumber(enrollments.completed)} completed`} />
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-3 sm:gap-6 lg:grid-cols-2">
           <Card className="rounded-2xl border-slate-200/80">
             <CardHeader className="border-b border-slate-100 bg-slate-50/60">
               <CardTitle className="text-base">Revenue trend</CardTitle>
             </CardHeader>
-            <CardContent className="pt-5">
+            <CardContent className="pt-3 sm:pt-5">
               <BarChart
                 rows={revenue.trend.map((point) => ({
                   label: point.label,
@@ -147,7 +147,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
             <CardHeader className="border-b border-slate-100 bg-slate-50/60">
               <CardTitle className="text-base">Enrollment trend</CardTitle>
             </CardHeader>
-            <CardContent className="pt-5">
+            <CardContent className="pt-3 sm:pt-5">
               <BarChart
                 rows={enrollments.trend.map((point) => ({
                   label: point.label,
@@ -162,17 +162,17 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
 
         <Card className="rounded-2xl border-slate-200/80">
           <CardHeader className="border-b border-slate-100 bg-slate-50/60"><CardTitle className="text-base">Collections by payment method</CardTitle></CardHeader>
-          <CardContent className="grid gap-3 pt-5 sm:grid-cols-2 lg:grid-cols-5">
+          <CardContent className="grid gap-3 pt-3 sm:grid-cols-2 sm:pt-5 lg:grid-cols-5">
             {revenue.byMethod.length === 0 ? <p className="text-sm text-slate-500">No verified collections in this window.</p> : revenue.byMethod.map((row) => <div key={row.method} className="rounded-xl border border-slate-200 p-3"><p className="text-xs font-medium text-slate-500">{row.method.replaceAll("_", " ").replace(/\b\w/g, (char) => char.toUpperCase())}</p><p className="mt-1 font-bold text-slate-900">{formatCurrencyFromPaise(row.amountPaise)}</p><p className="text-xs text-slate-400">{row.count} transaction{row.count === 1 ? "" : "s"}</p></div>)}
           </CardContent>
         </Card>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-3 sm:gap-6 lg:grid-cols-2">
           <Card className="rounded-2xl border-slate-200/80">
             <CardHeader className="border-b border-slate-100 bg-slate-50/60">
               <CardTitle className="text-base">Top courses by revenue</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 pt-5">
+            <CardContent className="space-y-3 pt-3 sm:pt-5">
               {revenue.byCourse.length === 0 ? (
                 <EmptyState icon={<Wallet className="h-10 w-10" />} title="No verified collection yet" description="Verified manual payments in this window will appear here." />
               ) : (
@@ -199,7 +199,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
             <CardHeader className="border-b border-slate-100 bg-slate-50/60">
               <CardTitle className="text-base">Payment status</CardTitle>
             </CardHeader>
-            <CardContent className="pt-5">
+            <CardContent className="pt-3 sm:pt-5">
               {revenue.statusBreakdown.length === 0 ? (
                 <EmptyState icon={<Activity className="h-10 w-10" />} title="No payments in this window" />
               ) : (
@@ -224,7 +224,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
           </Card>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-3 sm:gap-6 lg:grid-cols-2">
           <Card className="overflow-hidden rounded-2xl border-slate-200/80">
             <CardHeader className="border-b border-slate-100 bg-slate-50/60">
               <CardTitle className="flex items-center gap-2 text-base">

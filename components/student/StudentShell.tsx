@@ -271,7 +271,7 @@ export function StudentShell({ children, session }: StudentShellProps) {
         </header>
 
         <main id="main-content">
-          <Container className="py-6 sm:py-8 lg:py-10">{children}</Container>
+          <Container className="py-3 sm:py-8 lg:py-10">{children}</Container>
         </main>
       </div>
     </div>

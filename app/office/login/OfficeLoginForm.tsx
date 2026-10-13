@@ -75,7 +75,7 @@ export function OfficeLoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4" noValidate>
       {passwordChanged ? (
         <Alert variant="success">
           <AlertDescription>Your password was changed successfully. Sign in with your new password.</AlertDescription>
