@@ -133,17 +133,17 @@ export default async function SupportListPage({ searchParams }: SupportListPageP
 
           <SupportStatsCards stats={stats} />
 
-          <Card className="mt-6 overflow-hidden border-slate-200/80 shadow-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2">
-                <Search className="h-5 w-5" aria-hidden="true" />
-                Tickets
-              </CardTitle>
-              <CardDescription>
-                {result.total} ticket{result.total !== 1 ? "s" : ""} found
-              </CardDescription>
+          <Card className="mt-6 overflow-hidden border-slate-200/60 shadow-sm">
+            <CardHeader className="border-b border-slate-100 bg-slate-50/60 py-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Search className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                  <CardTitle className="text-base">Tickets</CardTitle>
+                  <CardDescription className="ml-1">— {result.total} found</CardDescription>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-4">
               <SupportFilters
                 initialFilters={filters}
                 initialSort={sort}
@@ -177,7 +177,7 @@ export default async function SupportListPage({ searchParams }: SupportListPageP
           </Card>
         ) : (
           <>
-            <Card className="hidden overflow-hidden border-slate-200/80 shadow-card lg:block">
+            <Card className="hidden overflow-hidden rounded-2xl border-slate-200/60 shadow-sm lg:block">
               <CardContent className="p-0">
                 <SupportTable
                   tickets={result.tickets}

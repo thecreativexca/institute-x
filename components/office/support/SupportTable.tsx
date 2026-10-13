@@ -6,7 +6,10 @@ import { useRouter } from "next/navigation";
 import type { OfficeTicketSummary } from "@/lib/support";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MoreVertical, ExternalLink, AlertCircle, Clock, CheckCircle, User, ArrowRight, MessageSquare } from "lucide-react";
+import {
+  MoreVertical, ExternalLink, AlertCircle, Clock, CheckCircle,
+  User, ArrowRight, MessageSquare, Ticket,
+} from "lucide-react";
 import { useState } from "react";
 import { runOfficeTicketAction, type OfficeTicketAction } from "@/lib/support/client";
 
@@ -18,18 +21,18 @@ interface SupportTableProps {
 }
 
 const statusConfig = {
-  open: { label: "Open", variant: "default" as const, icon: MessageSquare },
-  in_progress: { label: "In Progress", variant: "primary" as const, icon: Clock },
-  waiting_for_student: { label: "Waiting for Student", variant: "warning" as const, icon: AlertCircle },
-  resolved: { label: "Resolved", variant: "success" as const, icon: CheckCircle },
-  closed: { label: "Closed", variant: "neutral" as const, icon: CheckCircle },
+  open: { label: "Open", variant: "default" as const, icon: MessageSquare, pill: "bg-blue-50 text-blue-700 ring-1 ring-blue-200" },
+  in_progress: { label: "In Progress", variant: "primary" as const, icon: Clock, pill: "bg-violet-50 text-violet-700 ring-1 ring-violet-200" },
+  waiting_for_student: { label: "Waiting", variant: "warning" as const, icon: AlertCircle, pill: "bg-amber-50 text-amber-700 ring-1 ring-amber-200" },
+  resolved: { label: "Resolved", variant: "success" as const, icon: CheckCircle, pill: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200" },
+  closed: { label: "Closed", variant: "neutral" as const, icon: CheckCircle, pill: "bg-slate-100 text-slate-600 ring-1 ring-slate-200" },
 } as const;
 
 const priorityConfig = {
-  low: { label: "Low", variant: "secondary" as const },
-  normal: { label: "Normal", variant: "default" as const },
-  high: { label: "High", variant: "destructive" as const },
-  urgent: { label: "Urgent", variant: "destructive" as const },
+  low: { label: "Low", pill: "bg-slate-100 text-slate-500" },
+  normal: { label: "Normal", pill: "bg-sky-50 text-sky-600 ring-1 ring-sky-200" },
+  high: { label: "High", pill: "bg-orange-50 text-orange-700 ring-1 ring-orange-200" },
+  urgent: { label: "Urgent", pill: "bg-rose-50 text-rose-700 ring-1 ring-rose-200" },
 } as const;
 
 const categoryLabels: Record<string, string> = {
@@ -43,12 +46,7 @@ const categoryLabels: Record<string, string> = {
   other: "Other",
 };
 
-export function SupportTable({
-  tickets,
-  canManage,
-  canReply,
-  canAssign,
-}: SupportTableProps) {
+export function SupportTable({ tickets, canManage, canReply, canAssign }: SupportTableProps) {
   const router = useRouter();
   const [actionMenu, setActionMenu] = useState<{ ticketId: string; x: number; y: number } | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -76,91 +74,139 @@ export function SupportTable({
           {actionError}
         </p>
       ) : null}
-      <div className="overflow-x-auto">
-        <table className="w-full" role="table">
+      <div className="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <table className="w-full min-w-[900px] table-fixed" role="table">
+          <colgroup>
+            <col className="w-[120px]" />  {/* Ticket */}
+            <col className="w-[180px]" />  {/* Student */}
+            <col className="w-[160px]" />  {/* Subject */}
+            <col className="w-[110px]" />  {/* Category */}
+            <col className="w-[90px]" />   {/* Priority */}
+            <col className="w-[120px]" />  {/* Status */}
+            <col className="w-[130px]" />  {/* Assigned */}
+            <col className="w-[110px]" />  {/* Last Activity */}
+            <col className="w-[100px]" />  {/* Actions */}
+          </colgroup>
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50">
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Ticket</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Student</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Subject</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Category</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Priority</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Assigned</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Last Activity</th>
-              <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+            <tr className="border-b border-slate-100 bg-slate-50/80">
+              <th className="px-3 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Ticket</th>
+              <th className="px-3 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Student</th>
+              <th className="px-3 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Subject</th>
+              <th className="px-3 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Category</th>
+              <th className="px-3 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Priority</th>
+              <th className="px-3 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Status</th>
+              <th className="px-3 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Assigned</th>
+              <th className="px-3 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Last Activity</th>
+              <th className="px-3 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
+          <tbody className="divide-y divide-slate-100">
             {tickets.map((ticket) => {
               const statusCfg = statusConfig[ticket.status];
               const priorityCfg = priorityConfig[ticket.priority];
               const categoryLabel = categoryLabels[ticket.category] ?? ticket.category;
 
               return (
-                <tr key={ticket.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-4 py-4">
+                <tr
+                  key={ticket.id}
+                  className="group transition-colors duration-150 hover:bg-slate-50/70"
+                >
+                  {/* Ticket number */}
+                  <td className="px-3 py-3.5 align-middle">
                     <Link
                       href={`/office/support/${ticket.id}`}
-                      className="font-medium text-slate-900 hover:text-primary-600"
+                      className="flex items-center gap-1.5 font-mono text-[11px] font-semibold text-primary-600 hover:text-primary-700 hover:underline truncate"
                     >
-                      {ticket.ticketNumber}
+                      <Ticket className="h-3 w-3 shrink-0 text-primary-400" aria-hidden="true" />
+                      <span className="truncate">{ticket.ticketNumber}</span>
                     </Link>
                   </td>
-                  <td className="px-4 py-4">
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-slate-400" aria-hidden="true" />
-                      <div>
+
+                  {/* Student */}
+                  <td className="px-3 py-3.5 align-middle">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-600 uppercase">
+                        {ticket.studentName?.charAt(0) ?? "?"}
+                      </span>
+                      <div className="min-w-0 flex-1">
                         <Link
                           href={`/office/students/${ticket.studentId}`}
-                          className="font-medium text-slate-900 hover:text-primary-600"
+                          className="block truncate text-xs font-semibold text-slate-800 hover:text-primary-600"
                         >
                           {ticket.studentName}
                         </Link>
-                        <p className="text-xs text-slate-500 truncate max-w-xs">{ticket.studentEmail}</p>
+                        <p className="truncate text-[10px] text-slate-400">{ticket.studentEmail}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-4">
+
+                  {/* Subject */}
+                  <td className="px-3 py-3.5 align-middle">
                     <Link
                       href={`/office/support/${ticket.id}`}
-                      className="font-medium text-slate-900 hover:text-primary-600 max-w-xs truncate block"
+                      className="block truncate text-xs font-medium text-slate-700 hover:text-primary-600"
                     >
                       {ticket.subject}
                     </Link>
                   </td>
-                  <td className="px-4 py-4">
-                    <Badge variant="secondary">{categoryLabel}</Badge>
+
+                  {/* Category */}
+                  <td className="px-3 py-3.5 align-middle">
+                    <span className="inline-flex items-center truncate rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+                      {categoryLabel}
+                    </span>
                   </td>
-                  <td className="px-4 py-4">
-                    <Badge variant={priorityCfg.variant}>{priorityCfg.label}</Badge>
+
+                  {/* Priority */}
+                  <td className="px-3 py-3.5 align-middle">
+                    <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold ${priorityCfg.pill}`}>
+                      {priorityCfg.label}
+                    </span>
                   </td>
-                  <td className="px-4 py-4">
-                    <Badge variant={statusCfg.variant} className="gap-1">
-                      <statusCfg.icon className="h-3 w-3" aria-hidden="true" />
-                      {statusCfg.label}
-                    </Badge>
+
+                  {/* Status */}
+                  <td className="px-3 py-3.5 align-middle">
+                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${statusCfg.pill}`}>
+                      <statusCfg.icon className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
+                      <span className="truncate">{statusCfg.label}</span>
+                    </span>
                   </td>
-                  <td className="px-4 py-4 text-sm text-slate-600">
+
+                  {/* Assigned */}
+                  <td className="px-3 py-3.5 align-middle">
                     {ticket.assignedToName ? (
-                      <div className="flex items-center gap-1.5">
-                        <User className="h-3.5 w-3.5 text-slate-400" aria-hidden="true" />
-                        {ticket.assignedToName}
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-[9px] font-bold text-primary-700 uppercase">
+                          {ticket.assignedToName.charAt(0)}
+                        </span>
+                        <span className="truncate text-xs text-slate-600">{ticket.assignedToName}</span>
                       </div>
                     ) : (
-                      <Badge variant="neutral">Unassigned</Badge>
+                      <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-[11px] text-slate-400">
+                        <User className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
+                        Unassigned
+                      </span>
                     )}
                   </td>
-                  <td className="px-4 py-4 text-sm text-slate-600">
-                    {format(new Date(ticket.lastMessageAt), "MMM d, yyyy HH:mm")}
+
+                  {/* Last Activity */}
+                  <td className="px-3 py-3.5 align-middle">
+                    <div className="text-xs text-slate-600 tabular-nums">
+                      {format(new Date(ticket.lastMessageAt), "MMM d, yyyy")}
+                    </div>
+                    <div className="text-[10px] text-slate-400 tabular-nums">
+                      {format(new Date(ticket.lastMessageAt), "HH:mm")}
+                    </div>
                   </td>
-                  <td className="px-4 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
+
+                  {/* Actions */}
+                  <td className="px-3 py-3.5 align-middle text-right">
+                    <div className="flex items-center justify-end gap-1.5">
                       <Link
                         href={`/office/support/${ticket.id}`}
-                        className="text-sm font-medium text-primary-600 hover:text-primary-700 hidden sm:inline-flex items-center gap-1"
+                        className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 shadow-sm transition hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700"
                       >
-                        <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                        <ExternalLink className="h-3 w-3" aria-hidden="true" />
                         View
                       </Link>
                       {(canReply || canAssign || canManage) && (
@@ -168,7 +214,7 @@ export function SupportTable({
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0"
+                            className="h-8 w-8 p-0 rounded-lg hover:bg-slate-100"
                             onClick={(e) => {
                               e.stopPropagation();
                               const rect = e.currentTarget.getBoundingClientRect();
@@ -180,7 +226,7 @@ export function SupportTable({
                           </Button>
                           {actionMenu?.ticketId === ticket.id && (
                             <div
-                              className="absolute right-0 mt-1 w-56 rounded-md border border-slate-200 bg-white shadow-lg py-1 z-10"
+                              className="absolute right-0 mt-1 w-56 rounded-xl border border-slate-200 bg-white shadow-xl py-1.5 z-10"
                               role="menu"
                             >
                               <Link
@@ -189,43 +235,43 @@ export function SupportTable({
                                 onClick={() => setActionMenu(null)}
                                 className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2"
                               >
-                                <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                                <ExternalLink className="h-4 w-4 text-slate-400" aria-hidden="true" />
                                 View Details
                               </Link>
                               {canReply && (
                                 <>
-                                  <hr className="my-1 border-slate-200" />
+                                  <hr className="my-1 border-slate-100" />
                                   <button
                                     role="menuitem"
                                     onClick={() => goToSection(ticket.id, "reply")}
                                     className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2"
                                   >
-                                    <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                                    <MessageSquare className="h-4 w-4 text-slate-400" aria-hidden="true" />
                                     Reply
                                   </button>
                                 </>
                               )}
                               {canAssign && (
                                 <>
-                                  <hr className="my-1 border-slate-200" />
+                                  <hr className="my-1 border-slate-100" />
                                   <button
                                     role="menuitem"
                                     onClick={() => goToSection(ticket.id, "assign")}
                                     className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2"
                                   >
-                                    <User className="h-4 w-4" aria-hidden="true" />
+                                    <User className="h-4 w-4 text-slate-400" aria-hidden="true" />
                                     Assign
                                   </button>
                                 </>
                               )}
                               {canManage && (
                                 <>
-                                  <hr className="my-1 border-slate-200" />
+                                  <hr className="my-1 border-slate-100" />
                                   {ticket.status !== "resolved" && ticket.status !== "closed" && (
                                     <button
                                       role="menuitem"
                                       onClick={() => updateStatus(ticket.id, "resolve")}
-                                      className="w-full px-4 py-2 text-left text-sm text-amber-700 hover:bg-amber-50 flex items-center gap-2"
+                                      className="w-full px-4 py-2 text-left text-sm text-emerald-700 hover:bg-emerald-50 flex items-center gap-2"
                                     >
                                       <CheckCircle className="h-4 w-4" aria-hidden="true" />
                                       Resolve

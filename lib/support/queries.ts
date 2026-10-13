@@ -166,7 +166,9 @@ export async function getOfficeSupportTickets(
     : [];
   const courseMap = new Map(courses.map((c) => [c._id.toString(), c.name]));
 
-  const ticketSummaries: OfficeTicketSummary[] = tickets.map((ticket) => {
+  const ticketSummaries: OfficeTicketSummary[] = tickets
+    .filter((ticket) => ticket.student != null)
+    .map((ticket) => {
     const student = ticket.student as unknown as { _id: Types.ObjectId; name: string; email: string };
     const assigned = assignedMap.get(ticket._id.toString());
     const courseName = ticket.course ? courseMap.get(ticket.course.toString()) ?? null : null;
