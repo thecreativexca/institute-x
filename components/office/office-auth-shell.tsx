@@ -4,7 +4,7 @@ import { Building2, ClipboardCheck, LockKeyhole, ShieldCheck } from "lucide-reac
 
 export function OfficeAuthShell({ children }: { children: React.ReactNode }) {
   return (
-    <main id="main-content" className="office-theme relative flex min-h-screen items-center overflow-hidden bg-[#f8fbfd] px-2 py-3 sm:px-6 sm:py-10 lg:px-8">
+    <main id="main-content" className="office-theme relative flex min-h-screen items-center overflow-hidden bg-[#fffaf0] px-2 py-3 sm:px-6 sm:py-10 lg:px-8">
       <div aria-hidden="true" className="office-grid-pattern absolute inset-0 opacity-45" />
       <div aria-hidden="true" className="absolute -left-28 -top-28 h-96 w-96 rounded-full bg-primary-200/55 blur-3xl" />
       <div aria-hidden="true" className="absolute -bottom-32 -right-20 h-96 w-96 rounded-full bg-accent-200/55 blur-3xl" />

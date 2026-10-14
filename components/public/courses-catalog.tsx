@@ -3,15 +3,22 @@
 import { useDeferredValue, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, BookOpenCheck, BriefcaseBusiness, Clock3, GraduationCap, MessageCircleMore, Search, Wrench, X } from "lucide-react";
+import { ArrowUpRight, BookOpenCheck, BriefcaseBusiness, Clock3, GraduationCap, ListFilter, MessageCircleMore, Search, Wrench, X } from "lucide-react";
 
 import { CourseCard } from "@/components/public/course-card";
 import { Container } from "@/components/ui/container";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { CourseSummary } from "@/types/course";
 
 export interface SearchableCourse {
   course: CourseSummary;
   tags: string[];
+  categorySlug: string;
+}
+
+interface CategoryOption {
+  slug: string;
+  name: string;
 }
 
 const learningBenefits = [
@@ -24,6 +31,8 @@ const learningBenefits = [
 interface CoursesCatalogProps {
   courses: SearchableCourse[];
   initialSearch: string;
+  initialCategory: string;
+  categories: CategoryOption[];
   contactPhone: string;
   contactPhoneHref: string;
 }
@@ -32,30 +41,39 @@ function normalize(value: string): string {
   return value.trim().toLocaleLowerCase();
 }
 
-export function CoursesCatalog({ courses, initialSearch, contactPhone, contactPhoneHref }: CoursesCatalogProps) {
+export function CoursesCatalog({ courses, initialSearch, initialCategory, categories, contactPhone, contactPhoneHref }: CoursesCatalogProps) {
   const [search, setSearch] = useState(initialSearch);
+  const [category, setCategory] = useState(initialCategory);
   const deferredSearch = useDeferredValue(search);
 
   const filteredCourses = useMemo(() => {
     const query = normalize(deferredSearch);
-    if (!query) return courses;
+    return courses.filter(({ course, tags, categorySlug }) => {
+      if (category && categorySlug !== category) return false;
+      if (!query) return true;
 
-    return courses.filter(({ course, tags }) =>
-      [course.name, course.shortDescription, course.categoryName, ...tags]
+      return [course.name, course.shortDescription, course.categoryName, ...tags]
         .filter(Boolean)
         .some((value) => normalize(String(value)).includes(query))
-    );
-  }, [courses, deferredSearch]);
+    });
+  }, [category, courses, deferredSearch]);
 
   function updateSearch(value: string) {
     setSearch(value);
     const url = new URL(window.location.href);
     if (value.trim()) url.searchParams.set("search", value.trim());
     else url.searchParams.delete("search");
-    url.searchParams.delete("category");
     url.searchParams.delete("level");
     url.searchParams.delete("duration");
     url.searchParams.delete("sort");
+    window.history.replaceState(null, "", `${url.pathname}${url.search}`);
+  }
+
+  function updateCategory(value: string) {
+    setCategory(value);
+    const url = new URL(window.location.href);
+    if (value) url.searchParams.set("category", value);
+    else url.searchParams.delete("category");
     window.history.replaceState(null, "", `${url.pathname}${url.search}`);
   }
 
@@ -97,11 +115,28 @@ export function CoursesCatalog({ courses, initialSearch, contactPhone, contactPh
           </div>
 
           <div className="catalog-search-panel">
-            <label htmlFor="course-catalog-search">Search courses</label>
-            <div className="catalog-search-field catalog-search-field-light">
-              <Search className="h-5 w-5" aria-hidden="true" />
-              <input id="course-catalog-search" type="search" value={search} onChange={(event) => updateSearch(event.target.value)} placeholder="Search courses..." autoComplete="off" />
-              {search ? <button type="button" onClick={() => updateSearch("")} aria-label="Clear course search"><X className="h-5 w-5" aria-hidden="true" /></button> : null}
+            <div className="catalog-search-controls">
+              <label className="catalog-filter-control" htmlFor="course-catalog-search">
+                <span>Search courses</span>
+                <div className="catalog-search-field catalog-search-field-light">
+                  <Search className="h-5 w-5" aria-hidden="true" />
+                  <input id="course-catalog-search" type="search" value={search} onChange={(event) => updateSearch(event.target.value)} placeholder="Search courses..." autoComplete="off" />
+                  {search ? <button type="button" onClick={() => updateSearch("")} aria-label="Clear course search"><X className="h-5 w-5" aria-hidden="true" /></button> : null}
+                </div>
+              </label>
+              <div className="catalog-filter-control">
+                <label htmlFor="course-category-filter">Category</label>
+                <Select value={category || "all"} onValueChange={(value) => updateCategory(value === "all" ? "" : value)}>
+                  <SelectTrigger id="course-category-filter" className="catalog-category-trigger" aria-label="Filter courses by category">
+                    <ListFilter className="catalog-category-trigger-icon h-5 w-5" aria-hidden="true" />
+                    <SelectValue placeholder="All categories" />
+                  </SelectTrigger>
+                  <SelectContent side="bottom" align="start" sideOffset={8} avoidCollisions={false} className="catalog-category-menu">
+                    <SelectItem value="all" className="catalog-category-option">All categories</SelectItem>
+                    {categories.map((option) => <SelectItem key={option.slug} value={option.slug} className="catalog-category-option">{option.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <div className="catalog-search-meta catalog-search-meta-light"><p><strong>{filteredCourses.length}</strong> {filteredCourses.length === 1 ? "course" : "courses"} found</p><p>Admissions: <a href={contactPhoneHref}>{contactPhone}</a></p></div>
           </div>
@@ -114,8 +149,8 @@ export function CoursesCatalog({ courses, initialSearch, contactPhone, contactPh
             <div className="catalog-empty" role="status">
               <Search className="h-8 w-8" aria-hidden="true" />
               <h3>No courses found</h3>
-              <p>We could not find a course matching “{search}”. Try a broader skill, subject or category.</p>
-              <button type="button" onClick={() => updateSearch("")}>Clear search</button>
+              <p>We could not find a course with the selected search and category. Try changing or clearing the filters.</p>
+              <button type="button" onClick={() => { updateSearch(""); updateCategory(""); }}>Clear filters</button>
             </div>
           )}
         </Container>

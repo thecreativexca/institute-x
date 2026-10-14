@@ -57,6 +57,9 @@ export interface CatalogCourse {
   _id?: string;
   name: string;
   categorySlug: string;
+  /** Category values from the admin-managed database, when available. */
+  adminCategorySlug?: string;
+  categoryName?: string;
   shortDescription: string;
   /** Full course description */
   description: string;

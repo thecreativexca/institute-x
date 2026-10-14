@@ -6,6 +6,7 @@ import { Lesson } from "@/models/Lesson";
 import { COURSE_STATUSES, type CourseStatus } from "@/lib/constants";
 import {
   CATALOG_COURSES,
+  COURSE_CATEGORIES,
   type CatalogCourse,
   type CatalogModule,
 } from "@/lib/config/catalog";
@@ -15,6 +16,8 @@ function getCatalogFallbackCourses(): CatalogCourse[] {
     (course) => (course.status as CourseStatus) === COURSE_STATUSES.PUBLISHED
   ).map((course) => ({
     ...course,
+    adminCategorySlug: course.categorySlug,
+    categoryName: COURSE_CATEGORIES.find((category) => category.slug === course.categorySlug)?.name,
     // Reference catalog records do not exist in MongoDB, so checkout and
     // enrollment must stay disabled until staff publish real course records.
     isPurchasable: false,
@@ -110,6 +113,7 @@ export async function getPublishedCourses(): Promise<CatalogCourse[]> {
     ]);
 
     return courses.map((course) => {
+      const adminCategory = categoryById.get(String(course.category));
       const courseModules = modules.filter(
         (m) => String(m.course) === String(course._id)
       );
@@ -132,12 +136,14 @@ export async function getPublishedCourses(): Promise<CatalogCourse[]> {
         _id: String(course._id),
         name: course.name,
         categorySlug: resolvePublicCategorySlug({
-          categorySlug: categoryById.get(String(course.category))?.slug,
-          categoryName: categoryById.get(String(course.category))?.name,
+          categorySlug: adminCategory?.slug,
+          categoryName: adminCategory?.name,
           courseName: course.name,
           shortDescription: course.shortDescription,
           tags: course.tags,
         }),
+        adminCategorySlug: adminCategory?.slug,
+        categoryName: adminCategory?.name,
         shortDescription: course.shortDescription ?? "",
         description: course.description ?? "",
         level: course.level,
@@ -180,6 +186,30 @@ export async function getPublishedCourses(): Promise<CatalogCourse[]> {
     console.error("Public course query failed; using catalog fallback:", error);
     return getCatalogFallbackCourses();
   }
+}
+
+export interface PublicCategoryOption {
+  slug: string;
+  name: string;
+}
+
+/** Active categories created by administrators, ordered as configured in office. */
+export async function getPublicCourseCategories(): Promise<PublicCategoryOption[]> {
+  try {
+    await connectDB();
+    const categories = await Category.find({ isActive: { $ne: false } })
+      .sort({ sortOrder: 1, name: 1 })
+      .select("slug name")
+      .lean();
+
+    if (categories.length) {
+      return categories.map((category) => ({ slug: category.slug, name: category.name }));
+    }
+  } catch (error) {
+    console.error("Public category query failed; using catalog fallback:", error);
+  }
+
+  return COURSE_CATEGORIES.map((category) => ({ slug: category.slug, name: category.name }));
 }
 
 export async function getPublishedCourseBySlug(

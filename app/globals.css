@@ -360,17 +360,17 @@
 
 /* --------------------------- Office workspace theme ------------------------- */
 .office-theme {
-  --color-primary-50: #f1f6f9;
-  --color-primary-100: #e1edf3;
-  --color-primary-200: #c5dbe6;
-  --color-primary-300: #96bfd1;
-  --color-primary-400: #619db6;
-  --color-primary-500: #3d7d99;
-  --color-primary-600: #285f78;
-  --color-primary-700: #204b60;
-  --color-primary-800: #193d50;
-  --color-primary-900: #112f40;
-  --color-primary-950: #071e2c;
+  --color-primary-50: #fffdf3;
+  --color-primary-100: #fff7cf;
+  --color-primary-200: #f9e89f;
+  --color-primary-300: #edd06d;
+  --color-primary-400: #d5ad37;
+  --color-primary-500: #ad821d;
+  --color-primary-600: #866016;
+  --color-primary-700: #684817;
+  --color-primary-800: #503818;
+  --color-primary-900: #3a2916;
+  --color-primary-950: #24190d;
 
   --color-accent-50: #fffbeb;
   --color-accent-100: #fef3c7;
@@ -384,27 +384,27 @@
   --color-accent-900: #5f381d;
 
   --color-surface: #ffffff;
-  --color-surface-muted: #f5f7f9;
-  --color-surface-inset: #eef3f6;
-  --shadow-card: 0 1px 2px rgb(7 30 44 / 0.05), 0 8px 24px -20px rgb(7 30 44 / 0.26);
-  --shadow-card-hover: 0 18px 40px -24px rgb(7 30 44 / 0.32), 0 4px 12px -8px rgb(7 30 44 / 0.16);
+  --color-surface-muted: #fffaf0;
+  --color-surface-inset: #fff3cf;
+  --shadow-card: 0 1px 2px rgb(80 56 24 / 0.05), 0 8px 24px -20px rgb(80 56 24 / 0.22);
+  --shadow-card-hover: 0 18px 40px -24px rgb(80 56 24 / 0.28), 0 4px 12px -8px rgb(80 56 24 / 0.14);
 
   min-height: 100vh;
-  background: #f5f7f9;
-  color: #172530;
+  background: #fffaf0;
+  color: #302719;
 }
 
 .office-grid-pattern {
-  background-image: radial-gradient(rgb(255 255 255 / 0.13) 0.7px, transparent 0.7px);
+  background-image: radial-gradient(rgb(104 72 23 / 0.18) 0.7px, transparent 0.7px);
   background-size: 16px 16px;
 }
 
 .office-page-header {
   position: relative;
   overflow: hidden;
-  border: 1px solid #d7e3e9;
+  border: 1px solid #ead99a;
   border-radius: 1rem;
-  background: linear-gradient(135deg, #ffffff 0%, #f3f7f9 72%, #eef3f6 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #fffaf0 72%, #fff3cf 100%);
   padding: 1.25rem;
   box-shadow: var(--shadow-card);
 }
@@ -417,7 +417,7 @@
   width: 10rem;
   height: 10rem;
   border-radius: 9999px;
-  background: rgb(197 219 230 / 0.42);
+  background: rgb(249 232 159 / 0.56);
   pointer-events: none;
 }
 
@@ -427,7 +427,7 @@
 }
 
 .office-theme table thead tr {
-  background: #eef3f6;
+  background: #fff3cf;
 }
 
 .office-theme table tbody tr {
@@ -435,18 +435,18 @@
 }
 
 .office-theme table tbody tr:hover {
-  background: #f7fafb;
+  background: #fffaf0;
 }
 
 .office-theme [role="menu"] {
   border-radius: 0.875rem;
-  box-shadow: 0 16px 36px -20px rgb(7 30 44 / 0.28);
+  box-shadow: 0 16px 36px -20px rgb(80 56 24 / 0.25);
 }
 
 /* Slim, low-contrast scrollbar for the light office sidebar nav list. */
 .office-nav-scroll {
   scrollbar-width: thin;
-  scrollbar-color: rgb(150 191 209 / 0.42) transparent;
+  scrollbar-color: rgb(173 130 29 / 0.42) transparent;
 }
 
 .office-nav-scroll::-webkit-scrollbar {
@@ -458,18 +458,18 @@
 }
 
 .office-nav-scroll::-webkit-scrollbar-thumb {
-  background: rgb(150 191 209 / 0.42);
+  background: rgb(173 130 29 / 0.42);
   border-radius: 999px;
 }
 
 .office-nav-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgb(150 191 209 / 0.62);
+  background: rgb(173 130 29 / 0.62);
 }
 
 .office-auth-card {
   position: relative;
   overflow: hidden;
-  border-color: #c5dbe6;
+  border-color: #f0dd91;
   border-radius: 1rem;
   box-shadow: var(--shadow-card-hover);
 }
@@ -479,16 +479,16 @@
   position: absolute;
   inset: 0 0 auto;
   height: 0.35rem;
-  background: linear-gradient(90deg, #112f40 0 72%, #e9b949 72% 100%);
+  background: linear-gradient(90deg, #f1c94f 0 72%, #8f6515 72% 100%);
 }
 
 .office-auth-card input {
-  border-color: #c5dbe6;
+  border-color: #f0dd91;
   border-radius: 0.625rem;
 }
 
 .office-auth-card input:hover {
-  border-color: #3d7d99;
+  border-color: #ad821d;
 }
 
 @media (min-width: 640px) {
@@ -499,17 +499,17 @@
 
 /* -------------------------- Student learning theme ------------------------- */
 .student-theme {
-  --color-primary-50: #f1f6f9;
-  --color-primary-100: #e1edf3;
-  --color-primary-200: #c5dbe6;
-  --color-primary-300: #96bfd1;
-  --color-primary-400: #619db6;
-  --color-primary-500: #3d7d99;
-  --color-primary-600: #285f78;
-  --color-primary-700: #204b60;
-  --color-primary-800: #193d50;
-  --color-primary-900: #112f40;
-  --color-primary-950: #071e2c;
+  --color-primary-50: #fffef2;
+  --color-primary-100: #fff8cf;
+  --color-primary-200: #fae99b;
+  --color-primary-300: #efd167;
+  --color-primary-400: #d9af35;
+  --color-primary-500: #b3861d;
+  --color-primary-600: #8b6315;
+  --color-primary-700: #6b4a16;
+  --color-primary-800: #523918;
+  --color-primary-900: #3b2a16;
+  --color-primary-950: #251a0c;
 
   --color-accent-50: #fffbeb;
   --color-accent-100: #fef3c7;
@@ -523,27 +523,27 @@
   --color-accent-900: #5f381d;
 
   --color-surface: #ffffff;
-  --color-surface-muted: #f5f7f9;
-  --color-surface-inset: #eef3f6;
-  --shadow-card: 0 1px 2px rgb(7 30 44 / 0.05), 0 8px 24px -20px rgb(7 30 44 / 0.26);
-  --shadow-card-hover: 0 18px 40px -24px rgb(7 30 44 / 0.32), 0 4px 12px -8px rgb(7 30 44 / 0.16);
+  --color-surface-muted: #fffaf0;
+  --color-surface-inset: #fff3c9;
+  --shadow-card: 0 1px 2px rgb(82 57 24 / 0.05), 0 8px 24px -20px rgb(82 57 24 / 0.22);
+  --shadow-card-hover: 0 18px 40px -24px rgb(82 57 24 / 0.28), 0 4px 12px -8px rgb(82 57 24 / 0.14);
 
   min-height: 100vh;
-  background: #f5f7f9;
-  color: #172530;
+  background: #fffaf0;
+  color: #302719;
 }
 
 .student-grid-pattern {
-  background-image: radial-gradient(rgb(255 255 255 / 0.13) 0.75px, transparent 0.75px);
+  background-image: radial-gradient(rgb(107 74 22 / 0.18) 0.75px, transparent 0.75px);
   background-size: 17px 17px;
 }
 
 .student-page-header {
   position: relative;
   overflow: hidden;
-  border: 1px solid #d7e3e9;
+  border: 1px solid #ead99a;
   border-radius: 1rem;
-  background: linear-gradient(135deg, #ffffff 0%, #f3f7f9 70%, #eef3f6 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #fffaf0 70%, #fff3c9 100%);
   padding: 1.25rem;
   box-shadow: var(--shadow-card);
 }
@@ -556,7 +556,7 @@
   width: 10rem;
   height: 10rem;
   border-radius: 9999px;
-  background: rgb(197 219 230 / 0.42);
+  background: rgb(250 233 155 / 0.58);
 }
 
 .student-page-header > * {
@@ -565,7 +565,7 @@
 }
 
 .student-theme table thead tr {
-  background: #eef3f6;
+  background: #fff3c9;
 }
 
 .student-theme table tbody tr {
@@ -573,27 +573,27 @@
 }
 
 .student-theme table tbody tr:hover {
-  background: #f7fafb;
+  background: #fffaf0;
 }
 
 .student-theme [role="menu"] {
   border-radius: 0.875rem;
-  box-shadow: 0 16px 36px -20px rgb(7 30 44 / 0.28);
+  box-shadow: 0 16px 36px -20px rgb(82 57 24 / 0.25);
 }
 
 .student-theme main .shadow-card {
-  border-color: #d7e3e9;
+  border-color: #ead99a;
   border-radius: 0.875rem;
 }
 
 .student-theme main input,
 .student-theme main textarea {
-  border-color: #c5dbe6;
+  border-color: #f0dd91;
 }
 
 .student-theme main input:focus,
 .student-theme main textarea:focus {
-  border-color: #3d7d99;
+  border-color: #b3861d;
 }
 
 @media (min-width: 640px) {

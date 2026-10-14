@@ -63,7 +63,7 @@ export function toCourseSummary(course: CatalogCourse): CatalogCourseData {
     name: course.name,
     slug: course.slug,
     shortDescription: course.shortDescription,
-    categoryName: category?.name,
+    categoryName: course.categoryName ?? category?.name,
     level: course.level,
     status: course.status as CourseStatus,
     thumbnailUrl: course.thumbnailUrl,

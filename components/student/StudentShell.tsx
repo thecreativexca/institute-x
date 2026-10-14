@@ -109,22 +109,22 @@ export function StudentShell({ children, session }: StudentShellProps) {
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col overflow-hidden border-r border-primary-800 bg-primary-950 text-white shadow-2xl shadow-primary-950/20 transition-transform duration-200 ease-out lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-72 flex-col overflow-hidden border-r border-primary-300 bg-primary-100 text-primary-950 shadow-2xl shadow-primary-950/10 transition-transform duration-200 ease-out lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
         aria-label="Student sidebar navigation"
       >
-        <div aria-hidden="true" className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-primary-600/25 blur-3xl" />
+        <div aria-hidden="true" className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-accent-300/45 blur-3xl" />
         <div aria-hidden="true" className="student-grid-pattern absolute inset-0 opacity-35" />
 
-        <div className="relative flex h-[4.5rem] items-center justify-between border-b border-white/10 px-5">
+        <div className="relative flex h-[4.5rem] items-center justify-between border-b border-primary-300/70 px-5">
           <div className="min-w-0" onClick={() => setSidebarOpen(false)}>
             <PortalSidebarLogo href="/student/dashboard" />
-            <p className="mt-1.5 truncate text-xs text-primary-300">Student learning portal</p>
+            <p className="mt-1.5 truncate text-xs text-primary-700">Student learning portal</p>
           </div>
           <button
             type="button"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-primary-200 hover:bg-white/10 hover:text-white lg:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-primary-800 hover:bg-primary-200/80 hover:text-primary-950 lg:hidden"
             onClick={() => setSidebarOpen(false)}
             aria-label="Close navigation menu"
           >
@@ -133,7 +133,7 @@ export function StudentShell({ children, session }: StudentShellProps) {
         </div>
 
         <nav className="relative flex min-h-0 flex-1 flex-col px-4 py-5">
-          <p className="shrink-0 px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-400">Learning</p>
+          <p className="shrink-0 px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-700">Learning</p>
           <ul className="office-nav-scroll mt-3 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-1" role="list">
             {navItems.map((item) => {
               const active = isActive(item.href);
@@ -145,7 +145,7 @@ export function StudentShell({ children, session }: StudentShellProps) {
                       "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
                       active
                         ? "bg-white text-primary-950 shadow-sm"
-                        : "text-primary-200 hover:bg-white/10 hover:text-white"
+                        : "text-primary-900 hover:bg-primary-200/75 hover:text-primary-950"
                     )}
                     onClick={() => setSidebarOpen(false)}
                     aria-current={active ? "page" : undefined}
@@ -154,8 +154,8 @@ export function StudentShell({ children, session }: StudentShellProps) {
                       className={cn(
                         "flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
                         active
-                          ? "bg-primary-950 text-accent-300"
-                          : "bg-white/10 text-primary-200 group-hover:text-white"
+                          ? "bg-accent-300 text-primary-950"
+                          : "bg-white/65 text-primary-800 group-hover:text-primary-950"
                       )}
                     >
                       <item.icon className="h-4.5 w-4.5" aria-hidden="true" />
@@ -169,22 +169,22 @@ export function StudentShell({ children, session }: StudentShellProps) {
           </ul>
 
           <div className="shrink-0 pt-6">
-            <div className="rounded-xl border border-white/10 bg-white/[0.06] p-3.5">
+            <div className="rounded-xl border border-primary-300/70 bg-white/55 p-3.5">
               <div className="flex items-center gap-3">
                 {avatar("h-10 w-10")}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-white">{session.name}</p>
-                  <p className="truncate text-xs text-primary-300">Active learner</p>
+                  <p className="truncate text-sm font-semibold text-primary-950">{session.name}</p>
+                  <p className="truncate text-xs text-primary-700">Active learner</p>
                 </div>
               </div>
-              <div className="mt-3 flex items-center gap-2 rounded-lg bg-white/[0.07] px-3 py-2 text-xs text-primary-200">
-                <Sparkles className="h-3.5 w-3.5 text-accent-300" aria-hidden="true" />
+              <div className="mt-3 flex items-center gap-2 rounded-lg bg-white/65 px-3 py-2 text-xs text-primary-800">
+                <Sparkles className="h-3.5 w-3.5 text-primary-600" aria-hidden="true" />
                 Keep your learning streak going
               </div>
-              <form action="/api/auth/logout" method="POST" className="mt-3 border-t border-white/10 pt-3">
+              <form action="/api/auth/logout" method="POST" className="mt-3 border-t border-primary-300/70 pt-3">
                 <button
                   type="submit"
-                  className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-xs font-medium text-primary-300 transition-colors hover:bg-white/10 hover:text-white"
+                  className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-xs font-medium text-primary-800 transition-colors hover:bg-primary-200/75 hover:text-primary-950"
                 >
                   <LogOut className="h-4 w-4" aria-hidden="true" />
                   Sign out securely
@@ -196,7 +196,7 @@ export function StudentShell({ children, session }: StudentShellProps) {
       </aside>
 
       <div className="min-h-screen lg:pl-72">
-        <header className="sticky top-0 z-30 border-b border-primary-100 bg-[#ffffff]/92 backdrop-blur-xl supports-[backdrop-filter]:bg-[#ffffff]/82">
+        <header className="sticky top-0 z-30 border-b border-primary-200 bg-[#fffdf5]/94 backdrop-blur-xl supports-[backdrop-filter]:bg-[#fffdf5]/86">
           <Container>
             <div className="flex h-[4.5rem] items-center justify-between gap-4">
               <div className="flex min-w-0 items-center gap-3">
